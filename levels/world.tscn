@@ -9,7 +9,8 @@
 [node name="Player" parent="." instance=ExtResource("1_2mgkc")]
 
 [node name="Floor" type="StaticBody2D" parent="."]
-position = Vector2(-2, 66)
+position = Vector2(-7, 99)
+scale = Vector2(25.120005, 1)
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
