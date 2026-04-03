@@ -28,7 +28,7 @@ func _physics_process(delta: float) -> void:
 			# Play idle when standing still
 			animation_player.play("idle")
 		else:
-			animation_player.play("walk")
+			animation_player.play("run")
 			# Placeholder for when you create a running animation
 	else:
 		# Placeholder for when you create jump/fall animations
