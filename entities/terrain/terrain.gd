@@ -14,6 +14,7 @@ const STONE_ATLAS_COORD = Vector2i(1, 0)
 const ORE_ATLAS_COORD = Vector2i(2, 0)
 
 func _ready() -> void:
+	add_to_group("terrain")
 	generate_terrain()
 
 func generate_terrain() -> void:
@@ -34,3 +35,22 @@ func generate_terrain() -> void:
 					
 			# Place the tile: set_cell(coords, source_id, atlas_coords)
 			tile_map.set_cell(grid_position, TILE_SOURCE_ID, block_type)
+
+func mine_tile(world_position: Vector2) -> bool:
+	var local_pos = tile_map.to_local(world_position)
+	var grid_pos = tile_map.local_to_map(local_pos)
+	
+	# Check if there is a tile there
+	var source_id = tile_map.get_cell_source_id(grid_pos)
+	if source_id != -1:
+		var atlas_coords = tile_map.get_cell_atlas_coords(grid_pos)
+		if atlas_coords == ORE_ATLAS_COORD:
+			print("Mined Ore!")
+		elif atlas_coords == STONE_ATLAS_COORD:
+			print("Mined Stone.")
+		elif atlas_coords == DIRT_ATLAS_COORD:
+			print("Mined Dirt.")
+		
+		tile_map.set_cell(grid_pos, -1) # Remove the tile
+		return true
+	return false
