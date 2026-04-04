@@ -6,6 +6,10 @@ func enter():
 func update(delta: float):
 	handle_gravity(delta)
 	
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		actor.state_machine.transition_to("mine")
+		return
+		
 	if Input.is_action_just_pressed("ui_accept") and actor.is_on_floor():
 		actor.state_machine.transition_to("jump")
 		return
