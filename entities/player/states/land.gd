@@ -1,11 +1,11 @@
 extends PlayerState
 
-var land_timer := 0.1
+var land_timer :float
 
 func enter():
 	actor.animation_player.play("land")
 	actor.velocity = Vector2.ZERO
-	land_timer = 0.1
+	land_timer = actor.TIME_TO_LAND
 
 func update(delta: float):
 	handle_gravity(delta)
@@ -18,4 +18,8 @@ func update(delta: float):
 	land_timer -= delta
 	if land_timer <= 0:
 		actor.state_machine.transition_to("idle")
+		return
+
+	if actor.velocity.x != 0:
+		actor.state_machine.transition_to("run")
 		return

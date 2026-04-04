@@ -10,7 +10,7 @@
 
 [node name="Floor" type="StaticBody2D" parent="."]
 position = Vector2(-7, 99)
-scale = Vector2(25.120005, 1)
+scale = Vector2(31.173397, 1.2995743)
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
