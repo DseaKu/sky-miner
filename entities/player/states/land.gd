@@ -9,6 +9,11 @@ func enter():
 
 func update(delta: float):
 	handle_gravity(delta)
+	
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		actor.state_machine.transition_to("mine")
+		return
+
 	var direction := Input.get_axis("left", "right")
 	handle_flipping(direction)
 	actor.velocity.x = direction * actor.SPEED
