@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://bl0flyjumqb3j" path="res://entities/player/states/run.gd" id="6_run"]
 [ext_resource type="Script" uid="uid://bhs27tow2mn" path="res://entities/player/states/jump.gd" id="7_jump"]
 [ext_resource type="Script" uid="uid://chc2nax0irm0a" path="res://entities/player/states/fall.gd" id="8_fall"]
+[ext_resource type="Script" uid="uid://u26hxyfu3u13" path="res://entities/player/states/land.gd" id="9_land"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sfv1e"]
 height = 26.0
@@ -303,3 +304,6 @@ script = ExtResource("7_jump")
 
 [node name="Fall" type="Node" parent="CharacterBody2D/StateMachine"]
 script = ExtResource("8_fall")
+
+[node name="Land" type="Node" parent="CharacterBody2D/StateMachine"]
+script = ExtResource("9_land")

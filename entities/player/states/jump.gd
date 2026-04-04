@@ -11,8 +11,8 @@ func update(delta: float):
 	handle_flipping(direction)
 	actor.velocity.x = direction * actor.SPEED
 
+	actor.move_and_slide()
+
 	if actor.velocity.y >= 0:
 		actor.state_machine.transition_to("fall")
 		return
-
-	actor.move_and_slide()

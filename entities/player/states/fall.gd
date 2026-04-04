@@ -10,8 +10,8 @@ func update(delta: float):
 	handle_flipping(direction)
 	actor.velocity.x = direction * actor.SPEED
 
+	actor.move_and_slide()
+
 	if actor.is_on_floor():
 		actor.state_machine.transition_to("land")
 		return
-
-	actor.move_and_slide()

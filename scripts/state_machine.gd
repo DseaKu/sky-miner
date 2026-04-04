@@ -8,9 +8,9 @@ var states: Dictionary = {}
 func _ready():
     await get_parent().ready
     for child in get_children():
-        if child is State:
+        if child.has_method("enter"):
             states[child.name.to_lower()] = child
-            child.actor = get_parent() # Assuming parent is the Player
+            child.actor = get_parent()
     
     if initial_state:
         current_state = initial_state
@@ -21,6 +21,7 @@ func _physics_process(delta):
         current_state.update(delta)
 
 func transition_to(state_name: String):
+    # print("Transitioning to: ", state_name)
     var new_state = states.get(state_name.to_lower())
     if !new_state:
         return
