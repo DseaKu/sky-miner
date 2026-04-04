@@ -13,7 +13,6 @@ func update(delta: float):
 	handle_flipping(direction)
 	actor.velocity.x = direction * actor.SPEED
 
-	actor.move_and_slide()
 
 	land_timer -= delta
 	if land_timer <= 0:
@@ -23,3 +22,9 @@ func update(delta: float):
 	if actor.velocity.x != 0:
 		actor.state_machine.transition_to("run")
 		return
+
+	if Input.is_action_just_pressed("ui_accept") and actor.is_on_floor():
+		actor.state_machine.transition_to("jump")
+		return
+
+	actor.move_and_slide()

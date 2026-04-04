@@ -17,8 +17,9 @@ func update(delta: float):
 
 	actor.velocity.x = move_toward(actor.velocity.x, 0, actor.SPEED)
 	
-	actor.move_and_slide()
 	
 	if not actor.is_on_floor() and actor.velocity.y > 50.0:
 		actor.state_machine.transition_to("fall")
 		return
+
+	actor.move_and_slide()
