@@ -15,6 +15,9 @@ func physics_update(delta: float):
 	actor.velocity.x = direction * actor.SPEED
 
 	land_timer -= delta
+
+	actor.velocity.x = move_toward(actor.velocity.x, 0, actor.GROUND_FRICTION * delta)
+
 	actor.move_and_slide()
 
 func handle_transitions():

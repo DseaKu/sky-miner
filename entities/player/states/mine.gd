@@ -33,8 +33,13 @@ func physics_update(delta: float):
 
 
 func handle_transitions():
+
 	if not actor.is_on_floor():
 		actor.state_machine.transition_to("fall")
+		return
+
+	if Input.is_action_just_pressed("jump") and actor.is_on_floor():
+		actor.state_machine.transition_to("jump")
 		return
 
 	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):

@@ -5,7 +5,7 @@ func enter():
 
 func physics_update(delta: float):
 	handle_gravity(delta)
-	actor.velocity.x = move_toward(actor.velocity.x, 0, actor.SPEED)
+	actor.velocity.x = move_toward(actor.velocity.x, 0, actor.GROUND_FRICTION * delta)
 	actor.move_and_slide()
 
 func handle_transitions():

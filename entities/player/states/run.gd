@@ -8,7 +8,11 @@ func physics_update(delta: float):
 
 	var direction := Input.get_axis("left", "right")
 	handle_flipping(direction)
-	actor.velocity.x = direction * actor.SPEED
+	
+	if direction != 0:
+		actor.velocity.x = move_toward(actor.velocity.x, direction * actor.SPEED, actor.GROUND_ACCEL * delta)
+	else:
+		actor.velocity.x = move_toward(actor.velocity.x, 0, actor.GROUND_FRICTION * delta)
 
 	actor.move_and_slide()
 
