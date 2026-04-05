@@ -2,5 +2,15 @@
 
 [ext_resource type="Script" uid="uid://b211ft71804m0" path="res://ui/ui.gd" id="1_nb4k0"]
 
-[node name="Ui" type="Node2D"]
+[node name="Ui" type="CanvasLayer"]
 script = ExtResource("1_nb4k0")
+
+[node name="FPSLabel" type="VBoxContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PosLabel" type="VBoxContainer" parent="."]
+offset_left = 1.0
+offset_top = 40.0
+offset_right = 41.0
+offset_bottom = 80.0
