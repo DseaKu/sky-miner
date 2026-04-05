@@ -3,6 +3,7 @@ extends CanvasLayer
 # Create references to your labels
 @onready var fps_label = $FPSLabel
 @onready var pos_label = $PosLabel
+@onready var state_label = $StateLabel
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -25,8 +26,18 @@ func _process(_delta: float) -> void:
 	var player = get_tree().get_first_node_in_group("player")
 	
 	if player:
+		# Update Position
 		var pos_x = round(player.global_position.x)
 		var pos_y = round(player.global_position.y)
 		pos_label.text = "Pos: (" + str(pos_x) + ", " + str(pos_y) + ")"
+
+		# Update State
+		var state_machine = player.get_node("StateMachine")
+		if state_machine and "state" in state_machine:
+			state_label.text = "State: " + state_machine.state.name
+		else:
+			state_label.text = "State: Unknown"
+
 	else:
-		pos_label.text = "Pos: Player not found"
+		pos_label.text = "Pos: --"
+		state_label.text = "State: --"

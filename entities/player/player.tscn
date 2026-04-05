@@ -352,7 +352,7 @@ _data = {
 &"run": SubResource("Animation_bls4j")
 }
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_abrql")
 metadata/_edit_group_ = true
 
