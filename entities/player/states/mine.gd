@@ -41,6 +41,6 @@ func handle_transitions():
 		actor.state_machine.transition_to("idle")
 		return
 	
-	if Input.is_action_pressed("left") or Input.is_action_pressed("right"):
+	if Input.is_action_just_pressed("left") or Input.is_action_just_pressed("right"):
 		actor.state_machine.transition_to("run")
 		return

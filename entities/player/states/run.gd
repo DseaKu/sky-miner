@@ -25,6 +25,6 @@ func handle_transitions():
 		actor.state_machine.transition_to("idle")
 		return
 
-	if Input.is_action_pressed("mine"):
+	if Input.is_action_just_pressed("mine"):
 		actor.state_machine.transition_to("mine")
 		return
