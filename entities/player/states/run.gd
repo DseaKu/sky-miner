@@ -10,7 +10,11 @@ func physics_update(delta: float):
 	handle_flipping(direction)
 	
 	if direction != 0:
-		actor.velocity.x = move_toward(actor.velocity.x, direction * actor.SPEED, actor.GROUND_ACCEL * delta)
+		var accel = actor.GROUND_ACCEL
+		if sign(direction) != sign(actor.velocity.x) and actor.velocity.x != 0:
+			accel = actor.TURN_ACCEL
+		
+		actor.velocity.x = move_toward(actor.velocity.x, direction * actor.SPEED, accel * delta)
 	else:
 		actor.velocity.x = move_toward(actor.velocity.x, 0, actor.GROUND_FRICTION * delta)
 

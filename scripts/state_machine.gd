@@ -18,10 +18,10 @@ func _ready():
 
 func _physics_process(delta):
     if current_state:
+        current_state.handle_transitions(delta)
         current_state.physics_update(delta)
-        current_state.handle_transitions()
 
-func transition_to(state_name: String):
+func transition_to(state_name: String, delta:float):
     # print("Transitioning to: ", state_name)
     var new_state = states.get(state_name.to_lower())
     if !new_state:

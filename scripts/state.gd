@@ -16,5 +16,5 @@ func physics_update(_delta: float):
     pass
 
 # Called during _physics_process to handle transitions
-func handle_transitions():
+func handle_transitions(_delta: float):
     pass

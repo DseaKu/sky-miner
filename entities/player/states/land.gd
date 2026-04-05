@@ -13,14 +13,17 @@ func physics_update(delta: float):
 	handle_flipping(direction)
 
 	if direction != 0:
-		actor.velocity.x = move_toward(actor.velocity.x, direction * actor.SPEED, actor.GROUND_ACCEL * delta)
+		var accel = actor.GROUND_ACCEL
+		if sign(direction) != sign(actor.velocity.x) and actor.velocity.x != 0:
+			accel = actor.TURN_ACCEL
+		
+		actor.velocity.x = move_toward(actor.velocity.x, direction * actor.SPEED, accel * delta)
 	else:
 		actor.velocity.x = move_toward(actor.velocity.x, 0, actor.GROUND_FRICTION * delta)
 
-	land_timer -= delta
 	actor.move_and_slide()
 
-func handle_transitions():
+func handle_transitions(delta:float):
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		actor.state_machine.transition_to("mine")
 		return
