@@ -11,6 +11,10 @@ func enter():
 func exit():
     pass
 
-# Called during _process or _physics_process
-func update(_delta: float):
+# Called during _physics_process for state logic
+func physics_update(_delta: float):
+    pass
+
+# Called during _physics_process to handle transitions
+func handle_transitions():
     pass

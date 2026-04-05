@@ -7,19 +7,21 @@ func enter():
 	actor.velocity = Vector2.ZERO
 	land_timer = actor.TIME_TO_LAND
 
-func update(delta: float):
+func physics_update(delta: float):
 	handle_gravity(delta)
 	
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		actor.state_machine.transition_to("mine")
-		return
-
 	var direction := Input.get_axis("left", "right")
 	handle_flipping(direction)
 	actor.velocity.x = direction * actor.SPEED
 
-
 	land_timer -= delta
+	actor.move_and_slide()
+
+func handle_transitions():
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		actor.state_machine.transition_to("mine")
+		return
+
 	if land_timer <= 0:
 		actor.state_machine.transition_to("idle")
 		return
@@ -31,5 +33,3 @@ func update(delta: float):
 	if Input.is_action_just_pressed("ui_accept") and actor.is_on_floor():
 		actor.state_machine.transition_to("jump")
 		return
-
-	actor.move_and_slide()
