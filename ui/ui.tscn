@@ -5,11 +5,11 @@
 [node name="Ui" type="CanvasLayer"]
 script = ExtResource("1_nb4k0")
 
-[node name="FPSLabel" type="VBoxContainer" parent="."]
+[node name="FPSLabel" type="Label" parent="."]
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="PosLabel" type="VBoxContainer" parent="."]
+[node name="PosLabel" type="Label" parent="."]
 offset_left = 1.0
 offset_top = 40.0
 offset_right = 41.0

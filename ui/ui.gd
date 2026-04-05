@@ -9,9 +9,9 @@ func _ready() -> void:
 	visible =false
 
 
-# func _input(event: InputEvent) -> void:
-# 	if event.is_action_just_pressed("show_debug_ui"):
-# 		visible = not visible
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("show_debug_ui"):
+		visible = not visible
 
 func _process(_delta: float) -> void:
 	# Do not process updates if the UI is hidden

@@ -352,48 +352,46 @@ _data = {
 &"run": SubResource("Animation_bls4j")
 }
 
-[node name="Player" type="Node2D"]
-
-[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+[node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_abrql")
 metadata/_edit_group_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
 shape = SubResource("CapsuleShape2D_sfv1e")
 
-[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
+[node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(1.0000002, 0)
 scale = Vector2(0.9166667, 0.9166667)
 texture = ExtResource("2_bls4j")
 hframes = 7
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="CharacterBody2D"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 &"": SubResource("AnimationLibrary_bls4j")
 }
 
-[node name="Camera2D" type="Camera2D" parent="CharacterBody2D"]
+[node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(4, 4)
 
-[node name="StateMachine" type="Node" parent="CharacterBody2D" node_paths=PackedStringArray("initial_state")]
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("4_state_machine")
 initial_state = NodePath("Idle")
 
-[node name="Idle" type="Node" parent="CharacterBody2D/StateMachine"]
+[node name="Idle" type="Node" parent="StateMachine"]
 script = ExtResource("5_idle")
 
-[node name="Run" type="Node" parent="CharacterBody2D/StateMachine"]
+[node name="Run" type="Node" parent="StateMachine"]
 script = ExtResource("6_run")
 
-[node name="Jump" type="Node" parent="CharacterBody2D/StateMachine"]
+[node name="Jump" type="Node" parent="StateMachine"]
 script = ExtResource("7_jump")
 
-[node name="Fall" type="Node" parent="CharacterBody2D/StateMachine"]
+[node name="Fall" type="Node" parent="StateMachine"]
 script = ExtResource("8_fall")
 
-[node name="Land" type="Node" parent="CharacterBody2D/StateMachine"]
+[node name="Land" type="Node" parent="StateMachine"]
 script = ExtResource("9_land")
 
-[node name="Mine" type="Node" parent="CharacterBody2D/StateMachine"]
+[node name="Mine" type="Node" parent="StateMachine"]
 script = ExtResource("10_mine")
