@@ -8,13 +8,13 @@ func enter():
 	else:
 		actor.animation_player.play("idle")
 
-func physics_update(delta: float):
-	handle_gravity(delta)
+func physics_update(_delta: float):
+	handle_gravity(_delta)
 	var mouse_pos = actor.get_global_mouse_position()
 
 	# Handle mining timer and execution
 	if mining_timer > 0:
-		mining_timer -= delta
+		mining_timer -= _delta
 
 	if mining_timer <= 0:
 		if actor.global_position.distance_to(mouse_pos) <= actor.MINING_RANGE:
@@ -32,7 +32,7 @@ func physics_update(delta: float):
 	actor.move_and_slide()
 
 
-func handle_transitions():
+func handle_transitions(_delta: float):
 
 	if not actor.is_on_floor():
 		actor.state_machine.transition_to("fall")
@@ -45,7 +45,7 @@ func handle_transitions():
 	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		actor.state_machine.transition_to("idle")
 		return
-	
-	if Input.is_action_just_pressed("left") or Input.is_action_just_pressed("right"):
+
+	if Input.is_action_pressed("left") or Input.is_action_pressed("right"):
 		actor.state_machine.transition_to("run")
 		return

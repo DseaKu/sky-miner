@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://dq8hrsp5t7qm1"]
+[gd_scene load_steps=25 format=3 uid="uid://dq8hrsp5t7qm1"]
 
 [ext_resource type="Script" uid="uid://byedp8rmuicjy" path="res://entities/player/character_body_2d.gd" id="1_abrql"]
 [ext_resource type="Texture2D" uid="uid://ceafx430ccaf1" path="res://entities/player/assets/player jump 48x48.png" id="2_bls4j"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://cvl3qdtl166l3" path="res://entities/player/assets/player land 48x48.png" id="5_wvtmh"]
 [ext_resource type="Texture2D" uid="uid://dsua1b3hk380u" path="res://entities/player/assets/player sword atk 64x64.png" id="6_j3ovn"]
 [ext_resource type="Script" uid="uid://bl0flyjumqb3j" path="res://entities/player/states/run.gd" id="6_run"]
+[ext_resource type="Texture2D" uid="uid://7u6gss2wseop" path="res://entities/player/assets/Player Roll 48x48.png" id="7_afbqv"]
 [ext_resource type="Script" uid="uid://bhs27tow2mn" path="res://entities/player/states/jump.gd" id="7_jump"]
 [ext_resource type="Script" uid="uid://chc2nax0irm0a" path="res://entities/player/states/fall.gd" id="8_fall"]
 [ext_resource type="Script" uid="uid://u26hxyfu3u13" path="res://entities/player/states/land.gd" id="9_land"]
@@ -299,6 +300,46 @@ tracks/2/keys = {
 "values": [0, 1, 2, 3, 4, 5]
 }
 
+[sub_resource type="Animation" id="Animation_gx6sm"]
+resource_name = "roll"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("7_afbqv")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:hframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [7]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.046604678, 0.09157955, 0.14474204, 0.20861474, 0.26666668),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_bls4j"]
 _data = {
 &"RESET": SubResource("Animation_8fjmc"),
@@ -307,6 +348,7 @@ _data = {
 &"jump": SubResource("Animation_fkugw"),
 &"land": SubResource("Animation_7thud"),
 &"mine": SubResource("Animation_afbqv"),
+&"roll": SubResource("Animation_gx6sm"),
 &"run": SubResource("Animation_bls4j")
 }
 
