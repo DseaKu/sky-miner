@@ -8,6 +8,7 @@ extends CanvasLayer
 @onready var pos_label = $MainPanel/PlayerPanel/PosLabel
 @onready var grid_pos_label = $MainPanel/PlayerPanel/GridPosLabel
 @onready var state_label = $MainPanel/PlayerPanel/StateLabel
+@onready var velocity_label = $MainPanel/PlayerPanel/VelocityLabel
 
 
 const INDENT_LABEL =  "  "
@@ -47,16 +48,16 @@ func update_player_data()->void:
 		return
 
 	# Update Position
-	var pos_x = round(player.global_position.x)
-	var pos_y = round(player.global_position.y)
-	pos_label.text = INDENT_LABEL+"Pos: (" + str(pos_x) + ", " + str(pos_y) + ")"
+	var player_pos = round(player.global_position)
+	pos_label.text = INDENT_LABEL+"Pos: (" + str(round(player_pos.x)) + ", " + str(round(player_pos.y)) + ")"
 
-	# Get Grid Position
-	var terrain = get_tree().get_first_node_in_group("terrain")
-	if terrain:
+	# Update Grid Position
+	var terrain_root = get_tree().get_first_node_in_group("terrain")
+	if terrain_root and terrain_root.has_node("TileMapLayer"):
+		var tilemap = terrain_root.get_node("TileMapLayer")
+		
 		# Convert global pixel position to local grid position
-		var local_pos = terrain.to_local(player.global_position)
-		var cell_pos = terrain.local_to_map(local_pos)
+		var cell_pos = tilemap.local_to_map(player_pos)
 		
 		grid_pos_label.text = INDENT_LABEL + "Cell: (" + str(cell_pos.x) + ", " + str(cell_pos.y) + ")"
 	else:
@@ -69,4 +70,10 @@ func update_player_data()->void:
 		state_label.text = INDENT_LABEL+"State: " + state_machine.current_state.name
 	else:
 		state_label.text = INDENT_LABEL+"State: --"
+	
+	# Update Velocity
+	var player_velo= player.velocity
+	velocity_label.text = INDENT_LABEL + "Velocity: (" + str(round(player_velo.x)) + ", " + str(round(player_velo.y)) + ")"
+
+
 	

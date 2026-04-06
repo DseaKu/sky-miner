@@ -35,3 +35,6 @@ layout_mode = 2
 
 [node name="StateLabel" type="Label" parent="MainPanel/PlayerPanel"]
 layout_mode = 2
+
+[node name="VelocityLabel" type="Label" parent="MainPanel/PlayerPanel"]
+layout_mode = 2

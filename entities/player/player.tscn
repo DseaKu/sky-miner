@@ -16,7 +16,8 @@
 [ext_resource type="Script" uid="uid://dtqnhal05owgf" path="res://entities/player/states/mine.gd" id="10_mine"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sfv1e"]
-height = 26.0
+radius = 7.0
+height = 24.0
 
 [sub_resource type="Animation" id="Animation_8fjmc"]
 length = 0.001
@@ -354,7 +355,6 @@ _data = {
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_abrql")
-metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
