@@ -23,5 +23,5 @@ sources/0 = SubResource("TileSetAtlasSource_b5q0i")
 [node name="Terrain" type="Node2D"]
 script = ExtResource("1_b5q0i")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="."]
+[node name="TileMapLayer" type="TileMapLayer" parent="." groups=["terrain"]]
 tile_set = SubResource("TileSet_2ny8j")

@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=3 uid="uid://cvy1dgbtpqipp"]
+
+[ext_resource type="Script" uid="uid://b211ft71804m0" path="res://ui/debug/debug_ui.gd" id="1_nb4k0"]
+
+[node name="DebugUI" type="CanvasLayer"]
+script = ExtResource("1_nb4k0")
+
+[node name="MainPanel" type="VBoxContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SystemPanel" type="VBoxContainer" parent="MainPanel"]
+layout_mode = 2
+
+[node name="SystemHeader" type="Label" parent="MainPanel/SystemPanel"]
+layout_mode = 2
+
+[node name="FPSLabel" type="Label" parent="MainPanel/SystemPanel"]
+layout_mode = 2
+
+[node name="MemoryLabel" type="Label" parent="MainPanel/SystemPanel"]
+layout_mode = 2
+
+[node name="PlayerPanel" type="VBoxContainer" parent="MainPanel"]
+layout_mode = 2
+
+[node name="PlayerHeader" type="Label" parent="MainPanel/PlayerPanel"]
+layout_mode = 2
+
+[node name="PosLabel" type="Label" parent="MainPanel/PlayerPanel"]
+layout_mode = 2
+
+[node name="GridPosLabel" type="Label" parent="MainPanel/PlayerPanel"]
+layout_mode = 2
+
+[node name="StateLabel" type="Label" parent="MainPanel/PlayerPanel"]
+layout_mode = 2
