@@ -4,7 +4,7 @@ extends Node2D
 
 # Chunk Generation Settings
 const CHUNK_SIZE = 16
-const RENDER_DISTANCE = 2  # Loads 2 chunks in every direction around the player
+const RENDER_DISTANCE = 5  # Loads 2 chunks in every direction around the player
 
 # Atlas Coords
 const TILE_SOURCE_ID = 2
@@ -14,16 +14,26 @@ const ORE = Vector2i(2, 0)
 const EMPTY_CELL = Vector2i(3, 3)
 const NONE_EXISTING_CELL = Vector2i(-1, -1)
 
+# Noise Thresholds
 const ORE_SEED = 1
 const ORE_SPREAD = 0.15
 const ORE_THRESHOLD = 0.6
+const DIRT_THRESHOLD = -0.3
 
 const EMPTY_CELLS_SEED = 2
-const EMPTY_CELLS_SPREAD = 0.08
-const EMPTY_CELLS_THRESHOLD = 0.25
+const EMPTY_CELLS_SPREAD = 0.1
+const EMPTY_CELLS_THRESHOLD = 0.30
 
+const ISLAND_SEED = 3
+const ISLAND_SPREAD = 0.001  # Lower frequency creates larger islands
+const ISLAND_THRESHOLD = 0.0001  # Adjust this to change island thickness
+const ISLAND_STRETCH_X = 1.0  # Lower values make islands wider
+const ISLAND_STRETCH_Y = 5.0  # Higher values make islands flatter and thinner
+
+# Generators
 var ore_noise = FastNoiseLite.new()
 var void_noise = FastNoiseLite.new()
+var island_noise = FastNoiseLite.new()
 
 # Track generation state
 var generated_chunks: Dictionary = {}
@@ -44,6 +54,10 @@ func setup_noise() -> void:
 	void_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
 	void_noise.seed = EMPTY_CELLS_SEED
 	void_noise.frequency = EMPTY_CELLS_SPREAD
+
+	island_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
+	island_noise.seed = ISLAND_SEED
+	island_noise.frequency = ISLAND_SPREAD
 
 
 func _process(_delta: float) -> void:
@@ -91,24 +105,26 @@ func generate_chunk(chunk_coord: Vector2i) -> void:
 
 	for x in range(start_x, start_x + CHUNK_SIZE):
 		for y in range(start_y, start_y + CHUNK_SIZE):
-			# Replicate your previous surface level logic
-			# y < 5 is empty sky, y == 5 is dirt, y > 5 is underground
-			if y < 5:
-				continue
-
 			var grid_position = Vector2i(x, y)
-			var block_type = DIRT
 
-			if y > 5:
-				block_type = STONE
+			# Apply the stretch multipliers to the coordinates
+			var island_val = island_noise.get_noise_2d(x * ISLAND_STRETCH_X, y * ISLAND_STRETCH_Y)
 
-				var ore_noise_val = ore_noise.get_noise_2d(x, y)
-				var void_noise_val = void_noise.get_noise_2d(x, y)
+			if island_val < ISLAND_THRESHOLD:
+				continue  # Skip this coordinate entirely to leave it as empty sky
 
-				if void_noise_val > EMPTY_CELLS_THRESHOLD:
-					block_type = EMPTY_CELL
-				elif ore_noise_val > ORE_THRESHOLD:
-					block_type = ORE
+			var block_type = STONE
+
+			# Apply voids and ore only to the underground stone layer
+			var ore_noise_val = ore_noise.get_noise_2d(x, y)
+			var void_noise_val = void_noise.get_noise_2d(x, y)
+
+			if void_noise_val > EMPTY_CELLS_THRESHOLD:
+				block_type = EMPTY_CELL
+			elif ore_noise_val < DIRT_THRESHOLD:
+				block_type = DIRT
+			elif ore_noise_val > ORE_THRESHOLD:
+				block_type = ORE
 
 			tile_map.set_cell(grid_position, TILE_SOURCE_ID, block_type)
 
