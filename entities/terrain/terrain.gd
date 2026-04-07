@@ -2,8 +2,9 @@ extends Node2D
 
 @onready var tile_map = $TileMapLayer
 
-const WIDTH = 100
-const DEPTH = 50
+# Chunk Generation Settings
+const CHUNK_SIZE = 16
+const RENDER_DISTANCE = 2  # Loads 2 chunks in every direction around the player
 
 # Atlas Coords
 const TILE_SOURCE_ID = 2
@@ -11,7 +12,7 @@ const DIRT = Vector2i(0, 0)
 const STONE = Vector2i(1, 0)
 const ORE = Vector2i(2, 0)
 const EMPTY_CELL = Vector2i(3, 3)
-const NONE_EXISTING_CELL = Vector2i(-1, -1)  # Defined by Godot
+const NONE_EXISTING_CELL = Vector2i(-1, -1)
 
 const ORE_SEED = 1
 const ORE_SPREAD = 0.15
@@ -21,15 +22,18 @@ const EMPTY_CELLS_SEED = 2
 const EMPTY_CELLS_SPREAD = 0.08
 const EMPTY_CELLS_THRESHOLD = 0.25
 
-# Define the noise generator
 var ore_noise = FastNoiseLite.new()
 var void_noise = FastNoiseLite.new()
+
+# Track generation state
+var generated_chunks: Dictionary = {}
+var player_node: Node2D = null
+var current_player_chunk: Vector2i = Vector2i(999999, 999999)  # Forces initial load
 
 
 func _ready() -> void:
 	add_to_group("terrain")
 	setup_noise()
-	generate_terrain()
 
 
 func setup_noise() -> void:
@@ -42,13 +46,60 @@ func setup_noise() -> void:
 	void_noise.frequency = EMPTY_CELLS_SPREAD
 
 
-func generate_terrain() -> void:
-	for x in range(WIDTH):
-		for y in range(DEPTH):
-			var grid_position = Vector2i(x, y + 5)
+func _process(_delta: float) -> void:
+	if not player_node:
+		player_node = get_tree().get_first_node_in_group("player")
+		return
+
+	# Get player's grid position
+	var local_pos = tile_map.to_local(player_node.global_position)
+	var grid_pos = tile_map.local_to_map(local_pos)
+
+	# Calculate which chunk the player is currently in
+	var new_chunk_x = floori(grid_pos.x / float(CHUNK_SIZE))
+	var new_chunk_y = floori(grid_pos.y / float(CHUNK_SIZE))
+	var new_player_chunk = Vector2i(new_chunk_x, new_chunk_y)
+
+	# Only update terrain if the player crossed into a new chunk
+	if new_player_chunk != current_player_chunk:
+		current_player_chunk = new_player_chunk
+		update_chunks()
+
+
+func update_chunks() -> void:
+	# Loop through the render distance radius
+	for cx in range(
+		current_player_chunk.x - RENDER_DISTANCE, current_player_chunk.x + RENDER_DISTANCE + 1
+	):
+		for cy in range(
+			current_player_chunk.y - RENDER_DISTANCE, current_player_chunk.y + RENDER_DISTANCE + 1
+		):
+			var chunk_coord = Vector2i(cx, cy)
+
+			# Generate the chunk if it hasn't been generated yet
+			if not generated_chunks.has(chunk_coord):
+				generate_chunk(chunk_coord)
+
+
+func generate_chunk(chunk_coord: Vector2i) -> void:
+	# Mark chunk as generated
+	generated_chunks[chunk_coord] = true
+
+	# Calculate the starting global grid coordinates for this specific chunk
+	var start_x = chunk_coord.x * CHUNK_SIZE
+	var start_y = chunk_coord.y * CHUNK_SIZE
+
+	for x in range(start_x, start_x + CHUNK_SIZE):
+		for y in range(start_y, start_y + CHUNK_SIZE):
+			# Replicate your previous surface level logic
+			# y < 5 is empty sky, y == 5 is dirt, y > 5 is underground
+			if y < 5:
+				continue
+
+			var grid_position = Vector2i(x, y)
 			var block_type = DIRT
 
-			if y > 0:
+			if y > 5:
 				block_type = STONE
 
 				var ore_noise_val = ore_noise.get_noise_2d(x, y)
@@ -56,7 +107,6 @@ func generate_terrain() -> void:
 
 				if void_noise_val > EMPTY_CELLS_THRESHOLD:
 					block_type = EMPTY_CELL
-
 				elif ore_noise_val > ORE_THRESHOLD:
 					block_type = ORE
 
