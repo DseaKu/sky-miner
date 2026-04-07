@@ -4,10 +4,11 @@ extends CharacterBody2D
 const SPEED = 300.0
 const JUMP_VELOCITY = -400.0
 const JUMP_RELEASE_FORCE = 0.6
-const TIME_TO_LAND = 0.2
+const TIME_TO_LAND_IDLE = 0.2
+const TIME_TO_LAND_RUN = 0.1
 const GROUND_ACCEL = 500.0
 const GROUND_FRICTION = 3000.0
-const TURN_ACCEL = 2000.0
+const TURN_ACCEL = 3000.0
 const AIR_ACCEL = 300.0
 const AIR_FRICTION = 70.0
 

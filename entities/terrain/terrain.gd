@@ -6,38 +6,56 @@ extends Node2D
 const WIDTH = 100
 const DEPTH = 50
 
-# These IDs correspond to your TileSet configuration.
-# 0 is the ID of the texture atlas.
 const TILE_SOURCE_ID = 0
 const DIRT_ATLAS_COORD = Vector2i(0, 0)
 const STONE_ATLAS_COORD = Vector2i(1, 0)
 const ORE_ATLAS_COORD = Vector2i(2, 0)
-const VOID_ATLAS_COORD = Vector2i(3, 3)
+const EMPTY_CELLS_ATLAS_COORD = Vector2i(3, 3)
+
+const ORE_SEED = 1
+const ORE_SPREAD = 0.45
+const ORE_THRESHOLD = 0.55
+const EMPTY_CELLS_SEED = 2
+const EMPTY_CELLS_SPREAD = 0.45
+const EMPTY_CELLS_THRESHOLD = 0.3
+
+# Define the noise generator
+var ore_noise = FastNoiseLite.new()
+var void_noise = FastNoiseLite.new()
 
 func _ready() -> void:
 	add_to_group("terrain")
+	setup_noise()
 	generate_terrain()
+
+func setup_noise() -> void:
+	ore_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
+	ore_noise.seed = ORE_SEED
+	ore_noise.frequency = ORE_SPREAD
+
+	void_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
+	void_noise.seed = EMPTY_CELLS_SEED
+	void_noise.frequency = EMPTY_CELLS_SPREAD 
 
 func generate_terrain() -> void:
 	for x in range(WIDTH):
 		for y in range(DEPTH):
-			# Offset the generation so it starts below the player
 			var grid_position = Vector2i(x, y + 5) 
-			
 			var block_type = DIRT_ATLAS_COORD
 			
-			# Basic depth logic: Dirt on top, stone below
-			if y > 5:
+			if y > 2:
 				block_type = STONE_ATLAS_COORD
 				
-				# Random chance for ore inside the stone layer
-				if randf() < 0.05: # 5% chance
+				var ore_noise_val = ore_noise.get_noise_2d(x, y)
+				var void_noise_val = void_noise.get_noise_2d(x,y)
+
+				if ore_noise_val > ORE_THRESHOLD: 
 					block_type = ORE_ATLAS_COORD
-					
-				if randf() < 0.05: # 5% chance
-					block_type = VOID_ATLAS_COORD
-					
-			# Place the tile: set_cell(coords, source_id, atlas_coords)
+				
+				elif void_noise_val > EMPTY_CELLS_THRESHOLD:
+					block_type = EMPTY_CELLS_ATLAS_COORD
+
+
 			tile_map.set_cell(grid_position, TILE_SOURCE_ID, block_type)
 
 func mine_tile(world_position: Vector2) -> bool:

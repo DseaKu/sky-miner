@@ -7,6 +7,7 @@ func physics_update(_delta: float):
 	handle_gravity(_delta)
 
 	var direction := Input.get_axis("left", "right")
+	handle_flipping(direction)
 
 	if direction != 0:
 		actor.velocity.x = move_toward(actor.velocity.x, direction * actor.SPEED, actor.AIR_ACCEL * _delta)

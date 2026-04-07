@@ -4,7 +4,7 @@ var land_timer :float
 
 func enter():
 	actor.animation_player.play("land")
-	land_timer = actor.TIME_TO_LAND
+	land_timer = 0
 
 
 func physics_update(_delta: float):
@@ -29,10 +29,11 @@ func handle_transitions(_delta: float):
 		actor.state_machine.transition_to("jump")
 		return
 
-	land_timer -=_delta
-	if land_timer < 0:
-		if Input.is_action_pressed("left") or Input.is_action_pressed("right"):
+	land_timer +=_delta
+	if Input.is_action_pressed("left") or Input.is_action_pressed("right"):
+		if land_timer > actor.TIME_TO_LAND_RUN:
 			actor.state_machine.transition_to("run")
-		else:
+	else:
+		if land_timer > actor.TIME_TO_LAND_IDLE:
 			actor.state_machine.transition_to("idle")
-		return
+	return
