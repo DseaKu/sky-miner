@@ -414,7 +414,7 @@ libraries = {
 }
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(1.5, 1.5)
+zoom = Vector2(2.75, 2.75)
 
 [node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("4_state_machine")
