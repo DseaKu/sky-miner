@@ -3,9 +3,7 @@ extends State
 
 
 func handle_gravity(delta: float):
-	actor.velocity.y = move_toward(
-		actor.velocity.y, actor.MAX_FALL_SPEED, delta * actor.FALL_ACCEL
-	)
+	actor.velocity.y = lerp(actor.velocity.y, actor.MAX_FALL_SPEED, delta * actor.FALL_ACCEL)
 
 
 func handle_flipping(direction: float):
