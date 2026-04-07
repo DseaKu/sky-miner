@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://b5npnmjesv2a1"]
 
 [ext_resource type="Script" uid="uid://720yg4so05x5" path="res://entities/terrain/terrain.gd" id="1_b5q0i"]
-[ext_resource type="Texture2D" uid="uid://dwps6r7qfbgd8" path="res://entities/terrain/assets/tilemap.png" id="1_kdop1"]
+[ext_resource type="Texture2D" uid="uid://dwps6r7qfbgd8" path="res://entities/terrain/assets/tilemap32x32.png" id="1_kdop1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_b5q0i"]
 texture = ExtResource("1_kdop1")
@@ -17,7 +17,6 @@ texture_region_size = Vector2i(32, 32)
 3:3/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_2ny8j"]
-tile_size = Vector2i(32, 32)
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_b5q0i")
 

@@ -14,11 +14,12 @@ const EMPTY_CELL = Vector2i(3, 3)
 const NONE_EXISTING_CELL = Vector2i(-1, -1)  # Defined by Godot
 
 const ORE_SEED = 1
-const ORE_SPREAD = 0.45
-const ORE_THRESHOLD = 0.55
+const ORE_SPREAD = 0.15
+const ORE_THRESHOLD = 0.6
+
 const EMPTY_CELLS_SEED = 2
-const EMPTY_CELLS_SPREAD = 0.45
-const EMPTY_CELLS_THRESHOLD = 0.3
+const EMPTY_CELLS_SPREAD = 0.08
+const EMPTY_CELLS_THRESHOLD = 0.25
 
 # Define the noise generator
 var ore_noise = FastNoiseLite.new()
@@ -53,11 +54,11 @@ func generate_terrain() -> void:
 				var ore_noise_val = ore_noise.get_noise_2d(x, y)
 				var void_noise_val = void_noise.get_noise_2d(x, y)
 
-				if ore_noise_val > ORE_THRESHOLD:
-					block_type = ORE
-
-				elif void_noise_val > EMPTY_CELLS_THRESHOLD:
+				if void_noise_val > EMPTY_CELLS_THRESHOLD:
 					block_type = EMPTY_CELL
+
+				elif ore_noise_val > ORE_THRESHOLD:
+					block_type = ORE
 
 			tile_map.set_cell(grid_position, TILE_SOURCE_ID, block_type)
 

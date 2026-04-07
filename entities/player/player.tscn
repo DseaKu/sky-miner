@@ -400,12 +400,11 @@ _data = {
 script = ExtResource("1_abrql")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 2)
+position = Vector2(0, 3)
 shape = SubResource("CapsuleShape2D_sfv1e")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(1.0000002, 0)
-scale = Vector2(0.9166667, 0.9166667)
 texture = ExtResource("2_bls4j")
 hframes = 7
 

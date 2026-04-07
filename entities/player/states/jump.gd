@@ -26,10 +26,6 @@ func physics_update(_delta: float):
 
 
 func handle_transitions(_delta: float):
-	if Input.is_action_just_pressed("jump") and not actor.is_on_floor():
-		actor.state_machine.transition_to("air_slam")
-		return
-
 	if actor.velocity.y >= 0:
 		actor.state_machine.transition_to("fall")
 		return
