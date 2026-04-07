@@ -1,12 +1,15 @@
 extends PlayerState
 
+
 func enter():
 	actor.animation_player.play("idle")
+
 
 func physics_update(_delta: float):
 	handle_gravity(_delta)
 	actor.velocity.x = move_toward(actor.velocity.x, 0, actor.GROUND_FRICTION * _delta)
 	actor.move_and_slide()
+
 
 func handle_transitions(_delta: float):
 	if not actor.is_on_floor() and actor.velocity.y > 50.0:
