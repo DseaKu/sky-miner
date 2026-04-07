@@ -4,17 +4,20 @@ extends CharacterBody2D
 const SPEED = 300.0
 const JUMP_VELOCITY = -400.0
 const JUMP_RELEASE_FORCE = 0.5
+const N_JUMPS_IN_ROW = 2
 const AIR_SLAM_VELOCITY = 600.0
 const TIME_TO_LAND_IDLE = 0.2
 const TIME_TO_LAND_RUN = 0.1
 const GROUND_ACCEL = 500.0
 const GROUND_FRICTION = 3000.0
 const TURN_ACCEL = 3000.0
-const AIR_ACCEL = 300.0
+const AIR_ACCEL = 400.0
 const AIR_FRICTION = 70.0
 
 const MINING_RANGE = 100.0
 const MINING_COOLDOWN = 0.2
+
+var jumps_left: int = N_JUMPS_IN_ROW
 
 @onready var animation_player = $AnimationPlayer
 @onready var sprite = $Sprite2D

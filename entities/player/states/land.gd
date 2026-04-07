@@ -6,6 +6,7 @@ var land_timer: float
 func enter():
 	actor.animation_player.play("land")
 	land_timer = 0
+	actor.jumps_left = actor.N_JUMPS_IN_ROW
 
 
 func physics_update(_delta: float):

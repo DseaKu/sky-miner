@@ -3,6 +3,7 @@ extends PlayerState
 
 func enter():
 	actor.animation_player.play("fall")
+	actor.jumps_left -= 1
 
 
 func physics_update(_delta: float):
@@ -24,4 +25,8 @@ func physics_update(_delta: float):
 func handle_transitions(_delta: float):
 	if actor.is_on_floor():
 		actor.state_machine.transition_to("land")
+		return
+
+	if actor.jumps_left > 0 and Input.is_action_just_pressed("jump"):
+		actor.state_machine.transition_to("jump")
 		return
