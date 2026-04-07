@@ -14,7 +14,7 @@ func physics_update(_delta: float):
 
 	if direction != 0:
 		actor.velocity.x = move_toward(
-			actor.velocity.x, direction * actor.SPEED, actor.AIR_ACCEL * _delta
+			actor.velocity.x, direction * actor.MAX_SPEED, actor.AIR_ACCEL * _delta
 		)
 	else:
 		actor.velocity.x = move_toward(actor.velocity.x, 0, actor.AIR_FRICTION * _delta)

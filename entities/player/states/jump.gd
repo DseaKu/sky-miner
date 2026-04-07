@@ -2,7 +2,10 @@ extends PlayerState
 
 
 func enter():
-	actor.animation_player.play("jump")
+	if actor.jumps_left == actor.N_JUMPS_IN_ROW:
+		actor.animation_player.play("jump")
+	else:
+		actor.animation_player.play("air_slam")
 	actor.velocity.y = actor.JUMP_VELOCITY
 
 
@@ -14,7 +17,7 @@ func physics_update(_delta: float):
 
 	if direction != 0:
 		actor.velocity.x = move_toward(
-			actor.velocity.x, direction * actor.SPEED, actor.AIR_ACCEL * _delta
+			actor.velocity.x, direction * actor.MAX_SPEED, actor.AIR_ACCEL * _delta
 		)
 	else:
 		actor.velocity.x = move_toward(actor.velocity.x, 0, actor.AIR_FRICTION * _delta)
