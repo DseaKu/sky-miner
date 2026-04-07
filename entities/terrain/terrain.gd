@@ -4,7 +4,7 @@ extends Node2D
 
 # Chunk Generation Settings
 const CHUNK_SIZE = 16
-const RENDER_DISTANCE = 5  # Loads 2 chunks in every direction around the player
+const RENDER_DISTANCE = 10
 
 # Atlas Coords
 const TILE_SOURCE_ID = 2
@@ -25,10 +25,10 @@ const EMPTY_CELLS_SPREAD = 0.1
 const EMPTY_CELLS_THRESHOLD = 0.30
 
 const ISLAND_SEED = 3
-const ISLAND_SPREAD = 0.001  # Lower frequency creates larger islands
-const ISLAND_THRESHOLD = 0.0001  # Adjust this to change island thickness
-const ISLAND_STRETCH_X = 1.0  # Lower values make islands wider
-const ISLAND_STRETCH_Y = 5.0  # Higher values make islands flatter and thinner
+const ISLAND_SPREAD = 0.001
+const ISLAND_THRESHOLD = 0.00001
+const ISLAND_STRETCH_X = 1.0
+const ISLAND_STRETCH_Y = 25.0
 
 # Generators
 var ore_noise = FastNoiseLite.new()
