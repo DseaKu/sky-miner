@@ -6,7 +6,7 @@ const WIDTH = 100
 const DEPTH = 50
 
 # Atlas Coords
-const TILE_SOURCE_ID = 0
+const TILE_SOURCE_ID = 2
 const DIRT = Vector2i(0, 0)
 const STONE = Vector2i(1, 0)
 const ORE = Vector2i(2, 0)
