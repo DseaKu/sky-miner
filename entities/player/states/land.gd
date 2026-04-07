@@ -19,12 +19,10 @@ func physics_update(_delta: float):
 		var accel = actor.GROUND_ACCEL
 		if sign(direction) != sign(actor.velocity.x) and actor.velocity.x != 0:
 			accel = actor.TURN_ACCEL
+		actor.velocity.x = lerp(actor.velocity.x, direction * actor.MAX_SPEED, accel * _delta)
 
-		actor.velocity.x = move_toward(
-			actor.velocity.x, direction * actor.MAX_SPEED, accel * _delta
-		)
 	else:
-		actor.velocity.x = move_toward(actor.velocity.x, 0, actor.GROUND_FRICTION * _delta)
+		actor.velocity.x = move_toward(actor.velocity.x, 0.0, actor.GROUND_FRICTION * _delta)
 
 	actor.move_and_slide()
 
