@@ -11,6 +11,7 @@ const TIME_TO_LAND_RUN: float = 0.1
 
 # In Air
 const FLYING = true
+const FLYING_SPEED = 1500
 const JUMP_MAX_SPEED: float = -400.0
 const JUMP_ACCEL: float = 10.0
 const JUMP_INIT_SPEED: float = -300.0

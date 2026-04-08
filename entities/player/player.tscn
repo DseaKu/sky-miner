@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://dq8hrsp5t7qm1"]
+[gd_scene load_steps=31 format=3 uid="uid://dq8hrsp5t7qm1"]
 
 [ext_resource type="Script" uid="uid://byedp8rmuicjy" path="res://entities/player/character_body_2d.gd" id="1_abrql"]
 [ext_resource type="Texture2D" uid="uid://ceafx430ccaf1" path="res://entities/player/assets/player jump 48x48.png" id="2_bls4j"]
@@ -13,9 +13,12 @@
 [ext_resource type="Script" uid="uid://bhs27tow2mn" path="res://entities/player/states/jump.gd" id="7_jump"]
 [ext_resource type="Script" uid="uid://chc2nax0irm0a" path="res://entities/player/states/fall.gd" id="8_fall"]
 [ext_resource type="Texture2D" uid="uid://u2cucdytvluh" path="res://entities/player/assets/player air spin 48x48.png" id="8_yqrof"]
+[ext_resource type="Script" uid="uid://d3rra3hf345e1" path="res://entities/player/camera_2d.gd" id="9_b2kln"]
 [ext_resource type="Script" uid="uid://u26hxyfu3u13" path="res://entities/player/states/land.gd" id="9_land"]
 [ext_resource type="Script" uid="uid://dtqnhal05owgf" path="res://entities/player/states/mine.gd" id="10_mine"]
 [ext_resource type="Script" uid="uid://cx1j3q7djx600" path="res://entities/player/states/air_slam.gd" id="16_3wlsy"]
+[ext_resource type="Script" uid="uid://dbdbbuvtlg4b0" path="res://entities/player/states/fly.gd" id="17_3wlsy"]
+[ext_resource type="Script" uid="uid://cb7hjegmnodxl" path="res://entities/player/fly.gd" id="19_we0b7"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sfv1e"]
 radius = 7.0
@@ -415,16 +418,7 @@ libraries = {
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(3, 3)
-
-[node name="Node" type="Node" parent="Camera2D"]
-
-[node name="Node" type="Node" parent="Camera2D/Node"]
-
-[node name="Node" type="Node" parent="Camera2D/Node/Node"]
-
-[node name="Node" type="Node" parent="Camera2D/Node/Node/Node"]
-
-[node name="Node" type="Node" parent="Camera2D/Node/Node/Node/Node"]
+script = ExtResource("9_b2kln")
 
 [node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
 script = ExtResource("4_state_machine")
@@ -450,3 +444,9 @@ script = ExtResource("10_mine")
 
 [node name="AirSlam" type="Node" parent="StateMachine"]
 script = ExtResource("16_3wlsy")
+
+[node name="ChargeJump" type="Node" parent="StateMachine"]
+script = ExtResource("17_3wlsy")
+
+[node name="fly" type="Node" parent="StateMachine"]
+script = ExtResource("19_we0b7")

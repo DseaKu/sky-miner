@@ -7,15 +7,15 @@ func enter():
 
 func physics_update(_delta: float):
 	if Input.is_action_pressed("up"):
-		actor.velocity.y = -600
+		actor.velocity.y = -actor.FLYING_SPEED
 	else:
 		actor.velocity.y = 0
 
 	if Input.is_action_pressed("left"):
-		actor.velocity.x = -600
+		actor.velocity.x = -actor.FLYING_SPEED
 
 	elif Input.is_action_pressed("right"):
-		actor.velocity.x = 600
+		actor.velocity.x = actor.FLYING_SPEED
 	else:
 		actor.velocity.x = 0
 

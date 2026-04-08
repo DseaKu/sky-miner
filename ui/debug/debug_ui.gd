@@ -14,7 +14,9 @@ extends CanvasLayer
 @onready var state_label = $MainPanel/PlayerPanel/StateLabel
 @onready var velocity_label = $MainPanel/PlayerPanel/VelocityLabel
 
-const INDENT_LABEL = "  "
+@onready var game_header = $MainPanel/GamePanel/GameHeader
+@onready var isle_spawn_penality_label = $MainPanel/GamePanel/IsleSpawnPenality
+const INDENT_LABEL = "   "
 
 
 func _ready() -> void:
@@ -32,10 +34,11 @@ func _process(_delta: float) -> void:
 
 	update_system_data()
 	update_player_data()
+	update_game_data()
 
 
 func update_system_data() -> void:
-	system_header.text = "System"
+	system_header.text = "System:"
 	fps_label.text = INDENT_LABEL + "FPS: " + str(Engine.get_frames_per_second())
 
 	# Get memory in bytes and convert to Megabytes
@@ -55,8 +58,16 @@ func update_system_data() -> void:
 	physics_time.text = INDENT_LABEL + "Physics: " + str(snapped(ph_time, 0.01)) + " ms"
 
 
+func update_game_data() -> void:
+	game_header.text = "Game:"
+	var terrain_root = get_tree().get_first_node_in_group("terrain")
+	if terrain_root:
+		var active_threshold = terrain_root.isle_spawn_penality
+		isle_spawn_penality_label.text = INDENT_LABEL + "Y Hight Penality:" + str(active_threshold)
+
+
 func update_player_data() -> void:
-	player_header.text = "Player"
+	player_header.text = "Player:"
 	var player = get_tree().get_first_node_in_group("player")
 
 	if not player:

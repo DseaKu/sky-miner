@@ -54,3 +54,12 @@ layout_mode = 2
 
 [node name="VelocityLabel" type="Label" parent="MainPanel/PlayerPanel"]
 layout_mode = 2
+
+[node name="GamePanel" type="VBoxContainer" parent="MainPanel"]
+layout_mode = 2
+
+[node name="GameHeader" type="Label" parent="MainPanel/GamePanel"]
+layout_mode = 2
+
+[node name="IsleSpawnPenality" type="Label" parent="MainPanel/GamePanel"]
+layout_mode = 2
