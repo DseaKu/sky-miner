@@ -21,7 +21,7 @@ func physics_update(_delta: float):
 		jump_released = true
 
 	if jump_timer < actor.JUMP_MAX_DURATION and not jump_released:
-		actor.velocity.y = lerp(actor.velocity.y, actor.JUMP_MAX_SPEED, 90.0 * _delta)
+		actor.velocity.y = lerp(actor.velocity.y, actor.JUMP_MAX_SPEED, actor.JUMP_ACCEL * _delta)
 
 	else:
 		handle_gravity(_delta)
