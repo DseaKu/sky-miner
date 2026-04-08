@@ -107,6 +107,10 @@ func generate_chunk(chunk_coord: Vector2i) -> void:
 		for y in range(start_y, start_y + CHUNK_SIZE):
 			var grid_position = Vector2i(x, y)
 
+			if y > 0:
+				tile_map.set_cell(grid_position, TILE_SOURCE_ID, STONE)
+				continue
+
 			# Apply the stretch multipliers to the coordinates
 			var island_val = island_noise.get_noise_2d(x * ISLAND_STRETCH_X, y * ISLAND_STRETCH_Y)
 
