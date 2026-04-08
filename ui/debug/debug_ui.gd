@@ -10,6 +10,7 @@ extends CanvasLayer
 @onready var player_header = $MainPanel/PlayerPanel/PlayerHeader
 @onready var pos_label = $MainPanel/PlayerPanel/PosLabel
 @onready var grid_pos_label = $MainPanel/PlayerPanel/GridPosLabel
+@onready var chunk_pos_label = $MainPanel/PlayerPanel/ChunkPosLabel
 @onready var state_label = $MainPanel/PlayerPanel/StateLabel
 @onready var velocity_label = $MainPanel/PlayerPanel/VelocityLabel
 
@@ -68,7 +69,7 @@ func update_player_data() -> void:
 		INDENT_LABEL + "Pos: (" + str(round(player_pos.x)) + ", " + str(round(player_pos.y)) + ")"
 	)
 
-	# Update Grid Position
+	# Update Grid and Chunk Position
 	var terrain_root = get_tree().get_first_node_in_group("terrain")
 	if terrain_root and terrain_root.has_node("TileMapLayer"):
 		var tilemap = terrain_root.get_node("TileMapLayer")
@@ -79,8 +80,19 @@ func update_player_data() -> void:
 		grid_pos_label.text = (
 			INDENT_LABEL + "Cell: (" + str(cell_pos.x) + ", " + str(cell_pos.y) + ")"
 		)
+
+		# Calculate Chunk Position
+		# Grabs the CHUNK_SIZE constant directly from your terrain.gd script
+		var chunk_size = terrain_root.CHUNK_SIZE
+		var chunk_x = floori(cell_pos.x / float(chunk_size))
+		var chunk_y = floori(cell_pos.y / float(chunk_size))
+
+		chunk_pos_label.text = (
+			INDENT_LABEL + "Chunk: (" + str(chunk_x) + ", " + str(chunk_y) + ")"
+		)
 	else:
 		grid_pos_label.text = INDENT_LABEL + "Cell: --"
+		chunk_pos_label.text = INDENT_LABEL + "Chunk: --"
 
 	# Update State
 	var state_machine = player.get_node("StateMachine")
