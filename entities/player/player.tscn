@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://dq8hrsp5t7qm1"]
+[gd_scene load_steps=33 format=3 uid="uid://dq8hrsp5t7qm1"]
 
 [ext_resource type="Script" uid="uid://byedp8rmuicjy" path="res://entities/player/character_body_2d.gd" id="1_abrql"]
 [ext_resource type="Texture2D" uid="uid://ceafx430ccaf1" path="res://entities/player/assets/player jump 48x48.png" id="2_bls4j"]
@@ -19,6 +19,7 @@
 [ext_resource type="Script" uid="uid://cx1j3q7djx600" path="res://entities/player/states/air_slam.gd" id="16_3wlsy"]
 [ext_resource type="Script" uid="uid://dbdbbuvtlg4b0" path="res://entities/player/states/fly.gd" id="17_3wlsy"]
 [ext_resource type="Script" uid="uid://cb7hjegmnodxl" path="res://entities/player/fly.gd" id="19_we0b7"]
+[ext_resource type="Script" uid="uid://dsvurkvrwrltk" path="res://entities/player/glide.gd" id="20_mtric"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sfv1e"]
 radius = 7.0
@@ -386,11 +387,53 @@ tracks/2/keys = {
 "values": [0, 1, 2, 3, 4, 5, 6]
 }
 
+[sub_resource type="Animation" id="Animation_mtric"]
+resource_name = "glide"
+length = 0.1
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("8_yqrof")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:hframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [6]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [5]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_bls4j"]
 _data = {
 &"RESET": SubResource("Animation_8fjmc"),
 &"air_slam": SubResource("Animation_b2kln"),
 &"fall": SubResource("Animation_qiwj3"),
+&"glide": SubResource("Animation_mtric"),
 &"idle": SubResource("Animation_abrql"),
 &"jump": SubResource("Animation_fkugw"),
 &"land": SubResource("Animation_7thud"),
@@ -448,5 +491,8 @@ script = ExtResource("16_3wlsy")
 [node name="ChargeJump" type="Node" parent="StateMachine"]
 script = ExtResource("17_3wlsy")
 
-[node name="fly" type="Node" parent="StateMachine"]
+[node name="Fly" type="Node" parent="StateMachine"]
 script = ExtResource("19_we0b7")
+
+[node name="Glide" type="Node" parent="StateMachine"]
+script = ExtResource("20_mtric")

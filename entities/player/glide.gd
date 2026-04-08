@@ -2,22 +2,20 @@ extends PlayerState
 
 
 func enter():
-	actor.animation_player.play("fall")
-	actor.jumps_left -= 1
+	actor.animation_player.play("glide")
 
 
 func physics_update(_delta: float):
-	handle_gravity(_delta)
+	actor.velocity.y = lerp(
+		actor.velocity.y, actor.GLIDE_MAX_FALL_SPEED, _delta * actor.GLIDE_FALL_ACCEL
+	)
 
 	var direction := Input.get_axis("left", "right")
 	handle_flipping(direction)
 
-	if direction != 0:
-		actor.velocity.x = move_toward(
-			actor.velocity.x, direction * actor.MAX_SPEED, actor.AIR_ACCEL * _delta
-		)
-	else:
-		actor.velocity.x = move_toward(actor.velocity.x, 0, actor.AIR_FRICTION * _delta)
+	actor.velocity.x = lerp(
+		actor.velocity.x, direction * actor.GLIDE_MAX_SPEED, actor.GLIDE_ACCEL * _delta
+	)
 
 	actor.move_and_slide()
 
@@ -31,6 +29,6 @@ func handle_transitions(_delta: float):
 		actor.state_machine.transition_to("jump")
 		return
 
-	if Input.is_action_pressed("up"):
-		actor.state_machine.transition_to("glide")
+	if not Input.is_action_pressed("up"):
+		actor.state_machine.transition_to("fall")
 		return

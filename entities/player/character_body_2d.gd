@@ -2,33 +2,43 @@ extends CharacterBody2D
 
 # Movement
 # Ground
-const MAX_SPEED: float = 400.0
-const GROUND_ACCEL: float = 1.5
-const TURN_ACCEL: float = 10.0
-const GROUND_FRICTION: float = 3000.0
-const TIME_TO_LAND_IDLE: float = 0.2
-const TIME_TO_LAND_RUN: float = 0.1
+const MAX_SPEED := 400.0
+const GROUND_ACCEL := 1.5
+const TURN_ACCEL := 10.0
+const GROUND_FRICTION := 3000.0
+const TIME_TO_LAND_IDLE := 0.2
+const TIME_TO_LAND_RUN := 0.1
 
 # In Air
-const FLYING = true
-const FLYING_SPEED = 1500
-const JUMP_MAX_SPEED: float = -400.0
-const JUMP_ACCEL: float = 10.0
-const JUMP_INIT_SPEED: float = -300.0
-const JUMP_MAX_DURATION: float = 0.20
-const BOOST_MAX_SPEED_FACTOR: float = 2.8
-const BOOST_ACCEL_FACTOR: float = 2.0
-const N_JUMPS_IN_ROW: int = 2
-const AIR_FRICTION: float = 40.0
-const FALL_ACCEL: float = 3.3
-const FALL_MAX_SPEED: float = 700.0
-const AIR_SLAM_VELOCITY: float = 600.0
-const AIR_ACCEL: float = 400.0
+const AIR_FRICTION := 40.0
+const FALL_ACCEL := 3.3
+const FALL_MAX_SPEED := 700.0
+const AIR_SLAM_VELOCITY := 600.0
+const AIR_ACCEL := 400.0
 
-const MINING_RANGE: float = 100.0
-const MINING_COOLDOWN: float = 0.2
+# Jump
+const JUMP_MAX_SPEED := -400.0
+const JUMP_ACCEL := 10.0
+const JUMP_INIT_SPEED := -300.0
+const JUMP_MAX_DURATION := 0.20
+const BOOST_MAX_SPEED_FACTOR := 2.8
+const BOOST_ACCEL_FACTOR := 2.0
+const N_JUMPS_IN_ROW := 2
 
-var jumps_left: int = N_JUMPS_IN_ROW
+# Glide
+const GLIDE_MAX_FALL_SPEED := 250.0
+const GLIDE_FALL_ACCEL := 1.0
+const GLIDE_MAX_SPEED := 300.0
+const GLIDE_ACCEL := 2.0
+
+# Fly
+const FLYING := false
+const FLYING_SPEED := 1500.0
+
+const MINING_RANGE := 100.0
+const MINING_COOLDOWN := 0.2
+
+var jumps_left := N_JUMPS_IN_ROW
 
 @onready var animation_player = $AnimationPlayer
 @onready var sprite = $Sprite2D
