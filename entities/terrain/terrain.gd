@@ -109,6 +109,11 @@ func generate_chunk(chunk_coord: Vector2i) -> void:
 	var start_x = chunk_coord.x * CHUNK_SIZE
 	var start_y = chunk_coord.y * CHUNK_SIZE
 
+	# Use the chunk's top Y coordinate to define its altitude level
+	var height_up = max(0, SPACE_ISLE_GROUND - start_y)
+	var difficulty_penalty = (height_up / float(DIFFICULT_STEP_FACTOR)) * 0.02
+	var dynamic_threshold = ISLAND_THRESHOLD + difficulty_penalty
+
 	for x in range(start_x, start_x + CHUNK_SIZE):
 		for y in range(start_y, start_y + CHUNK_SIZE):
 			var grid_position = Vector2i(x, y)
@@ -124,8 +129,8 @@ func generate_chunk(chunk_coord: Vector2i) -> void:
 			# Apply the stretch multipliers to the coordinates
 			var island_val = island_noise.get_noise_2d(x * ISLAND_STRETCH_X, y * ISLAND_STRETCH_Y)
 
-			if island_val < ISLAND_THRESHOLD:
-				continue  # Skip this coordinate entirely to leave it as empty sky
+			if island_val < dynamic_threshold:
+				continue
 
 			var block_type = STONE
 

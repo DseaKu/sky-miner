@@ -27,3 +27,7 @@ func handle_transitions(_delta: float):
 	if Input.is_action_pressed("mine"):
 		actor.state_machine.transition_to("mine")
 		return
+
+	if actor.FLYING and Input.is_action_pressed("up"):
+		actor.state_machine.transition_to("fly")
+		return
