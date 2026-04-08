@@ -21,6 +21,15 @@ layout_mode = 2
 [node name="MemoryLabel" type="Label" parent="MainPanel/SystemPanel"]
 layout_mode = 2
 
+[node name="DrawCalls" type="Label" parent="MainPanel/SystemPanel"]
+layout_mode = 2
+
+[node name="ProcessTime" type="Label" parent="MainPanel/SystemPanel"]
+layout_mode = 2
+
+[node name="PhysicsTime" type="Label" parent="MainPanel/SystemPanel"]
+layout_mode = 2
+
 [node name="PlayerPanel" type="VBoxContainer" parent="MainPanel"]
 layout_mode = 2
 

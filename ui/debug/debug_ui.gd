@@ -3,6 +3,9 @@ extends CanvasLayer
 @onready var system_header = $MainPanel/SystemPanel/SystemHeader
 @onready var fps_label = $MainPanel/SystemPanel/FPSLabel
 @onready var memory_label = $MainPanel/SystemPanel/MemoryLabel
+@onready var draw_calls = $MainPanel/SystemPanel/DrawCalls
+@onready var process_time = $MainPanel/SystemPanel/ProcessTime
+@onready var physics_time = $MainPanel/SystemPanel/PhysicsTime
 
 @onready var player_header = $MainPanel/PlayerPanel/PlayerHeader
 @onready var pos_label = $MainPanel/PlayerPanel/PosLabel
@@ -37,7 +40,18 @@ func update_system_data() -> void:
 	# Get memory in bytes and convert to Megabytes
 	var mem_bytes = OS.get_static_memory_usage()
 	var mem_mb = mem_bytes / 1048576.0
-	memory_label.text = INDENT_LABEL + "FPS: " + str(snapped(mem_mb, 0.01)) + " MB"
+	memory_label.text = INDENT_LABEL + "Memory: " + str(snapped(mem_mb, 0.01)) + " MB"
+
+	# GPU: Draw Calls
+	var calls = Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
+	draw_calls.text = INDENT_LABEL + "Draw Calls: " + str(calls)
+
+	# CPU: Process and Physics times (converted from seconds to milliseconds)
+	var p_time = Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0
+	process_time.text = INDENT_LABEL + "Process: " + str(snapped(p_time, 0.01)) + " ms"
+
+	var ph_time = Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
+	physics_time.text = INDENT_LABEL + "Physics: " + str(snapped(ph_time, 0.01)) + " ms"
 
 
 func update_player_data() -> void:
