@@ -25,10 +25,12 @@ const EMPTY_CELLS_SPREAD = 0.1
 const EMPTY_CELLS_THRESHOLD = 0.30
 
 const ISLAND_SEED = 3
-const ISLAND_SPREAD = 0.0006
-const ISLAND_THRESHOLD = 0.6
-const ISLAND_STRETCH_X = 1.0
+const ISLAND_SPREAD = 0.0025
+const ISLAND_THRESHOLD = 0.5
+const ISLAND_STRETCH_X = 2.0
 const ISLAND_STRETCH_Y = 25.0
+const SPACE_ISLE_GROUND = -7
+const DIFFICULT_STEP_FACTOR = 10
 
 # Generators
 var ore_noise = FastNoiseLite.new()
@@ -39,6 +41,10 @@ var island_noise = FastNoiseLite.new()
 var generated_chunks: Dictionary = {}
 var player_node: Node2D = null
 var current_player_chunk: Vector2i = Vector2i(999999, 999999)  # Forces initial load
+
+# Isle Gen Dynamic Parameters
+var island_spread = ISLAND_SPREAD
+var island_stretch_y = ISLAND_STRETCH_Y
 
 
 func _ready() -> void:
@@ -109,6 +115,10 @@ func generate_chunk(chunk_coord: Vector2i) -> void:
 
 			if y > 0:
 				tile_map.set_cell(grid_position, TILE_SOURCE_ID, STONE)
+				continue
+
+			if y > SPACE_ISLE_GROUND:
+				tile_map.set_cell(grid_position, TILE_SOURCE_ID, EMPTY_CELL)
 				continue
 
 			# Apply the stretch multipliers to the coordinates

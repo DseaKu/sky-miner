@@ -1,12 +1,15 @@
 extends PlayerState
 
-var jump_timer
-var jump_released
+var jump_timer: float
+var jump_released: float
+var jump_accel: float
+var jump_max_speed: float
 
 
 func enter():
 	jump_timer = 0
 	jump_released = false
+	actor.velocity.y = actor.JUMP_INIT_SPEED
 
 	if actor.jumps_left == actor.N_JUMPS_IN_ROW:
 		actor.animation_player.play("jump")
@@ -17,11 +20,18 @@ func enter():
 func physics_update(_delta: float):
 	# Y-Movement
 	jump_timer += _delta
+	jump_accel = actor.JUMP_ACCEL
+	jump_max_speed = actor.JUMP_MAX_SPEED
+
 	if Input.is_action_just_released("jump"):
 		jump_released = true
 
+	if Input.is_action_pressed("boost"):
+		jump_max_speed *= actor.BOOST_MAX_SPEED_FACTOR
+		jump_accel *= actor.BOOST_ACCEL_FACTOR
+
 	if jump_timer < actor.JUMP_MAX_DURATION and not jump_released:
-		actor.velocity.y = lerp(actor.velocity.y, actor.JUMP_MAX_SPEED, actor.JUMP_ACCEL * _delta)
+		actor.velocity.y = lerp(actor.velocity.y, jump_max_speed, jump_accel * _delta)
 
 	else:
 		handle_gravity(_delta)

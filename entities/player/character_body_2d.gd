@@ -10,14 +10,15 @@ const TIME_TO_LAND_IDLE: float = 0.2
 const TIME_TO_LAND_RUN: float = 0.1
 
 # In Air
-const JUMP_MAX_SPEED: float = -300.0
-const JUMP_ACCEL: float = 90.0
+const JUMP_MAX_SPEED: float = -400.0
+const JUMP_ACCEL: float = 10.0
+const JUMP_INIT_SPEED: float = -300.0
 const JUMP_MAX_DURATION: float = 0.20
-const BOOST_MAX_SPEED_FACTOR: float = 2.0
+const BOOST_MAX_SPEED_FACTOR: float = 2.8
 const BOOST_ACCEL_FACTOR: float = 2.0
 const N_JUMPS_IN_ROW: int = 2
 const AIR_FRICTION: float = 70.0
-const FALL_ACCEL: float = 2.5
+const FALL_ACCEL: float = 3.3
 const FALL_MAX_SPEED: float = 700.0
 const AIR_SLAM_VELOCITY: float = 600.0
 const AIR_ACCEL: float = 400.0
