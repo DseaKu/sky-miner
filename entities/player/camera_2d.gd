@@ -13,4 +13,6 @@ func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("one"):
 		zoom = Vector2(0.3, .3)
 	if Input.is_action_just_pressed("two"):
+		zoom = Vector2(1., 1.)
+	if Input.is_action_just_pressed("three"):
 		zoom = DEFAULT_ZOOM
