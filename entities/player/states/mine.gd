@@ -10,13 +10,13 @@ func enter():
 		actor.animation_player.play("idle")
 
 
-func physics_update(_delta: float):
-	handle_gravity(_delta)
+func physics_update(delta: float):
+	handle_gravity(delta)
 	var mouse_pos = actor.get_global_mouse_position()
 
 	# Handle mining timer and execution
 	if mining_timer > 0:
-		mining_timer -= _delta
+		mining_timer -= delta
 
 	if mining_timer <= 0:
 		if actor.global_position.distance_to(mouse_pos) <= actor.MINING_RANGE:
@@ -29,7 +29,7 @@ func physics_update(_delta: float):
 	handle_flipping(face_direction)
 
 	# Stop mine and slide
-	actor.velocity.x = move_toward(actor.velocity.x, 0, actor.MAX_SPEED)
+	actor.velocity.x = move_toward(actor.velocity.x, 0, actor.MAX_SPEED * delta)
 
 	actor.move_and_slide()
 
