@@ -19,6 +19,8 @@ extends CanvasLayer
 @onready var game_header = $MainPanel/GamePanel/GameHeader
 @onready var isle_spawn_penality_label = $MainPanel/GamePanel/IsleSpawnPenality
 @onready var rarity_factor_label = $MainPanel/GamePanel/RarityFactor
+@onready var ore_thresh_label = $MainPanel/GamePanel/OreTreshLabel
+@onready var gem_thresh_label = $MainPanel/GamePanel/GemTreshLabel
 
 const INDENT_LABEL = "   "
 
@@ -94,6 +96,12 @@ func update_game_data() -> void:
 	)
 	rarity_factor_label.text = (
 		INDENT_LABEL + "Rarity Factor:" + str(snapped(terrain.rarity_factor, 0.001))
+	)
+	ore_thresh_label.text = (
+		INDENT_LABEL + "Ore Threshold:" + str(snapped(terrain.ore_threshold, 0.001))
+	)
+	gem_thresh_label.text = (
+		INDENT_LABEL + "Gem Threshold:" + str(snapped(terrain.gem_threshold, 0.001))
 	)
 
 

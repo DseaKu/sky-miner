@@ -65,3 +65,9 @@ layout_mode = 2
 
 [node name="RarityFactor" type="Label" parent="MainPanel/GamePanel"]
 layout_mode = 2
+
+[node name="OreTreshLabel" type="Label" parent="MainPanel/GamePanel"]
+layout_mode = 2
+
+[node name="GemTreshLabel" type="Label" parent="MainPanel/GamePanel"]
+layout_mode = 2

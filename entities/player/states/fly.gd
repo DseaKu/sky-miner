@@ -11,7 +11,10 @@ func exit():
 
 
 func physics_update(_delta: float):
-	if Input.is_action_pressed("up"):
+	if Input.is_action_pressed("up") and Input.is_action_pressed("boost"):
+		actor.velocity.y = -actor.FLYING_SPEED * 3
+
+	elif Input.is_action_pressed("up"):
 		actor.velocity.y = -actor.FLYING_SPEED
 
 	elif Input.is_action_pressed("down"):

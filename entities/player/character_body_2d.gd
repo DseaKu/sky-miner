@@ -33,7 +33,7 @@ const GLIDE_ACCEL := 2.0
 
 # Fly
 const FLYING := true
-const FLYING_SPEED := 2500.0
+const FLYING_SPEED := 2000.0
 
 const MINING_RANGE := 100.0
 const MINING_COOLDOWN := 0.2

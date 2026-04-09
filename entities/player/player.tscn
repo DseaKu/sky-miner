@@ -530,7 +530,7 @@ script = ExtResource("16_3wlsy")
 script = ExtResource("17_3wlsy")
 
 [node name="Fly" type="Node" parent="StateMachine"]
-script = SubResource("GDScript_we0b7")
+script = ExtResource("17_3wlsy")
 
 [node name="Glide" type="Node" parent="StateMachine"]
 script = ExtResource("20_mtric")

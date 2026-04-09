@@ -57,6 +57,8 @@ var island_spread = ISLAND_SPREAD
 var island_stretch_y = ISLAND_STRETCH_Y
 var height_penalty := 0.0
 var rarity_factor := 0.0
+var ore_threshold := 0.0
+var gem_threshold := 0.0
 
 
 func _ready() -> void:
@@ -117,18 +119,19 @@ func update_chunks() -> void:
 
 
 func generate_chunk(chunk_coord: Vector2i) -> void:
-	# Mark chunk as generated
 	generated_chunks[chunk_coord] = true
 
-	# Calculate the starting global grid coordinates for this specific chunk
 	var start_x = chunk_coord.x * CHUNK_SIZE
 	var start_y = chunk_coord.y * CHUNK_SIZE
 
+	# Increase difficulty and item rarity with height
 	height_penalty = move_toward(
 		ISLAND_THRESHOLD, 0.0, player_node.global_position.y * HEIGHT_PENALTY
 	)
 
 	rarity_factor = height_penalty / RARITY_HEIGHT_IMPACT
+	ore_threshold = ORE_THRESHOLD - rarity_factor
+	gem_threshold = GEM_THRESHOLD - rarity_factor
 
 	for x in range(start_x, start_x + CHUNK_SIZE):
 		for y in range(start_y, start_y + CHUNK_SIZE):
@@ -159,9 +162,9 @@ func generate_chunk(chunk_coord: Vector2i) -> void:
 				block_type = EMPTY_CELL
 			elif ore_noise_val < DIRT_THRESHOLD:
 				block_type = DIRT
-			elif ore_noise_val > ORE_THRESHOLD - rarity_factor:
+			elif ore_noise_val > ore_threshold:
 				block_type = ORE
-			elif gem_noise_val > GEM_THRESHOLD - rarity_factor:
+			elif gem_noise_val > gem_threshold:
 				block_type = GEM
 
 			tile_map.set_cell(grid_position, TILE_SOURCE_ID, block_type)

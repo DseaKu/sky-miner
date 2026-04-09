@@ -1,6 +1,6 @@
 extends Camera2D
 
-const DEFAULT_ZOOM := Vector2(2.75, 2.75)
+const DEFAULT_ZOOM := Vector2(2.25, 2.25)
 
 
 # Called when the node enters the scene tree for the first time.
@@ -11,7 +11,7 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("one"):
-		zoom = Vector2(0.3, .3)
+		zoom = Vector2(0.5, .5)
 	if Input.is_action_just_pressed("two"):
 		zoom = Vector2(1., 1.)
 	if Input.is_action_just_pressed("three"):
