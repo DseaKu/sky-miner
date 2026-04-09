@@ -1,9 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://cvy1dgbtpqipp"]
+[gd_scene load_steps=2 format=3 uid="uid://cvy1dgbtpqipp"]
 
 [ext_resource type="Script" uid="uid://b211ft71804m0" path="res://ui/debug/debug_ui.gd" id="1_nb4k0"]
-
-[sub_resource type="Theme" id="Theme_5d1r1"]
-Label/font_sizes/font_size = 32
 
 [node name="DebugUI" type="CanvasLayer"]
 script = ExtResource("1_nb4k0")
@@ -11,7 +8,6 @@ script = ExtResource("1_nb4k0")
 [node name="MainPanel" type="VBoxContainer" parent="."]
 offset_right = 40.0
 offset_bottom = 40.0
-theme = SubResource("Theme_5d1r1")
 
 [node name="SystemPanel" type="VBoxContainer" parent="MainPanel"]
 layout_mode = 2

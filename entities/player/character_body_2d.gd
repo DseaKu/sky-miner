@@ -49,3 +49,5 @@ var terrain: Node2D
 
 func _ready() -> void:
 	terrain = get_tree().get_first_node_in_group("terrain")
+	if terrain:
+		terrain.player_node = self

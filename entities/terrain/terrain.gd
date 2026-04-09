@@ -84,7 +84,6 @@ func setup_noise() -> void:
 
 func _process(_delta: float) -> void:
 	if not player_node:
-		player_node = get_tree().get_first_node_in_group("player")
 		return
 
 	# Get player's grid position
