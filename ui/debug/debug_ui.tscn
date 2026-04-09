@@ -54,6 +54,9 @@ layout_mode = 2
 [node name="VelocityLabel" type="Label" parent="MainPanel/PlayerPanel"]
 layout_mode = 2
 
+[node name="IsFlyingLabel" type="Label" parent="MainPanel/PlayerPanel"]
+layout_mode = 2
+
 [node name="GamePanel" type="VBoxContainer" parent="MainPanel"]
 layout_mode = 2
 

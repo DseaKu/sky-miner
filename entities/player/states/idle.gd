@@ -10,6 +10,9 @@ func physics_update(_delta: float):
 	actor.velocity.x = move_toward(actor.velocity.x, 0, actor.GROUND_FRICTION * _delta)
 	actor.move_and_slide()
 
+	if Input.is_action_just_pressed("five"):
+		actor.is_flying = !actor.is_flying
+
 
 func handle_transitions(_delta: float):
 	if not actor.is_on_floor() and actor.velocity.y > 50.0:
@@ -28,6 +31,6 @@ func handle_transitions(_delta: float):
 		actor.state_machine.transition_to("mine")
 		return
 
-	if actor.FLYING and Input.is_action_pressed("up"):
+	if actor.is_flying and Input.is_action_pressed("up"):
 		actor.state_machine.transition_to("fly")
 		return

@@ -17,8 +17,8 @@ const NONE_EXISTING_CELL = Vector2i(-1, -1)
 
 # Ore
 const ORE_SEED = 1
-const ORE_SPREAD = 0.15
-const ORE_THRESHOLD = 0.9
+const ORE_SPREAD = 0.05
+const ORE_THRESHOLD = 0.80
 const DIRT_THRESHOLD = -0.3
 
 # Void
@@ -101,6 +101,7 @@ func _process(_delta: float) -> void:
 	if new_player_chunk != current_player_chunk:
 		current_player_chunk = new_player_chunk
 		update_chunks()
+		cleanup_chunks()
 
 
 func update_chunks() -> void:
@@ -116,6 +117,30 @@ func update_chunks() -> void:
 			# Generate the chunk if it hasn't been generated yet
 			if not generated_chunks.has(chunk_coord):
 				generate_chunk(chunk_coord)
+
+
+func cleanup_chunks() -> void:
+	# Define a buffer outside the render distance for unloading
+	var unload_distance = RENDER_DISTANCE + 2
+	var chunks_to_remove: Array[Vector2i] = []
+
+	for chunk_coord in generated_chunks:
+		var distance = (chunk_coord - current_player_chunk).abs()
+		if distance.x > unload_distance or distance.y > unload_distance:
+			chunks_to_remove.append(chunk_coord)
+
+	for chunk_coord in chunks_to_remove:
+		unload_chunk(chunk_coord)
+		generated_chunks.erase(chunk_coord)
+
+
+func unload_chunk(chunk_coord: Vector2i) -> void:
+	var start_x = chunk_coord.x * CHUNK_SIZE
+	var start_y = chunk_coord.y * CHUNK_SIZE
+
+	for x in range(start_x, start_x + CHUNK_SIZE):
+		for y in range(start_y, start_y + CHUNK_SIZE):
+			tile_map.set_cell(Vector2i(x, y), -1)
 
 
 func generate_chunk(chunk_coord: Vector2i) -> void:

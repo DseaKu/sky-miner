@@ -2,6 +2,7 @@ extends CanvasLayer
 
 @onready var error_panel = $MainPanel/ErrorPanel
 
+# SYSTEM
 @onready var system_header = $MainPanel/SystemPanel/SystemHeader
 @onready var fps_label = $MainPanel/SystemPanel/FPSLabel
 @onready var memory_label = $MainPanel/SystemPanel/MemoryLabel
@@ -9,13 +10,16 @@ extends CanvasLayer
 @onready var process_time = $MainPanel/SystemPanel/ProcessTime
 @onready var physics_time = $MainPanel/SystemPanel/PhysicsTime
 
+# PLAYER
 @onready var player_header = $MainPanel/PlayerPanel/PlayerHeader
 @onready var pos_label = $MainPanel/PlayerPanel/PosLabel
 @onready var grid_pos_label = $MainPanel/PlayerPanel/GridPosLabel
 @onready var chunk_pos_label = $MainPanel/PlayerPanel/ChunkPosLabel
 @onready var state_label = $MainPanel/PlayerPanel/StateLabel
 @onready var velocity_label = $MainPanel/PlayerPanel/VelocityLabel
+@onready var is_flying_label = $MainPanel/PlayerPanel/IsFlyingLabel
 
+# GAME
 @onready var game_header = $MainPanel/GamePanel/GameHeader
 @onready var isle_spawn_penality_label = $MainPanel/GamePanel/IsleSpawnPenality
 @onready var rarity_factor_label = $MainPanel/GamePanel/RarityFactor
@@ -92,16 +96,16 @@ func update_system_data() -> void:
 func update_game_data() -> void:
 	game_header.text = "Game:"
 	isle_spawn_penality_label.text = (
-		INDENT_LABEL + "Height Penalty:" + str(snapped(terrain.height_penalty, 0.001))
+		INDENT_LABEL + "Height Penalty: " + str(snapped(terrain.height_penalty, 0.001))
 	)
 	rarity_factor_label.text = (
-		INDENT_LABEL + "Rarity Factor:" + str(snapped(terrain.rarity_factor, 0.001))
+		INDENT_LABEL + "Rarity Factor: " + str(snapped(terrain.rarity_factor, 0.001))
 	)
 	ore_thresh_label.text = (
-		INDENT_LABEL + "Ore Threshold:" + str(snapped(terrain.ore_threshold, 0.001))
+		INDENT_LABEL + "Ore Threshold: " + str(snapped(terrain.ore_threshold, 0.001))
 	)
 	gem_thresh_label.text = (
-		INDENT_LABEL + "Gem Threshold:" + str(snapped(terrain.gem_threshold, 0.001))
+		INDENT_LABEL + "Gem Threshold: " + str(snapped(terrain.gem_threshold, 0.001))
 	)
 
 
@@ -155,3 +159,5 @@ func update_player_data() -> void:
 		+ str(round(player_velo.y))
 		+ ")"
 	)
+
+	is_flying_label.text = INDENT_LABEL + "Is Flying: " + str(player.is_flying)

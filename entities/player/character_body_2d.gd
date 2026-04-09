@@ -21,8 +21,8 @@ const JUMP_MAX_SPEED := -400.0
 const JUMP_ACCEL := 10.0
 const JUMP_INIT_SPEED := -300.0
 const JUMP_MAX_DURATION := 0.20
-const BOOST_MAX_SPEED_FACTOR := 2.8
-const BOOST_ACCEL_FACTOR := 2.0
+const BOOST_MAX_SPEED_FACTOR := 2.3
+const BOOST_ACCEL_FACTOR := 1.3
 const N_JUMPS_IN_ROW := 2
 
 # Glide
@@ -32,13 +32,14 @@ const GLIDE_MAX_SPEED := 300.0
 const GLIDE_ACCEL := 2.0
 
 # Fly
-const FLYING := true
+const IS_FLYING := false
 const FLYING_SPEED := 2000.0
 
 const MINING_RANGE := 100.0
 const MINING_COOLDOWN := 0.2
 
 var jumps_left := N_JUMPS_IN_ROW
+var is_flying := IS_FLYING
 
 @onready var animation_player = $AnimationPlayer
 @onready var sprite = $Sprite2D
