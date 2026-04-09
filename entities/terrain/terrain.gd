@@ -28,8 +28,8 @@ const EMPTY_CELLS_THRESHOLD = 0.23
 
 # Gems
 const GEM_SEED = 3
-const GEM_SPREAD = 0.45
-const GEM_THRESHOLD = 1.0
+const GEM_SPREAD = 0.65
+const GEM_THRESHOLD = 0.83
 
 # Isle
 const ISLAND_SEED = 4
