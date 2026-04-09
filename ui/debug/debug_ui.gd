@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+@onready var error_panel = $MainPanel/ErrorPanel
+
 @onready var system_header = $MainPanel/SystemPanel/SystemHeader
 @onready var fps_label = $MainPanel/SystemPanel/FPSLabel
 @onready var memory_label = $MainPanel/SystemPanel/MemoryLabel
@@ -16,7 +18,12 @@ extends CanvasLayer
 
 @onready var game_header = $MainPanel/GamePanel/GameHeader
 @onready var isle_spawn_penality_label = $MainPanel/GamePanel/IsleSpawnPenality
+@onready var rarity_factor_label = $MainPanel/GamePanel/RarityFactor
+
 const INDENT_LABEL = "   "
+
+var player: CharacterBody2D
+var terrain: Node2D
 
 
 func _ready() -> void:
@@ -26,10 +33,32 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("show_debug_ui"):
 		visible = not visible
+		if visible:
+			# Refresh references when UI is opened
+			_ensure_references()
+
+
+func _ensure_references() -> void:
+	if not player:
+		player = get_tree().get_first_node_in_group("player") as CharacterBody2D
+	if not terrain:
+		terrain = get_tree().get_first_node_in_group("terrain") as Node2D
 
 
 func _process(_delta: float) -> void:
 	if not visible:
+		return
+
+	var err_text = ""
+	_ensure_references()
+	if not player:
+		err_text.text += INDENT_LABEL + "PLAYER NOT FOUND"
+		return
+	if not terrain:
+		err_text.text += INDENT_LABEL + "TERRAIN NODE NOT FOUND"
+		return
+	error_panel.text = err_text
+	if not (terrain or player):
 		return
 
 	update_system_data()
@@ -60,21 +89,16 @@ func update_system_data() -> void:
 
 func update_game_data() -> void:
 	game_header.text = "Game:"
-	var terrain_root = get_tree().get_first_node_in_group("terrain")
-	if terrain_root:
-		var height_penalty = terrain_root.height_penalty
-		isle_spawn_penality_label.text = (
-			INDENT_LABEL + "Height Penalty:" + str(snapped(height_penalty, 0.001))
-		)
+	isle_spawn_penality_label.text = (
+		INDENT_LABEL + "Height Penalty:" + str(snapped(terrain.height_penalty, 0.001))
+	)
+	rarity_factor_label.text = (
+		INDENT_LABEL + "Rarity Factor:" + str(snapped(terrain.rarity_factor, 0.001))
+	)
 
 
 func update_player_data() -> void:
 	player_header.text = "Player:"
-	var player = get_tree().get_first_node_in_group("player")
-
-	if not player:
-		pos_label.text = INDENT_LABEL + "PLAYER NOT FOUND"
-		return
 
 	# Update Position
 	var player_pos = round(player.global_position)
@@ -83,9 +107,8 @@ func update_player_data() -> void:
 	)
 
 	# Update Grid and Chunk Position
-	var terrain_root = get_tree().get_first_node_in_group("terrain")
-	if terrain_root and terrain_root.has_node("TileMapLayer"):
-		var tilemap = terrain_root.get_node("TileMapLayer")
+	if terrain.has_node("TileMapLayer"):
+		var tilemap = terrain.get_node("TileMapLayer")
 
 		# Convert global pixel position to local grid position
 		var cell_pos = tilemap.local_to_map(player_pos)
@@ -96,7 +119,7 @@ func update_player_data() -> void:
 
 		# Calculate Chunk Position
 		# Grabs the CHUNK_SIZE constant directly from your terrain.gd script
-		var chunk_size = terrain_root.CHUNK_SIZE
+		var chunk_size = terrain.CHUNK_SIZE
 		var chunk_x = floori(cell_pos.x / float(chunk_size))
 		var chunk_y = floori(cell_pos.y / float(chunk_size))
 

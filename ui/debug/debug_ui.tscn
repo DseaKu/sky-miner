@@ -9,6 +9,9 @@ script = ExtResource("1_nb4k0")
 offset_right = 40.0
 offset_bottom = 40.0
 
+[node name="ErrorPanel" type="Label" parent="MainPanel"]
+layout_mode = 2
+
 [node name="SystemPanel" type="VBoxContainer" parent="MainPanel"]
 layout_mode = 2
 
@@ -58,4 +61,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="IsleSpawnPenality" type="Label" parent="MainPanel/GamePanel"]
+layout_mode = 2
+
+[node name="RarityFactor" type="Label" parent="MainPanel/GamePanel"]
 layout_mode = 2
