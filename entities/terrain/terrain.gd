@@ -11,30 +11,40 @@ const TILE_SOURCE_ID = 2
 const DIRT = Vector2i(0, 0)
 const STONE = Vector2i(1, 0)
 const ORE = Vector2i(2, 0)
+const GEM = Vector2i(0, 1)
 const EMPTY_CELL = Vector2i(3, 3)
 const NONE_EXISTING_CELL = Vector2i(-1, -1)
 
-# Noise Thresholds
+# Ore
 const ORE_SEED = 1
 const ORE_SPREAD = 0.15
-const ORE_THRESHOLD = 0.6
+const ORE_THRESHOLD = 0.9
 const DIRT_THRESHOLD = -0.3
 
+# Void
 const EMPTY_CELLS_SEED = 2
 const EMPTY_CELLS_SPREAD = 0.25
 const EMPTY_CELLS_THRESHOLD = 0.23
 
-const ISLAND_SEED = 3
+# Gems
+const GEM_SEED = 3
+const GEM_SPREAD = 0.45
+const GEM_THRESHOLD = 1.0
+
+# Isle
+const ISLAND_SEED = 4
 const ISLAND_SPREAD = 0.0013
-const ISLAND_THRESHOLD = 0.35
+const ISLAND_THRESHOLD = 0.25
 const ISLAND_STRETCH_X = 4.0
 const ISLAND_STRETCH_Y = 40.0
 const SPACE_ISLE_GROUND = -7
-const PENALITY_STEP_FACTOR = .000001
+const HEIGHT_PENALTY = .00001
+const RARITY_HEIGHT_IMPACT := 3.0
 
 # Generators
 var ore_noise = FastNoiseLite.new()
 var void_noise = FastNoiseLite.new()
+var gem_noise = FastNoiseLite.new()
 var island_noise = FastNoiseLite.new()
 
 # Track generation state
@@ -45,7 +55,8 @@ var current_player_chunk: Vector2i = Vector2i(0, -1)
 # Isle Gen Dynamic Parameters
 var island_spread = ISLAND_SPREAD
 var island_stretch_y = ISLAND_STRETCH_Y
-var isle_spawn_penality := 0.0
+var height_penalty := 0.0
+var rarity_factor := 0.0
 
 
 func _ready() -> void:
@@ -57,6 +68,10 @@ func setup_noise() -> void:
 	ore_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
 	ore_noise.seed = ORE_SEED
 	ore_noise.frequency = ORE_SPREAD
+
+	gem_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
+	gem_noise.seed = GEM_SEED
+	gem_noise.frequency = GEM_SPREAD
 
 	void_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
 	void_noise.seed = EMPTY_CELLS_SEED
@@ -110,7 +125,11 @@ func generate_chunk(chunk_coord: Vector2i) -> void:
 	var start_x = chunk_coord.x * CHUNK_SIZE
 	var start_y = chunk_coord.y * CHUNK_SIZE
 
-	isle_spawn_penality = move_toward(ISLAND_THRESHOLD, 0.0, player_node.global_position.y * .00001)
+	height_penalty = move_toward(
+		ISLAND_THRESHOLD, 0.0, player_node.global_position.y * HEIGHT_PENALTY
+	)
+
+	rarity_factor = height_penalty / RARITY_HEIGHT_IMPACT
 
 	for x in range(start_x, start_x + CHUNK_SIZE):
 		for y in range(start_y, start_y + CHUNK_SIZE):
@@ -127,21 +146,24 @@ func generate_chunk(chunk_coord: Vector2i) -> void:
 			# Apply the stretch multipliers to the coordinates
 			var island_val = island_noise.get_noise_2d(x * ISLAND_STRETCH_X, y * ISLAND_STRETCH_Y)
 
-			if island_val < isle_spawn_penality:
+			if island_val < height_penalty:
 				continue
 
 			var block_type = STONE
 
 			# Apply voids and ore only to the underground stone layer
-			var ore_noise_val = ore_noise.get_noise_2d(x, y)
 			var void_noise_val = void_noise.get_noise_2d(x, y)
+			var ore_noise_val = ore_noise.get_noise_2d(x, y)
+			var gem_noise_val = gem_noise.get_noise_2d(x, y)
 
 			if void_noise_val > EMPTY_CELLS_THRESHOLD:
 				block_type = EMPTY_CELL
 			elif ore_noise_val < DIRT_THRESHOLD:
 				block_type = DIRT
-			elif ore_noise_val > ORE_THRESHOLD:
+			elif ore_noise_val > ORE_THRESHOLD - rarity_factor:
 				block_type = ORE
+			elif gem_noise_val > GEM_THRESHOLD - rarity_factor:
+				block_type = GEM
 
 			tile_map.set_cell(grid_position, TILE_SOURCE_ID, block_type)
 

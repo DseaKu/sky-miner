@@ -62,7 +62,7 @@ func update_game_data() -> void:
 	game_header.text = "Game:"
 	var terrain_root = get_tree().get_first_node_in_group("terrain")
 	if terrain_root:
-		var height_penalty = terrain_root.isle_spawn_penality
+		var height_penalty = terrain_root.height_penalty
 		isle_spawn_penality_label.text = (
 			INDENT_LABEL + "Height Penalty:" + str(snapped(height_penalty, 0.001))
 		)

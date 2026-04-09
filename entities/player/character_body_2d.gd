@@ -32,8 +32,8 @@ const GLIDE_MAX_SPEED := 300.0
 const GLIDE_ACCEL := 2.0
 
 # Fly
-const FLYING := false
-const FLYING_SPEED := 1500.0
+const FLYING := true
+const FLYING_SPEED := 2500.0
 
 const MINING_RANGE := 100.0
 const MINING_COOLDOWN := 0.2
