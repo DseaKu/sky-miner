@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://dq8hrsp5t7qm1"]
+[gd_scene load_steps=32 format=3 uid="uid://dq8hrsp5t7qm1"]
 
 [ext_resource type="Script" uid="uid://byedp8rmuicjy" path="res://entities/player/character_body_2d.gd" id="1_abrql"]
 [ext_resource type="Texture2D" uid="uid://ceafx430ccaf1" path="res://entities/player/assets/player jump 48x48.png" id="2_bls4j"]
@@ -440,45 +440,6 @@ _data = {
 &"roll": SubResource("Animation_gx6sm"),
 &"run": SubResource("Animation_bls4j")
 }
-
-[sub_resource type="GDScript" id="GDScript_we0b7"]
-script/source = "extends PlayerState
-
-
-func enter():
-	actor.animation_player.play(\"idle\")
-	actor.get_node(\"CollisionShape2D\").set_deferred(\"disabled\", true)
-
-
-func exit():
-	actor.get_node(\"CollisionShape2D\").set_deferred(\"disabled\", false)
-
-
-func physics_update(_delta: float):
-	if Input.is_action_pressed(\"up\"):
-		actor.velocity.y = -actor.FLYING_SPEED
-
-	elif Input.is_action_pressed(\"down\"):
-		actor.velocity.y = actor.FLYING_SPEED
-	else:
-		actor.velocity.y = 0
-
-	if Input.is_action_pressed(\"left\"):
-		actor.velocity.x = -actor.FLYING_SPEED
-
-	elif Input.is_action_pressed(\"right\"):
-		actor.velocity.x = actor.FLYING_SPEED
-	else:
-		actor.velocity.x = 0
-
-	actor.move_and_slide()
-
-
-func handle_transitions(_delta: float):
-	if Input.is_action_just_pressed(\"jump\"):
-		actor.state_machine.transition_to(\"idle\")
-		return
-"
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_abrql")

@@ -1,6 +1,6 @@
 extends Camera2D
 
-const DEFAULT_ZOOM := Vector2(1.5, 1.5)
+const DEFAULT_ZOOM := Vector2(2.0, 2.0)
 
 
 # Called when the node enters the scene tree for the first time.

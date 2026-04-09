@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dh6gxsju8jjsk"]
+[gd_scene load_steps=5 format=3 uid="uid://dh6gxsju8jjsk"]
 
 [ext_resource type="PackedScene" uid="uid://dq8hrsp5t7qm1" path="res://entities/player/player.tscn" id="1_2mgkc"]
 [ext_resource type="PackedScene" uid="uid://cvy1dgbtpqipp" path="res://ui/debug/debug_ui.tscn" id="1_pmfem"]
 [ext_resource type="PackedScene" uid="uid://b5npnmjesv2a1" path="res://entities/terrain/terrain.tscn" id="1_tsgde"]
+[ext_resource type="PackedScene" uid="uid://du4dwaqrw5d6g" path="res://ui/radial_menu/radial_menu.tscn" id="1_w32yo"]
 
 [node name="World" type="Node2D"]
 
@@ -12,3 +13,12 @@
 
 [node name="Player" parent="." instance=ExtResource("1_2mgkc")]
 position = Vector2(176, 32)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="RadialMenuLeft" parent="CanvasLayer" instance=ExtResource("1_w32yo")]
+input_action = "open_radial_left"
+
+[node name="RadialMenuRight" parent="CanvasLayer" instance=ExtResource("1_w32yo")]
+input_action = "open_radial_right"
+target_hand = 1

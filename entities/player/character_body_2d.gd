@@ -32,20 +32,23 @@ const GLIDE_MAX_SPEED := 300.0
 const GLIDE_ACCEL := 2.0
 
 # Fly
-const IS_FLYING := true
+const INIT_IS_FLYING := false
 const FLYING_SPEED := 2000.0
 
 const MINING_RANGE := 100.0
 const MINING_COOLDOWN := 0.2
 
 var jumps_left := N_JUMPS_IN_ROW
-var is_flying := IS_FLYING
+var is_flying := INIT_IS_FLYING
 
 @onready var animation_player = $AnimationPlayer
 @onready var sprite = $Sprite2D
 @onready var state_machine = $StateMachine
 
 var terrain: Node2D
+
+@export var left_tool := Equipment.Tool.PICKAXE
+@export var right_tool := Equipment.Tool.BINOCULARS
 
 
 func _ready() -> void:

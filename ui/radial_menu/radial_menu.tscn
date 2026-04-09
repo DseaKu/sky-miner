@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://du4dwaqrw5d6g"]
+
+[ext_resource type="Script" uid="uid://xhidr7emmdd8" path="res://ui/radial_menu/radial_menu.gd" id="1_pkr1m"]
+[ext_resource type="Texture2D" uid="uid://ddmnuoww6th1c" path="res://assets/tools/pickaxe.png" id="2_1i3lu"]
+[ext_resource type="Texture2D" uid="uid://l87rk3i82075" path="res://assets/tools/harpoon.png" id="3_fwcqo"]
+[ext_resource type="Texture2D" uid="uid://djitopvan3ayn" path="res://assets/tools/binoculars.png" id="4_fwcqo"]
+
+[node name="RadialMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+scale = Vector2(3, 3)
+script = ExtResource("1_pkr1m")
+
+[node name="Pickaxe" type="TextureButton" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture_normal = ExtResource("2_1i3lu")
+
+[node name="Harpoon" type="TextureButton" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture_normal = ExtResource("3_fwcqo")
+
+[node name="TextureButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture_normal = ExtResource("4_fwcqo")
