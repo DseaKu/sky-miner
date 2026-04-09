@@ -18,7 +18,9 @@ const NONE_EXISTING_CELL = Vector2i(-1, -1)
 # Ore
 const ORE_SEED = 1
 const ORE_SPREAD = 0.05
-const ORE_THRESHOLD = 0.80
+const ORE_INIT_THRESHOLD = 1.00
+const ORE_MIN_THRESHOLD = 0.60
+const ORE_CURVE_STEEP_THRESH = 1.35
 const DIRT_THRESHOLD = -0.3
 
 # Void
@@ -28,8 +30,10 @@ const EMPTY_CELLS_THRESHOLD = 0.23
 
 # Gems
 const GEM_SEED = 3
-const GEM_SPREAD = 0.65
-const GEM_THRESHOLD = 0.83
+const GEM_SPREAD = 0.35
+const GEM_INIT_THRESHOLD = 1.20
+const GEM_MIN_THRESHOLD = 0.50
+const GEM_CURVE_STEEP_THRESH = 1.35
 
 # Isle
 const ISLAND_SEED = 4
@@ -154,9 +158,11 @@ func generate_chunk(chunk_coord: Vector2i) -> void:
 		ISLAND_THRESHOLD, 0.0, player_node.global_position.y * HEIGHT_PENALTY
 	)
 
-	rarity_factor = height_penalty / RARITY_HEIGHT_IMPACT
-	ore_threshold = ORE_THRESHOLD - rarity_factor
-	gem_threshold = GEM_THRESHOLD - rarity_factor
+	var drop_ore = log((height_penalty * ORE_CURVE_STEEP_THRESH) + 1.0)
+	ore_threshold = clamp(ORE_INIT_THRESHOLD - drop_ore, ORE_MIN_THRESHOLD, ORE_INIT_THRESHOLD)
+
+	var drop_gem = log((height_penalty * GEM_CURVE_STEEP_THRESH) + 1.0)
+	gem_threshold = clamp(GEM_INIT_THRESHOLD - drop_gem, GEM_MIN_THRESHOLD, GEM_INIT_THRESHOLD)
 
 	for x in range(start_x, start_x + CHUNK_SIZE):
 		for y in range(start_y, start_y + CHUNK_SIZE):
