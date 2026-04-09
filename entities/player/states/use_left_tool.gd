@@ -4,10 +4,7 @@ var mining_timer = 0.0
 
 
 func enter():
-	if actor.animation_player.has_animation("mine"):
-		actor.animation_player.play("mine")
-	else:
-		actor.animation_player.play("idle")
+	actor.animation_player.play("mine")
 
 
 func physics_update(delta: float):

@@ -33,9 +33,5 @@ func handle_transitions(_delta: float):
 		return
 
 	if not (Input.is_action_pressed("left") or Input.is_action_pressed("right")):
-		if Input.is_action_pressed("mine"):
-			actor.state_machine.transition_to("mine")
-			return
-
 		actor.state_machine.transition_to("idle")
 		return

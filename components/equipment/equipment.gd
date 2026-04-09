@@ -1,11 +1,17 @@
-extends Node2D
+class_name Equipment
+extends Node
 
+enum Tool { NONE, PICKAXE, HARPOON, BINOCULARS }
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func use_tool(tool: Tool) -> void:
+	match tool:
+		Tool.NONE:
+			pass
+		Tool.PICKAXE:
+			pass
+		Tool.HARPOON:
+			pass
+		Tool.BINOCULARS:
+			pass
+		_:
+			pass

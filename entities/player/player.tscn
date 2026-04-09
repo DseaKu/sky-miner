@@ -1,7 +1,8 @@
-[gd_scene load_steps=32 format=3 uid="uid://dq8hrsp5t7qm1"]
+[gd_scene load_steps=34 format=3 uid="uid://dq8hrsp5t7qm1"]
 
 [ext_resource type="Script" uid="uid://byedp8rmuicjy" path="res://entities/player/character_body_2d.gd" id="1_abrql"]
 [ext_resource type="Texture2D" uid="uid://ceafx430ccaf1" path="res://entities/player/assets/player jump 48x48.png" id="2_bls4j"]
+[ext_resource type="PackedScene" uid="uid://v1kj8am5ibxw" path="res://components/equipment/equipment.tscn" id="2_eyb6c"]
 [ext_resource type="Texture2D" uid="uid://bq3hrll2uf7qr" path="res://entities/player/assets/player idle 48x48.png" id="2_sglur"]
 [ext_resource type="Texture2D" uid="uid://8v31mou5isyv" path="res://entities/player/assets/player run 48x48.png" id="3_bls4j"]
 [ext_resource type="Script" uid="uid://yrkc51mm3cw0" path="res://scripts/state_machine.gd" id="4_state_machine"]
@@ -15,9 +16,10 @@
 [ext_resource type="Texture2D" uid="uid://u2cucdytvluh" path="res://entities/player/assets/player air spin 48x48.png" id="8_yqrof"]
 [ext_resource type="Script" uid="uid://d3rra3hf345e1" path="res://entities/player/camera_2d.gd" id="9_b2kln"]
 [ext_resource type="Script" uid="uid://u26hxyfu3u13" path="res://entities/player/states/land.gd" id="9_land"]
-[ext_resource type="Script" uid="uid://dtqnhal05owgf" path="res://entities/player/states/mine.gd" id="10_mine"]
 [ext_resource type="Script" uid="uid://cx1j3q7djx600" path="res://entities/player/states/air_slam.gd" id="16_3wlsy"]
 [ext_resource type="Script" uid="uid://dbdbbuvtlg4b0" path="res://entities/player/states/fly.gd" id="17_3wlsy"]
+[ext_resource type="Script" uid="uid://dakfc4wpqoy5r" path="res://entities/player/states/use_right_tool.gd" id="17_mtric"]
+[ext_resource type="Script" uid="uid://cq76ja3o5gf0y" path="res://entities/player/states/use_left_tool.gd" id="20_eyb6c"]
 [ext_resource type="Script" uid="uid://dsvurkvrwrltk" path="res://entities/player/states/glide.gd" id="20_mtric"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sfv1e"]
@@ -444,6 +446,8 @@ _data = {
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_abrql")
 
+[node name="Equipment" parent="." instance=ExtResource("2_eyb6c")]
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 3)
 shape = SubResource("CapsuleShape2D_sfv1e")
@@ -481,8 +485,8 @@ script = ExtResource("8_fall")
 [node name="Land" type="Node" parent="StateMachine"]
 script = ExtResource("9_land")
 
-[node name="Mine" type="Node" parent="StateMachine"]
-script = ExtResource("10_mine")
+[node name="UseRightTool" type="Node" parent="StateMachine"]
+script = ExtResource("17_mtric")
 
 [node name="AirSlam" type="Node" parent="StateMachine"]
 script = ExtResource("16_3wlsy")
@@ -495,3 +499,6 @@ script = ExtResource("17_3wlsy")
 
 [node name="Glide" type="Node" parent="StateMachine"]
 script = ExtResource("20_mtric")
+
+[node name="UseLeftTool" type="Node" parent="StateMachine"]
+script = ExtResource("20_eyb6c")
