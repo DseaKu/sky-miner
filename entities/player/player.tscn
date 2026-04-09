@@ -18,8 +18,7 @@
 [ext_resource type="Script" uid="uid://dtqnhal05owgf" path="res://entities/player/states/mine.gd" id="10_mine"]
 [ext_resource type="Script" uid="uid://cx1j3q7djx600" path="res://entities/player/states/air_slam.gd" id="16_3wlsy"]
 [ext_resource type="Script" uid="uid://dbdbbuvtlg4b0" path="res://entities/player/states/fly.gd" id="17_3wlsy"]
-[ext_resource type="Script" uid="uid://cb7hjegmnodxl" path="res://entities/player/fly.gd" id="19_we0b7"]
-[ext_resource type="Script" uid="uid://dsvurkvrwrltk" path="res://entities/player/glide.gd" id="20_mtric"]
+[ext_resource type="Script" uid="uid://dsvurkvrwrltk" path="res://entities/player/states/glide.gd" id="20_mtric"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sfv1e"]
 radius = 7.0
@@ -118,6 +117,47 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [ExtResource("2_bls4j")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:hframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [6]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [5]
+}
+
+[sub_resource type="Animation" id="Animation_mtric"]
+resource_name = "glide"
+length = 0.1
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("8_yqrof")]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -387,47 +427,6 @@ tracks/2/keys = {
 "values": [0, 1, 2, 3, 4, 5, 6]
 }
 
-[sub_resource type="Animation" id="Animation_mtric"]
-resource_name = "glide"
-length = 0.1
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [ExtResource("8_yqrof")]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Sprite2D:hframes")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [6]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Sprite2D:frame")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [5]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_bls4j"]
 _data = {
 &"RESET": SubResource("Animation_8fjmc"),
@@ -441,6 +440,45 @@ _data = {
 &"roll": SubResource("Animation_gx6sm"),
 &"run": SubResource("Animation_bls4j")
 }
+
+[sub_resource type="GDScript" id="GDScript_we0b7"]
+script/source = "extends PlayerState
+
+
+func enter():
+	actor.animation_player.play(\"idle\")
+	actor.get_node(\"CollisionShape2D\").set_deferred(\"disabled\", true)
+
+
+func exit():
+	actor.get_node(\"CollisionShape2D\").set_deferred(\"disabled\", false)
+
+
+func physics_update(_delta: float):
+	if Input.is_action_pressed(\"up\"):
+		actor.velocity.y = -actor.FLYING_SPEED
+
+	elif Input.is_action_pressed(\"down\"):
+		actor.velocity.y = actor.FLYING_SPEED
+	else:
+		actor.velocity.y = 0
+
+	if Input.is_action_pressed(\"left\"):
+		actor.velocity.x = -actor.FLYING_SPEED
+
+	elif Input.is_action_pressed(\"right\"):
+		actor.velocity.x = actor.FLYING_SPEED
+	else:
+		actor.velocity.x = 0
+
+	actor.move_and_slide()
+
+
+func handle_transitions(_delta: float):
+	if Input.is_action_just_pressed(\"jump\"):
+		actor.state_machine.transition_to(\"idle\")
+		return
+"
 
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_abrql")
@@ -492,7 +530,7 @@ script = ExtResource("16_3wlsy")
 script = ExtResource("17_3wlsy")
 
 [node name="Fly" type="Node" parent="StateMachine"]
-script = ExtResource("19_we0b7")
+script = SubResource("GDScript_we0b7")
 
 [node name="Glide" type="Node" parent="StateMachine"]
 script = ExtResource("20_mtric")
