@@ -1,25 +1,30 @@
 extends PlayerState
 @export var return_state: State
+var hand := Equipment.Hand.LEFT
 
 
 func enter() -> void:
-	# 2. Tell the equipment component to execute the tool's actual logic
-	var equipment = actor.get_node("Equipment")
 	if Input.is_action_just_pressed("use_left_hand"):
-		equipment.use_left_tool()
+		hand = Equipment.Hand.LEFT
 	elif Input.is_action_just_pressed("use_right_hand"):
-		equipment.use_right_tool()
+		hand = Equipment.Hand.RIGHT
 
-	# 3. Play the appropriate animation based on the tool
-	# (Your equipment node could return the animation name!)
-	var anim_name = equipment.get_current_tool_animation()
-	actor.animation_player.play(anim_name)
+	player.animation_player.play(player.equipment.get_tool_animation(hand))
 
 
 func physics_update(_delta: float) -> void:
-	# 4. When the animation finishes, go back to Idle
-	if not actor.animation_player.is_playing():
-		actor.state_machine.transition_to("idle")
+	player.equipment.use_tool(hand)
+
+
+func handle_transitions(_delta: float):
+	match hand:
+		Equipment.Hand.LEFT:
+			if Input.is_action_just_released("use_left_hand"):
+				actor.state_machine.transition_to("idle")
+
+		Equipment.Hand.RIGHT:
+			if Input.is_action_just_released("use_right_hand"):
+				actor.state_machine.transition_to("idle")
 
 # var mining_timer = 0.0
 #
