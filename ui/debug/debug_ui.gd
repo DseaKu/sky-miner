@@ -29,9 +29,9 @@ extends CanvasLayer
 
 const INDENT_LABEL = "   "
 
-var player: CharacterBody2D
-var terrain: Node2D
-var equipment: Node2D
+var _player: CharacterBody2D
+var _terrain: Node2D
+var _equipment: Node2D
 
 
 func _ready() -> void:
@@ -47,12 +47,12 @@ func _input(event: InputEvent) -> void:
 
 
 func _ensure_references() -> void:
-	if not player:
-		player = get_tree().get_first_node_in_group("player") as CharacterBody2D
-	if not terrain:
-		terrain = get_tree().get_first_node_in_group("terrain") as Node2D
-	if not equipment and player:
-		equipment = player.get_node("Equipment")
+	if not _player:
+		_player = get_tree().get_first_node_in_group("player") as CharacterBody2D
+	if not _terrain:
+		_terrain = get_tree().get_first_node_in_group("terrain") as Node2D
+	if not _equipment and _player:
+		_equipment = _player.get_node("Equipment")
 
 
 func _process(_delta: float) -> void:
@@ -61,17 +61,17 @@ func _process(_delta: float) -> void:
 
 	var err_text = ""
 	_ensure_references()
-	if not player:
+	if not _player:
 		err_text.text += INDENT_LABEL + "PLAYER NOT FOUND"
 		return
-	if not terrain:
+	if not _terrain:
 		err_text.text += INDENT_LABEL + "TERRAIN NODE NOT FOUND"
 		return
-	if not equipment:
+	if not _equipment:
 		err_text.text += INDENT_LABEL + "EQUIPMENT NODE NOT FOUND"
 		return
 	error_panel.text = err_text
-	if not (terrain or player):
+	if not (_terrain or _player):
 		return
 
 	update_system_data()
@@ -103,17 +103,17 @@ func update_system_data() -> void:
 func update_game_data() -> void:
 	game_header.text = "Game:"
 	isle_spawn_penality_label.text = (
-		INDENT_LABEL + "Height Penalty: " + str(snapped(terrain.height_penalty, 0.001))
+		INDENT_LABEL + "Height Penalty: " + str(snapped(_terrain.height_penalty, 0.001))
 	)
 	ore_thresh_label.text = (
-		INDENT_LABEL + "Ore Threshold: " + str(snapped(terrain.ore_threshold, 0.001))
+		INDENT_LABEL + "Ore Threshold: " + str(snapped(_terrain.ore_threshold, 0.001))
 	)
 	gem_thresh_label.text = (
-		INDENT_LABEL + "Gem Threshold: " + str(snapped(terrain.gem_threshold, 0.001))
+		INDENT_LABEL + "Gem Threshold: " + str(snapped(_terrain.gem_threshold, 0.001))
 	)
 
-	var left_tool_string = Equipment.Tool.keys()[equipment.left_tool]
-	var right_tool_string = Equipment.Tool.keys()[equipment.right_tool]
+	var left_tool_string = Equipment.Tool.keys()[_equipment.left_tool]
+	var right_tool_string = Equipment.Tool.keys()[_equipment.right_tool]
 	tool_left_label.text = INDENT_LABEL + "Left Hand: " + left_tool_string.capitalize()
 	tool_right_label.text = INDENT_LABEL + "Right Hand: " + right_tool_string.capitalize()
 
@@ -122,14 +122,14 @@ func update_player_data() -> void:
 	player_header.text = "Player:"
 
 	# Update Position
-	var player_pos = round(player.global_position)
+	var player_pos = round(_player.global_position)
 	pos_label.text = (
 		INDENT_LABEL + "Pos: (" + str(round(player_pos.x)) + ", " + str(round(player_pos.y)) + ")"
 	)
 
 	# Update Grid and Chunk Position
-	if terrain.has_node("TileMapLayer"):
-		var tilemap = terrain.get_node("TileMapLayer")
+	if _terrain.has_node("TileMapLayer"):
+		var tilemap = _terrain.get_node("TileMapLayer")
 
 		# Convert global pixel position to local grid position
 		var cell_pos = tilemap.local_to_map(player_pos)
@@ -140,7 +140,7 @@ func update_player_data() -> void:
 
 		# Calculate Chunk Position
 		# Grabs the CHUNK_SIZE constant directly from your terrain.gd script
-		var chunk_size = terrain.CHUNK_SIZE
+		var chunk_size = _terrain.CHUNK_SIZE
 		var chunk_x = floori(cell_pos.x / float(chunk_size))
 		var chunk_y = floori(cell_pos.y / float(chunk_size))
 
@@ -152,14 +152,14 @@ func update_player_data() -> void:
 		chunk_pos_label.text = INDENT_LABEL + "Chunk: --"
 
 	# Update State
-	var state_machine = player.get_node("StateMachine")
+	var state_machine = _player.get_node("StateMachine")
 	if state_machine and "current_state" in state_machine and state_machine.current_state:
 		state_label.text = INDENT_LABEL + "State: " + state_machine.current_state.name
 	else:
 		state_label.text = INDENT_LABEL + "State: --"
 
 	# Update Velocity
-	var player_velo = player.velocity
+	var player_velo = _player.velocity
 	velocity_label.text = (
 		INDENT_LABEL
 		+ "Velocity: ("
@@ -169,4 +169,4 @@ func update_player_data() -> void:
 		+ ")"
 	)
 
-	is_flying_label.text = INDENT_LABEL + "Is Flying: " + str(player.is_flying)
+	is_flying_label.text = INDENT_LABEL + "Is Flying: " + str(_player.is_flying)

@@ -1,3 +1,4 @@
+class_name Player
 extends CharacterBody2D
 
 # Movement
@@ -44,6 +45,7 @@ var is_flying := INIT_IS_FLYING
 @onready var animation_player = $AnimationPlayer
 @onready var sprite = $Sprite2D
 @onready var state_machine = $StateMachine
+@onready var equipment = $Equipment
 
 var terrain: Node2D
 

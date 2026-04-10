@@ -1,13 +1,17 @@
 class_name PlayerState
 extends State
 
+var player: Player:
+	get:
+		return actor as Player
+
 
 func handle_gravity(delta: float):
-	actor.velocity.y = lerp(actor.velocity.y, actor.FALL_MAX_SPEED, delta * actor.FALL_ACCEL)
+	player.velocity.y = lerp(player.velocity.y, player.FALL_MAX_SPEED, delta * player.FALL_ACCEL)
 
 
 func handle_flipping(direction: float):
 	if direction > 0:
-		actor.sprite.flip_h = false
+		player.sprite.flip_h = false
 	elif direction < 0:
-		actor.sprite.flip_h = true
+		player.sprite.flip_h = true
