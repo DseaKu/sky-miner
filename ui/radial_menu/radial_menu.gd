@@ -5,7 +5,7 @@ extends Control
 
 @onready var player = get_tree().get_first_node_in_group("player")
 @onready var equipment = player.get_node("Equipment")
-@onready var target_hand: Equipment.Hand
+@export var target_hand: Equipment.Hand
 
 var selected_tool: Equipment.Tool = Equipment.Tool.NONE
 
@@ -15,8 +15,10 @@ func _ready() -> void:
 	arrange_buttons()
 	for button in get_children():
 		if button is TextureButton:
-			button.mouse_entered.connect(_on_button_mouse_entered.bind(button.name))
-			button.mouse_exited.connect(_on_button_mouse_exited.bind(button.name))
+			var tool_name = button.name.to_upper()
+			var tool_value = Equipment.Tool.get(tool_name, Equipment.Tool.NONE)
+			button.mouse_entered.connect(_on_button_mouse_entered.bind(tool_value))
+			button.mouse_exited.connect(_on_button_mouse_exited.bind(tool_value))
 
 
 func arrange_buttons() -> void:
