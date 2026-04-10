@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://v1kj8am5ibxw"]
+[gd_scene load_steps=3 format=3 uid="uid://v1kj8am5ibxw"]
 
 [ext_resource type="Script" uid="uid://dwcv3x81uljqv" path="res://components/equipment/equipment.gd" id="1_1ohla"]
+[ext_resource type="Script" uid="uid://b8ids0wgtjv34" path="res://components/equipment/pickaxe.gd" id="2_5apw5"]
 
 [node name="Equipment" type="Node2D"]
 script = ExtResource("1_1ohla")
+
+[node name="Pickaxe" type="Node" parent="."]
+script = ExtResource("2_5apw5")

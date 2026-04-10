@@ -5,7 +5,24 @@ enum Tool { NONE, PICKAXE, HARPOON, BINOCULARS }
 enum Hand { LEFT, RIGHT }
 
 @export var left_tool := Tool.PICKAXE
-@export var right_tool := Tool.BINOCULARS
+@export var right_tool := Tool.PICKAXE
+@onready var pickaxe := $Pickaxe
+
+@onready var player = get_parent()
+@onready var terrain = get_tree().get_first_node_in_group("terrain")
+
+
+func _ready() -> void:
+	if pickaxe:
+		pickaxe.setup(player, terrain)
+
+
+func _input(_event):
+	if Input.is_action_just_pressed("use_left_hand"):
+		use_tool(Hand.LEFT)
+
+	if Input.is_action_just_pressed("use_right_hand"):
+		use_tool(Hand.RIGHT)
 
 
 func use_tool(hand: Hand) -> void:
@@ -15,6 +32,7 @@ func use_tool(hand: Hand) -> void:
 		Tool.NONE:
 			pass
 		Tool.PICKAXE:
+			pickaxe.use()
 			pass
 		Tool.HARPOON:
 			pass

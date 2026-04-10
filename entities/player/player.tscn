@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://dq8hrsp5t7qm1"]
+[gd_scene load_steps=32 format=3 uid="uid://dq8hrsp5t7qm1"]
 
 [ext_resource type="Script" uid="uid://byedp8rmuicjy" path="res://entities/player/player.gd" id="1_abrql"]
 [ext_resource type="Texture2D" uid="uid://ceafx430ccaf1" path="res://entities/player/assets/player jump 48x48.png" id="2_bls4j"]
@@ -19,7 +19,6 @@
 [ext_resource type="Script" uid="uid://cx1j3q7djx600" path="res://entities/player/states/air_slam.gd" id="16_3wlsy"]
 [ext_resource type="Script" uid="uid://dbdbbuvtlg4b0" path="res://entities/player/states/fly.gd" id="17_3wlsy"]
 [ext_resource type="Script" uid="uid://dsvurkvrwrltk" path="res://entities/player/states/glide.gd" id="20_mtric"]
-[ext_resource type="Script" uid="uid://3goer24h4q3w" path="res://entities/player/states/use_tool.gd" id="21_eyb6c"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sfv1e"]
 radius = 7.0
@@ -497,4 +496,3 @@ script = ExtResource("17_3wlsy")
 script = ExtResource("20_mtric")
 
 [node name="UseTool" type="Node" parent="StateMachine"]
-script = ExtResource("21_eyb6c")

@@ -27,10 +27,6 @@ func handle_transitions(_delta: float):
 		player.state_machine.transition_to("run")
 		return
 
-	if Input.is_action_pressed("use_left_hand") or Input.is_action_pressed("use_right_hand"):
-		player.state_machine.transition_to("use_tool")
-		return
-
 	if player.is_flying and Input.is_action_pressed("up"):
 		player.state_machine.transition_to("fly")
 		return

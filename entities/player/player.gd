@@ -36,9 +36,6 @@ const GLIDE_ACCEL := 2.0
 const INIT_IS_FLYING := false
 const FLYING_SPEED := 2000.0
 
-const MINING_RANGE := 100.0
-const MINING_COOLDOWN := 0.2
-
 var jumps_left := N_JUMPS_IN_ROW
 var is_flying := INIT_IS_FLYING
 
