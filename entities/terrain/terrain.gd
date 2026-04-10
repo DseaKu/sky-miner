@@ -16,7 +16,7 @@ const EMPTY_CELL = Vector2i(3, 3)
 const NONE_EXISTING_CELL = Vector2i(-1, -1)
 
 # Ore
-const ORE_SEED = 1
+# const ORE_SEED = 1
 const ORE_SPREAD = 0.05
 const ORE_INIT_THRESHOLD = 1.00
 const ORE_MIN_THRESHOLD = 0.60
@@ -24,19 +24,19 @@ const ORE_CURVE_STEEP_THRESH = 1.35
 const DIRT_THRESHOLD = -0.3
 
 # Void
-const EMPTY_CELLS_SEED = 2
+# const EMPTY_CELLS_SEED = 2
 const EMPTY_CELLS_SPREAD = 0.25
 const EMPTY_CELLS_THRESHOLD = 0.23
 
 # Gems
-const GEM_SEED = 3
+# const GEM_SEED = 3
 const GEM_SPREAD = 0.35
 const GEM_INIT_THRESHOLD = 1.20
 const GEM_MIN_THRESHOLD = 0.50
 const GEM_CURVE_STEEP_THRESH = 1.35
 
 # Isle
-const ISLAND_SEED = 4
+# const ISLAND_SEED = 4
 const ISLAND_SPREAD = 0.0013
 const ISLAND_THRESHOLD = 0.25
 const ISLAND_STRETCH_X = 4.0
@@ -72,19 +72,19 @@ func _ready() -> void:
 
 func setup_noise() -> void:
 	ore_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
-	ore_noise.seed = ORE_SEED
+	ore_noise.seed = randi()
 	ore_noise.frequency = ORE_SPREAD
 
 	gem_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
-	gem_noise.seed = GEM_SEED
+	gem_noise.seed = randi()
 	gem_noise.frequency = GEM_SPREAD
 
 	void_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
-	void_noise.seed = EMPTY_CELLS_SEED
+	void_noise.seed = randi()
 	void_noise.frequency = EMPTY_CELLS_SPREAD
 
 	island_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
-	island_noise.seed = ISLAND_SEED
+	island_noise.seed = randi()
 	island_noise.frequency = ISLAND_SPREAD
 
 
