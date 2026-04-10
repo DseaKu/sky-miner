@@ -26,14 +26,10 @@ func arrange_buttons() -> void:
 		if not button:
 			continue
 
-		# Calculate the angle for this specific button.
-		# Subtracting PI / 2 shifts the starting point to the top (12 o'clock)
 		var angle = (i * angle_step) - (PI / 2.0)
 
-		# Calculate X and Y coordinates using trig
 		var target_pos = Vector2(cos(angle), sin(angle)) * radius
 
-		# Offset the position by half the button's size so it centers perfectly on the coordinate
 		button.position = target_pos - (button.size / 2.0)
 
 

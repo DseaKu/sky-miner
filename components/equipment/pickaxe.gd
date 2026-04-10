@@ -2,13 +2,8 @@ extends Node
 
 const MINING_RANGE := 100.0
 
-var player: CharacterBody2D
-var terrain: Node2D
-
-
-func setup(p_player: CharacterBody2D, p_terrain: Node2D) -> void:
-	player = p_player
-	terrain = p_terrain
+@onready var terrain = get_tree().get_first_node_in_group("terrain")
+@onready var player = get_parent().get_parent()
 
 
 func use() -> void:
