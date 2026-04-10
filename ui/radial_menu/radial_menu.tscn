@@ -23,7 +23,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 texture_normal = ExtResource("3_fwcqo")
 
-[node name="TextureButton" type="TextureButton" parent="."]
+[node name="Binoculars" type="TextureButton" parent="."]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0

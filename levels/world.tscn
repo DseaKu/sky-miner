@@ -21,4 +21,3 @@ input_action = "open_radial_left"
 
 [node name="RadialMenuRight" parent="CanvasLayer" instance=ExtResource("1_w32yo")]
 input_action = "open_radial_right"
-target_hand = 1
