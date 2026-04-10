@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://dq8hrsp5t7qm1"]
+[gd_scene load_steps=33 format=3 uid="uid://dq8hrsp5t7qm1"]
 
 [ext_resource type="Script" uid="uid://byedp8rmuicjy" path="res://entities/player/character_body_2d.gd" id="1_abrql"]
 [ext_resource type="Texture2D" uid="uid://ceafx430ccaf1" path="res://entities/player/assets/player jump 48x48.png" id="2_bls4j"]
@@ -18,9 +18,8 @@
 [ext_resource type="Script" uid="uid://u26hxyfu3u13" path="res://entities/player/states/land.gd" id="9_land"]
 [ext_resource type="Script" uid="uid://cx1j3q7djx600" path="res://entities/player/states/air_slam.gd" id="16_3wlsy"]
 [ext_resource type="Script" uid="uid://dbdbbuvtlg4b0" path="res://entities/player/states/fly.gd" id="17_3wlsy"]
-[ext_resource type="Script" uid="uid://dakfc4wpqoy5r" path="res://entities/player/states/use_right_tool.gd" id="17_mtric"]
-[ext_resource type="Script" uid="uid://cq76ja3o5gf0y" path="res://entities/player/states/use_left_tool.gd" id="20_eyb6c"]
 [ext_resource type="Script" uid="uid://dsvurkvrwrltk" path="res://entities/player/states/glide.gd" id="20_mtric"]
+[ext_resource type="Script" uid="uid://3goer24h4q3w" path="res://entities/player/states/use_tool.gd" id="21_eyb6c"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sfv1e"]
 radius = 7.0
@@ -485,9 +484,6 @@ script = ExtResource("8_fall")
 [node name="Land" type="Node" parent="StateMachine"]
 script = ExtResource("9_land")
 
-[node name="UseRightTool" type="Node" parent="StateMachine"]
-script = ExtResource("17_mtric")
-
 [node name="AirSlam" type="Node" parent="StateMachine"]
 script = ExtResource("16_3wlsy")
 
@@ -500,5 +496,5 @@ script = ExtResource("17_3wlsy")
 [node name="Glide" type="Node" parent="StateMachine"]
 script = ExtResource("20_mtric")
 
-[node name="UseLeftTool" type="Node" parent="StateMachine"]
-script = ExtResource("20_eyb6c")
+[node name="UseTool" type="Node" parent="StateMachine"]
+script = ExtResource("21_eyb6c")

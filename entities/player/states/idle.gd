@@ -27,8 +27,8 @@ func handle_transitions(_delta: float):
 		actor.state_machine.transition_to("run")
 		return
 
-	if Input.is_action_pressed("use_left_tool"):
-		actor.state_machine.transition_to("use_left_tool")
+	if Input.is_action_pressed("use_left_tool") or Input.is_action_pressed("use_right_tool"):
+		actor.state_machine.transition_to("use_tool")
 		return
 
 	if actor.is_flying and Input.is_action_pressed("up"):

@@ -47,9 +47,6 @@ var is_flying := INIT_IS_FLYING
 
 var terrain: Node2D
 
-@export var left_tool := Equipment.Tool.PICKAXE
-@export var right_tool := Equipment.Tool.BINOCULARS
-
 
 func _ready() -> void:
 	terrain = get_tree().get_first_node_in_group("terrain")

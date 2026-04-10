@@ -3,6 +3,10 @@ extends Node
 
 enum Tool { NONE, PICKAXE, HARPOON, BINOCULARS }
 
+@export var left_tool := Tool.PICKAXE
+@export var right_tool := Tool.PICKAXE
+
+
 func use_tool(tool: Tool) -> void:
 	match tool:
 		Tool.NONE:

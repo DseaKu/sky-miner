@@ -31,6 +31,7 @@ const INDENT_LABEL = "   "
 
 var player: CharacterBody2D
 var terrain: Node2D
+var equipment: Node2D
 
 
 func _ready() -> void:
@@ -50,6 +51,8 @@ func _ensure_references() -> void:
 		player = get_tree().get_first_node_in_group("player") as CharacterBody2D
 	if not terrain:
 		terrain = get_tree().get_first_node_in_group("terrain") as Node2D
+	if not equipment and player:
+		equipment = player.get_node("Equipment")
 
 
 func _process(_delta: float) -> void:
@@ -63,6 +66,9 @@ func _process(_delta: float) -> void:
 		return
 	if not terrain:
 		err_text.text += INDENT_LABEL + "TERRAIN NODE NOT FOUND"
+		return
+	if not equipment:
+		err_text.text += INDENT_LABEL + "EQUIPMENT NODE NOT FOUND"
 		return
 	error_panel.text = err_text
 	if not (terrain or player):
@@ -106,8 +112,8 @@ func update_game_data() -> void:
 		INDENT_LABEL + "Gem Threshold: " + str(snapped(terrain.gem_threshold, 0.001))
 	)
 
-	var left_tool_string = Equipment.Tool.keys()[player.left_tool]
-	var right_tool_string = Equipment.Tool.keys()[player.right_tool]
+	var left_tool_string = Equipment.Tool.keys()[equipment.left_tool]
+	var right_tool_string = Equipment.Tool.keys()[equipment.right_tool]
 	tool_left_label.text = INDENT_LABEL + "Left Hand: " + left_tool_string.capitalize()
 	tool_right_label.text = INDENT_LABEL + "Right Hand: " + right_tool_string.capitalize()
 
