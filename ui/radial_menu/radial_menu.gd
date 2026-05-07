@@ -7,6 +7,9 @@ extends Control
 @onready var equipment = player.get_node("Equipment")
 @export var target_hand: Equipment.Hand
 
+const SELECTED_SCALE := 1.5
+const LERP_SPEED := 15.0
+
 var selected_tool: Equipment.Tool = Equipment.Tool.NONE
 
 
@@ -19,6 +22,22 @@ func _ready() -> void:
 			var tool_value = Equipment.Tool.get(tool_name, Equipment.Tool.NONE)
 			button.mouse_entered.connect(_on_button_mouse_entered.bind(tool_value))
 			button.mouse_exited.connect(_on_button_mouse_exited.bind(tool_value))
+
+
+func _process(delta: float) -> void:
+	if not visible:
+		return
+
+	for button in get_children():
+		if button is TextureButton:
+			var tool_name = button.name.to_upper()
+			var tool_value = Equipment.Tool.get(tool_name, Equipment.Tool.NONE)
+			
+			var target_scale = Vector2.ONE
+			if selected_tool == tool_value:
+				target_scale = Vector2.ONE * SELECTED_SCALE
+			
+			button.scale = button.scale.lerp(target_scale, delta * LERP_SPEED)
 
 
 func arrange_buttons() -> void:
@@ -35,6 +54,7 @@ func arrange_buttons() -> void:
 		if not button:
 			continue
 
+		button.pivot_offset = button.size / 2.0
 		var angle = (i * angle_step) - (PI / 2.0)
 		var target_pos = Vector2(cos(angle), sin(angle)) * radius
 		button.position = target_pos - (button.size / 2.0)

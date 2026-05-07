@@ -11,11 +11,15 @@ enum Hand { LEFT, RIGHT }
 
 
 func _input(_event):
-	if Input.is_action_just_pressed("use_left_hand"):
+	if Input.is_action_pressed("use_left_hand"):
 		use_tool(Hand.LEFT)
+	elif Input.is_action_just_released("use_left_hand"):
+		stop_tool(Hand.LEFT)
 
-	if Input.is_action_just_pressed("use_right_hand"):
+	if Input.is_action_pressed("use_right_hand"):
 		use_tool(Hand.RIGHT)
+	elif Input.is_action_just_released("use_right_hand"):
+		stop_tool(Hand.RIGHT)
 
 
 func use_tool(hand: Hand) -> void:
@@ -30,3 +34,20 @@ func use_tool(hand: Hand) -> void:
 			binoculars.use()
 		_:
 			pass
+
+
+func stop_tool(hand: Hand) -> void:
+	var tool = left_tool if hand == Hand.LEFT else right_tool
+
+	match tool:
+		Tool.BINOCULARS:
+			binoculars.stop_use()
+		_:
+			pass
+
+
+func _process(_delta):
+	if Input.is_action_just_pressed("use_binoculars"):
+		binoculars.use()
+	elif Input.is_action_just_released("use_binoculars"):
+		binoculars.stop_use()

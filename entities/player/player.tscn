@@ -494,5 +494,3 @@ script = ExtResource("17_3wlsy")
 
 [node name="Glide" type="Node" parent="StateMachine"]
 script = ExtResource("20_mtric")
-
-[node name="UseTool" type="Node" parent="StateMachine"]
