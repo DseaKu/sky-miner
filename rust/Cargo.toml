@@ -1,0 +1,11 @@
+[package]
+name = "mine_world"
+version = "0.1.0"   # You can leave version and edition as-is for now.
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"] # Compile this crate to a dynamic C library.
+
+[dependencies]
+godot = "0.5.2"
+enum_dispatch = "0.3"

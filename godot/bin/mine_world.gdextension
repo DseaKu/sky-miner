@@ -1,0 +1,14 @@
+[configuration]
+entry_symbol = "gdext_rust_init"
+compatibility_minimum = 4.1
+reloadable = true
+
+[libraries]
+linux.debug.x86_64 =     "res://../rust/target/debug/libmine_world.so"
+linux.release.x86_64 =   "res://../rust/target/release/libmine_world.so"
+windows.debug.x86_64 =   "res://../rust/target/debug/mine_world.dll"
+windows.release.x86_64 = "res://../rust/target/release/mine_world.dll"
+macos.debug =            "res://../rust/target/debug/libmine_world.dylib"
+macos.release =          "res://../rust/target/release/libmine_world.dylib"
+macos.debug.arm64 =      "res://../rust/target/debug/libmine_world.dylib"
+macos.release.arm64 =    "res://../rust/target/release/libmine_world.dylib"

@@ -1,3 +1,21 @@
-# Godot 4+ specific ignores
-.godot/
-/android/
+# Rust build artifacts
+/rust/target/
+
+# Godot editor metadata and cache
+/godot/.godot/
+
+# Godot-specific ignores
+# If you want to ignore all generated import files (not recommended if you want consistent imports)
+# /godot/*.import
+
+# Godot export presets (can contain secrets)
+/godot/export_presets.cfg
+
+# macOS system files
+.DS_Store
+
+# IDE caches
+.vscode/
+.idea/
+*.swp
+*.swo

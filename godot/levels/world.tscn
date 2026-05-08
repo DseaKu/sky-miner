@@ -1,24 +1,24 @@
-[gd_scene load_steps=5 format=3 uid="uid://dh6gxsju8jjsk"]
+[gd_scene format=3 uid="uid://dh6gxsju8jjsk"]
 
 [ext_resource type="PackedScene" uid="uid://dq8hrsp5t7qm1" path="res://entities/player/player.tscn" id="1_2mgkc"]
 [ext_resource type="PackedScene" uid="uid://cvy1dgbtpqipp" path="res://ui/debug/debug_ui.tscn" id="1_pmfem"]
 [ext_resource type="PackedScene" uid="uid://b5npnmjesv2a1" path="res://entities/terrain/terrain.tscn" id="1_tsgde"]
 [ext_resource type="PackedScene" uid="uid://du4dwaqrw5d6g" path="res://ui/radial_menu/radial_menu.tscn" id="1_w32yo"]
 
-[node name="World" type="Node2D"]
+[node name="World" type="Node2D" unique_id=1433476343]
 
-[node name="DebugUI" parent="." instance=ExtResource("1_pmfem")]
+[node name="DebugUI" parent="." unique_id=549022426 instance=ExtResource("1_pmfem")]
 
-[node name="Terrain" parent="." instance=ExtResource("1_tsgde")]
+[node name="Terrain" parent="." unique_id=1903975994 instance=ExtResource("1_tsgde")]
 
-[node name="Player" parent="." instance=ExtResource("1_2mgkc")]
+[node name="Player" parent="." unique_id=1671982474 instance=ExtResource("1_2mgkc")]
 position = Vector2(176, 32)
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=862988935]
 
-[node name="RadialMenuLeft" parent="CanvasLayer" instance=ExtResource("1_w32yo")]
+[node name="RadialMenuLeft" parent="CanvasLayer" unique_id=1385088027 instance=ExtResource("1_w32yo")]
 input_action = "open_radial_left"
 
-[node name="RadialMenuRight" parent="CanvasLayer" instance=ExtResource("1_w32yo")]
+[node name="RadialMenuRight" parent="CanvasLayer" unique_id=1703863941 instance=ExtResource("1_w32yo")]
 input_action = "open_radial_right"
 target_hand = 1
