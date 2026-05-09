@@ -11,9 +11,12 @@ pub struct PlayerFsmNode {
 #[godot_api]
 impl INode for PlayerFsmNode {
     fn init(base: Base<Node>) -> Self {
-        let mut fsm = player_fsm::State::Idle(player_fsm::idle::IdleState);
-        fsm.on_enter();
+        let fsm = player_fsm::State::Idle(player_fsm::idle::IdleState);
 
         Self { fsm, base }
+    }
+
+    fn ready(&mut self) {
+        self.fsm.on_enter();
     }
 }
