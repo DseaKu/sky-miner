@@ -4,14 +4,14 @@ use godot::prelude::*;
 
 #[derive(GodotClass)]
 #[class(base=Sprite2D)]
-pub struct Player {
+pub struct PlayerGDE {
     angular_speed: f32,
 
     base: Base<Sprite2D>,
 }
 
 #[godot_api]
-impl ISprite2D for Player {
+impl ISprite2D for PlayerGDE {
     fn init(base: Base<Sprite2D>) -> Self {
         Self {
             angular_speed: 3.0,

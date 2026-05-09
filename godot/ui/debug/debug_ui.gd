@@ -62,13 +62,16 @@ func _process(_delta: float) -> void:
 	var err_text = ""
 	_ensure_references()
 	if not _player:
-		err_text.text += INDENT_LABEL + "PLAYER NOT FOUND"
+		err_text += INDENT_LABEL + "PLAYER NOT FOUND"
+		error_panel.text = err_text
 		return
 	if not _terrain:
-		err_text.text += INDENT_LABEL + "TERRAIN NODE NOT FOUND"
+		err_text += INDENT_LABEL + "TERRAIN NODE NOT FOUND"
+		error_panel.text = err_text
 		return
 	if not _equipment:
-		err_text.text += INDENT_LABEL + "EQUIPMENT NODE NOT FOUND"
+		err_text += INDENT_LABEL + "EQUIPMENT NODE NOT FOUND"
+		error_panel.text = err_text
 		return
 	error_panel.text = err_text
 	if not (_terrain or _player):

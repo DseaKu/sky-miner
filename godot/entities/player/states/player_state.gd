@@ -1,9 +1,9 @@
 class_name PlayerState
 extends State
 
-var player: Player:
+var player:
 	get:
-		return actor as Player
+		return actor
 
 
 func handle_gravity(delta: float):
