@@ -1,7 +1,7 @@
 use crate::entities::player_fsm;
 use godot::prelude::*;
 
-const STATE_NAME: &'static str = "Run State";
+const STATE_NAME: &str = "Run State";
 
 pub struct RunState;
 impl player_fsm::StateBehavior for RunState {
