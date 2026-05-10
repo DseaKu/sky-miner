@@ -1,3 +1,4 @@
+use crate::core::utils::FloatExt;
 use crate::entities::player_fsm::{self, State};
 use godot::classes::{CharacterBody2D, Input};
 use godot::prelude::*;
@@ -19,17 +20,11 @@ impl player_fsm::StateBehavior for IdleState {
 
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
         let mut velocity = player.get_velocity();
-        let friction = 3000.0;
 
-        // Manual move_toward for f32
         let target = 0.0;
-        let amount = (friction * delta) as f32;
-        if (target - velocity.x).abs() <= amount {
-            velocity.x = target;
-        } else {
-            velocity.x += (target - velocity.x).signum() * amount;
-        }
+        let friction_step = (player_fsm::constants::FRICTION * delta) as f32;
 
+        velocity.x = velocity.x.move_toward(target, friction_step);
         player.set_velocity(velocity);
         player.move_and_slide();
     }

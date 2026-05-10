@@ -1,0 +1,13 @@
+pub trait FloatExt {
+    fn move_toward(self, target: f32, delta: f32) -> f32;
+}
+
+impl FloatExt for f32 {
+    fn move_toward(self, target: f32, delta: f32) -> f32 {
+        if (target - self).abs() <= delta {
+            target
+        } else {
+            self + (target - self).signum() * delta
+        }
+    }
+}

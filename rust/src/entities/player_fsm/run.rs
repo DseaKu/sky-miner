@@ -22,11 +22,9 @@ impl player_fsm::StateBehavior for RunState {
         let direction = input.get_axis("left", "right");
 
         let mut velocity = player.get_velocity();
-        let max_speed = 400.0;
-        let accel = 1.5;
 
-        let target_x = direction * max_speed;
-        velocity.x = velocity.x + (target_x - velocity.x) * (accel * delta) as f32;
+        let target_x = direction * player_fsm::constants::MAX_SPEED;
+        velocity.x = velocity.x + (target_x - velocity.x) * (player_fsm::constants::ACCEL * delta as f32);
 
         player.set_velocity(velocity);
         player.move_and_slide();

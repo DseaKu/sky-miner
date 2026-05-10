@@ -5,6 +5,7 @@ use enum_dispatch::enum_dispatch;
 pub mod idle;
 pub mod player_fsm_node;
 pub mod run;
+pub mod constants;
 
 macro_rules! play_animation {
     ($player:expr, $anim:expr) => {
