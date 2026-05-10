@@ -1,21 +1,46 @@
-use crate::entities::player_fsm;
+use crate::entities::player_fsm::{self, State};
 use godot::prelude::*;
+use godot::classes::{CharacterBody2D, Input};
 
 const STATE_NAME: &str = "Idle State";
 
+#[derive(Default)]
 pub struct IdleState;
+
 impl player_fsm::StateBehavior for IdleState {
-    fn on_enter(&mut self) {
+    fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>) {
         godot_print!("Enter {} ", STATE_NAME);
+        if let Some(mut anim) = player.get_node_or_null("AnimationPlayer") {
+            anim.call("play", &[Variant::from("idle")]);
+        }
     }
 
-    fn on_exit(&mut self) {
+    fn on_exit(&mut self, _player: &mut Gd<CharacterBody2D>) {
         godot_print!("Exit {} ", STATE_NAME);
-        // 1. Create the new state instance
-        let next_state = State::Run(run::RunState::default());
+    }
 
-        // 2. Call the transition method
-        // 'current_state' would be the variable holding your current State enum instance
-        current_state.transition_to(next_state);
+    fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) -> Option<State> {
+        let input = Input::singleton();
+
+        if input.is_action_pressed("left") || input.is_action_pressed("right") {
+            return Some(State::Run(player_fsm::run::RunState::default()));
+        }
+
+        let mut velocity = player.get_velocity();
+        let friction = 3000.0;
+        
+        // Manual move_toward for f32
+        let target = 0.0;
+        let amount = (friction * delta) as f32;
+        if (target - velocity.x).abs() <= amount {
+            velocity.x = target;
+        } else {
+            velocity.x += (target - velocity.x).signum() * amount;
+        }
+        
+        player.set_velocity(velocity);
+        player.move_and_slide();
+
+        None
     }
 }

@@ -1,25 +1,30 @@
+use godot::prelude::*;
+use godot::classes::CharacterBody2D;
 use enum_dispatch::enum_dispatch;
 
-mod idle;
-mod player_fsm_node;
-mod run;
+pub mod idle;
+pub mod player_fsm_node;
+pub mod run;
 
 #[enum_dispatch]
 pub trait StateBehavior {
-    fn on_enter(&mut self) {}
-    fn on_exit(&mut self) {}
+    fn on_enter(&mut self, _player: &mut Gd<CharacterBody2D>) {}
+    fn on_exit(&mut self, _player: &mut Gd<CharacterBody2D>) {}
+    fn physics_update(&mut self, _player: &mut Gd<CharacterBody2D>, _delta: f64) -> Option<State> {
+        None
+    }
 }
 
 #[enum_dispatch(StateBehavior)]
 pub enum State {
     Idle(idle::IdleState),
-    run(run::RunState),
+    Run(run::RunState),
 }
 
 impl State {
-    fn transition_to(&mut self, mut new_state: State) {
-        self.on_exit();
-        new_state.on_enter();
+    pub fn transition_to(&mut self, player: &mut Gd<CharacterBody2D>, mut new_state: State) {
+        self.on_exit(player);
+        new_state.on_enter(player);
         *self = new_state;
     }
 }
