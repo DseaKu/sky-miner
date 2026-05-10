@@ -10,7 +10,8 @@ pub mod run;
 pub trait StateBehavior {
     fn on_enter(&mut self, _player: &mut Gd<CharacterBody2D>) {}
     fn on_exit(&mut self, _player: &mut Gd<CharacterBody2D>) {}
-    fn physics_update(&mut self, _player: &mut Gd<CharacterBody2D>, _delta: f64) -> Option<State> {
+    fn physics_update(&mut self, _player: &mut Gd<CharacterBody2D>, _delta: f64) {}
+    fn handle_transitions(&mut self, _player: &mut Gd<CharacterBody2D>, _delta: f64) -> Option<State> {
         None
     }
 }

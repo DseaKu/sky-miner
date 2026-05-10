@@ -41,7 +41,7 @@ var is_flying := INIT_IS_FLYING
 
 @onready var animation_player = $AnimationPlayer
 @onready var sprite = $Sprite2D
-@onready var state_machine = $StateMachine
+#@onready var state_machine = $StateMachine
 @onready var equipment = $Equipment
 @onready var terrain = get_tree().get_first_node_in_group("terrain")
 

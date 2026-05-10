@@ -27,7 +27,8 @@ impl INode for PlayerFsmNode {
     fn physics_process(&mut self, delta: f64) {
         let parent = self.base().get_parent();
         if let Some(mut player) = parent.and_then(|p| p.try_cast::<CharacterBody2D>().ok()) {
-            if let Some(next_state) = self.fsm.physics_update(&mut player, delta) {
+            self.fsm.physics_update(&mut player, delta);
+            if let Some(next_state) = self.fsm.handle_transitions(&mut player, delta) {
                 self.fsm.transition_to(&mut player, next_state);
             }
         }
