@@ -6,6 +6,15 @@ pub mod idle;
 pub mod player_fsm_node;
 pub mod run;
 
+macro_rules! play_animation {
+    ($player:expr, $anim:expr) => {
+        if let Some(mut anim_node) = $player.get_node_or_null("AnimationPlayer") {
+            anim_node.call("play", &[Variant::from($anim)]);
+        }
+    };
+}
+pub(crate) use play_animation;
+
 #[enum_dispatch]
 pub trait StateBehavior {
     fn on_enter(&mut self, _player: &mut Gd<CharacterBody2D>) {}

@@ -10,9 +10,7 @@ pub struct IdleState;
 impl player_fsm::StateBehavior for IdleState {
     fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>) {
         godot_print!("Enter {} ", STATE_NAME);
-        if let Some(mut anim) = player.get_node_or_null("AnimationPlayer") {
-            anim.call("play", &[Variant::from("idle")]);
-        }
+        player_fsm::play_animation!(player, "idle");
     }
 
     fn on_exit(&mut self, _player: &mut Gd<CharacterBody2D>) {
