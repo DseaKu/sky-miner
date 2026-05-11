@@ -2,7 +2,7 @@ use crate::core::utils::FloatExt;
 use crate::entities::player_fsm::{self, State};
 use godot::classes::{CharacterBody2D, Input};
 use godot::prelude::*;
-
+const STATE_NAME: &str = "IDLE";
 #[derive(Default)]
 pub struct IdleState;
 
@@ -35,5 +35,9 @@ impl player_fsm::StateBehavior for IdleState {
         }
 
         None
+    }
+
+    fn get_name(&self) -> Option<String> {
+        Some(STATE_NAME.to_string())
     }
 }

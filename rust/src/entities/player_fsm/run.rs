@@ -39,4 +39,8 @@ impl player_fsm::StateBehavior for RunState {
         }
         None
     }
+
+    fn get_name(&self) -> Option<String> {
+        Some("Run".to_string())
+    }
 }

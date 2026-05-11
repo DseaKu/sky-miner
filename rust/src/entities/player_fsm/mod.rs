@@ -20,6 +20,9 @@ pub trait StateBehavior {
     ) -> Option<State> {
         None
     }
+    fn get_name(&self) -> Option<String> {
+        None
+    }
 }
 
 #[enum_dispatch(StateBehavior)]
