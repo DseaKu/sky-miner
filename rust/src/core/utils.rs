@@ -1,5 +1,6 @@
 pub trait FloatExt {
     fn move_toward(self, target: f32, delta: f32) -> f32;
+    fn lerp(self, to: f32, weight: f32) -> f32;
 }
 
 impl FloatExt for f32 {
@@ -9,5 +10,9 @@ impl FloatExt for f32 {
         } else {
             self + (target - self).signum() * delta
         }
+    }
+    fn lerp(self, to: f32, weight: f32) -> f32 {
+        let t = weight.clamp(0.0, 1.0);
+        self + (to - self) * t
     }
 }

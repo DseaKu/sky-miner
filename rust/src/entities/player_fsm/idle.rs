@@ -3,28 +3,22 @@ use crate::entities::player_fsm::{self, State};
 use godot::classes::{CharacterBody2D, Input};
 use godot::prelude::*;
 
-const STATE_NAME: &str = "Idle State";
-
 #[derive(Default)]
 pub struct IdleState;
 
 impl player_fsm::StateBehavior for IdleState {
     fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>) {
-        godot_print!("Enter {} ", STATE_NAME);
-        player_fsm::play_animation!(player, "idle");
-    }
-
-    fn on_exit(&mut self, _player: &mut Gd<CharacterBody2D>) {
-        godot_print!("Exit {} ", STATE_NAME);
+        player_fsm::macros::play_animation!(player, "idle");
     }
 
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
         let mut velocity = player.get_velocity();
+        velocity.x = FloatExt::move_toward(
+            velocity.x,
+            0.0,
+            player_fsm::constants::FRICTION * delta as f32,
+        );
 
-        let target = 0.0;
-        let friction_step = (player_fsm::constants::FRICTION * delta) as f32;
-
-        velocity.x = velocity.x.move_toward(target, friction_step);
         player.set_velocity(velocity);
         player.move_and_slide();
     }
