@@ -155,9 +155,9 @@ func update_player_data() -> void:
 		chunk_pos_label.text = INDENT_LABEL + "Chunk: --"
 
 	# Update State
-	var state_machine = _player.get_node("StateMachine")
-	if state_machine and "current_state" in state_machine and state_machine.current_state:
-		state_label.text = INDENT_LABEL + "State: " + state_machine.current_state.name
+	var state_machine = _player.get_node_or_null("PlayerFsmNode")
+	if state_machine and state_machine.has_method("get_state_name"):
+		state_label.text = INDENT_LABEL + "State: " + state_machine.get_state_name()
 	else:
 		state_label.text = INDENT_LABEL + "State: --"
 

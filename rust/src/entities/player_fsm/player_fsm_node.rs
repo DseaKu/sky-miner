@@ -10,6 +10,14 @@ pub struct PlayerFsmNode {
 }
 
 #[godot_api]
+impl PlayerFsmNode {
+    #[func]
+    pub fn get_state_name(&self) -> String {
+        self.fsm.get_name().unwrap_or_else(|| "Unknown".to_string())
+    }
+}
+
+#[godot_api]
 impl INode for PlayerFsmNode {
     fn init(base: Base<Node>) -> Self {
         let fsm = player_fsm::State::Idle(player_fsm::idle::IdleState);

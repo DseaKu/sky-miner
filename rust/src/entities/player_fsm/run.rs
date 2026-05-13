@@ -2,11 +2,16 @@ use crate::core::utils::FloatExt;
 use crate::entities::player_fsm::{self, State};
 use godot::classes::{CharacterBody2D, Input};
 use godot::prelude::*;
+const STATE_NAME: &str = "Run";
 
 #[derive(Default)]
 pub struct RunState;
 
 impl player_fsm::StateBehavior for RunState {
+    fn get_name(&self) -> Option<String> {
+        Some(STATE_NAME.to_string())
+    }
+
     fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>) {
         player_fsm::macros::play_animation!(player, "run");
     }
@@ -38,9 +43,5 @@ impl player_fsm::StateBehavior for RunState {
             return Some(State::Idle(player_fsm::idle::IdleState));
         }
         None
-    }
-
-    fn get_name(&self) -> Option<String> {
-        Some("Run".to_string())
     }
 }
