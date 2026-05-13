@@ -24,6 +24,7 @@ impl player_fsm::StateBehavior for RunState {
 
         let mut velocity = player.get_velocity();
 
+        // Boost acceleration when changing directions to overcome existing momentum quickly and make turning feel more responsive.
         let mut accel = player_fsm::constants::ACCEL;
         if direction.signum() != velocity.x.signum() && velocity.x != 0.0_f32 {
             accel = player_fsm::constants::ACCEL_TURN;
