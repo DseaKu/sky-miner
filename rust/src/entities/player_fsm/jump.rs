@@ -2,18 +2,18 @@ use crate::core::utils::FloatExt;
 use crate::entities::player_fsm::{self, State};
 use godot::classes::{CharacterBody2D, Input};
 use godot::prelude::*;
-const STATE_NAME: &str = "RUN";
+const STATE_NAME: &str = "JUMP";
 
 #[derive(Default)]
-pub struct RunState;
+pub struct JumpState;
 
-impl player_fsm::StateBehavior for RunState {
+impl player_fsm::StateBehavior for JumpState {
     fn get_name(&self) -> Option<String> {
         Some(STATE_NAME.to_string())
     }
 
     fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>) {
-        player_fsm::macros::play_animation!(player, "run");
+        player_fsm::macros::play_animation!(player, "jump");
     }
 
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
@@ -49,11 +49,6 @@ impl player_fsm::StateBehavior for RunState {
         if direction == 0.0 {
             return Some(State::Idle(player_fsm::idle::IdleState));
         }
-
-        if input.is_action_just_pressed("jump") {
-            return Some(State::Jump(player_fsm::jump::JumpState));
-        }
-
         None
     }
 }

@@ -2,7 +2,7 @@ use crate::core::utils::FloatExt;
 use crate::entities::player_fsm::{self, State};
 use godot::classes::{CharacterBody2D, Input};
 use godot::prelude::*;
-const STATE_NAME: &str = "Idle";
+const STATE_NAME: &str = "IDLE";
 
 #[derive(Default)]
 pub struct IdleState;
@@ -34,6 +34,10 @@ impl player_fsm::StateBehavior for IdleState {
         _delta: f64,
     ) -> Option<State> {
         let input = Input::singleton();
+
+        if input.is_action_just_pressed("jump") {
+            return Some(State::Jump(player_fsm::jump::JumpState));
+        }
 
         // Stop switching back and forth between run states if the left and right buttons are pressed.
         if input.is_action_pressed("left") && input.is_action_pressed("right") {

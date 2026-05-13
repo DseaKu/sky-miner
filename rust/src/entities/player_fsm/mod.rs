@@ -4,6 +4,7 @@ use godot::prelude::*;
 
 pub mod constants;
 pub mod idle;
+pub mod jump;
 pub mod macros;
 pub mod player_fsm_node;
 pub mod run;
@@ -29,6 +30,7 @@ pub trait StateBehavior {
 pub enum State {
     Idle(idle::IdleState),
     Run(run::RunState),
+    Jump(jump::JumpState),
 }
 
 impl State {
