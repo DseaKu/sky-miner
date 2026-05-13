@@ -1,3 +1,4 @@
+use super::constants::jump;
 use crate::core::utils::FloatExt;
 use crate::entities::player_fsm::{self, State};
 use godot::classes::{CharacterBody2D, Input};
@@ -5,7 +6,9 @@ use godot::prelude::*;
 const STATE_NAME: &str = "JUMP";
 
 #[derive(Default)]
-pub struct JumpState;
+pub struct JumpState {
+    timer: f64,
+}
 
 impl player_fsm::StateBehavior for JumpState {
     fn get_name(&self) -> Option<String> {
@@ -19,22 +22,15 @@ impl player_fsm::StateBehavior for JumpState {
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
+        self.timer += delta;
 
         player_fsm::macros::flip_sprite!(player, direction);
 
         let mut velocity = player.get_velocity();
 
-        // Boost acceleration when changing directions to overcome existing momentum quickly and make turning feel more responsive.
-        let mut accel = player_fsm::constants::ACCEL;
-        if direction.signum() != velocity.x.signum() && velocity.x != 0.0_f32 {
-            accel = player_fsm::constants::ACCEL_TURN;
+        if self.timer < jump::MAX_DURATION {
+            velocity.y = FloatExt::lerp(velocity.y, jump::MAX_SPEED, jump::ACCEL * delta as f32);
         }
-
-        velocity.x = FloatExt::lerp(
-            velocity.x,
-            direction * player_fsm::constants::MAX_SPEED,
-            accel * delta as f32,
-        );
         player.set_velocity(velocity);
         player.move_and_slide();
     }
@@ -44,11 +40,11 @@ impl player_fsm::StateBehavior for JumpState {
         _player: &mut Gd<CharacterBody2D>,
         _delta: f64,
     ) -> Option<State> {
-        let input = Input::singleton();
-        let direction = input.get_axis("left", "right");
-        if direction == 0.0 {
-            return Some(State::Idle(player_fsm::idle::IdleState));
-        }
+        // let input = Input::singleton();
+        // let direction = input.get_axis("left", "right");
+        // if direction == 0.0 {
+        //     return Some(State::Idle(player_fsm::idle::IdleState));
+        // }
         None
     }
 }

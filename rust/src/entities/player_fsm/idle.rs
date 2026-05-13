@@ -1,3 +1,4 @@
+use super::constants::ground;
 use crate::core::utils::FloatExt;
 use crate::entities::player_fsm::{self, State};
 use godot::classes::{CharacterBody2D, Input, InputEvent};
@@ -18,11 +19,7 @@ impl player_fsm::StateBehavior for IdleState {
 
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
         let mut velocity = player.get_velocity();
-        velocity.x = FloatExt::move_toward(
-            velocity.x,
-            0.0,
-            player_fsm::constants::FRICTION * delta as f32,
-        );
+        velocity.x = FloatExt::move_toward(velocity.x, 0.0, ground::FRICTION * delta as f32);
 
         player.set_velocity(velocity);
         player.move_and_slide();
@@ -34,7 +31,7 @@ impl player_fsm::StateBehavior for IdleState {
         event: Gd<InputEvent>,
     ) -> Option<State> {
         if event.is_action_pressed("jump") {
-            return Some(State::Jump(player_fsm::jump::JumpState));
+            return Some(State::Jump(player_fsm::jump::JumpState::default()));
         }
         None
     }

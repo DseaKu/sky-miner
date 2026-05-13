@@ -1,3 +1,4 @@
+use super::constants::ground;
 use crate::core::utils::FloatExt;
 use crate::entities::player_fsm::{self, State};
 use godot::classes::{CharacterBody2D, Input, InputEvent};
@@ -25,14 +26,14 @@ impl player_fsm::StateBehavior for RunState {
         let mut velocity = player.get_velocity();
 
         // Boost acceleration when changing directions to overcome existing momentum quickly and make turning feel more responsive.
-        let mut accel = player_fsm::constants::ACCEL;
+        let mut accel = ground::ACCEL;
         if direction.signum() != velocity.x.signum() && velocity.x != 0.0_f32 {
-            accel = player_fsm::constants::ACCEL_TURN;
+            accel = ground::ACCEL_TURN;
         }
 
         velocity.x = FloatExt::lerp(
             velocity.x,
-            direction * player_fsm::constants::MAX_SPEED,
+            direction * ground::MAX_SPEED,
             accel * delta as f32,
         );
         player.set_velocity(velocity);
@@ -45,7 +46,7 @@ impl player_fsm::StateBehavior for RunState {
         event: Gd<InputEvent>,
     ) -> Option<State> {
         if event.is_action_pressed("jump") {
-            return Some(State::Jump(player_fsm::jump::JumpState));
+            return Some(State::Jump(player_fsm::jump::JumpState::default()));
         }
         None
     }
