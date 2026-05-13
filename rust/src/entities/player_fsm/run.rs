@@ -20,12 +20,19 @@ impl player_fsm::StateBehavior for RunState {
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
 
+        player_fsm::macros::flip_sprite!(player, direction);
+
         let mut velocity = player.get_velocity();
+
+        let mut accel = player_fsm::constants::ACCEL;
+        if direction.signum() != velocity.x.signum() && velocity.x != 0.0_f32 {
+            accel = player_fsm::constants::ACCEL_TURN;
+        }
 
         velocity.x = FloatExt::lerp(
             velocity.x,
             direction * player_fsm::constants::MAX_SPEED,
-            player_fsm::constants::ACCEL * delta as f32,
+            accel * delta as f32,
         );
         player.set_velocity(velocity);
         player.move_and_slide();
@@ -38,7 +45,6 @@ impl player_fsm::StateBehavior for RunState {
     ) -> Option<State> {
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
-
         if direction == 0.0 {
             return Some(State::Idle(player_fsm::idle::IdleState));
         }

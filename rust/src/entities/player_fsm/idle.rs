@@ -35,6 +35,11 @@ impl player_fsm::StateBehavior for IdleState {
     ) -> Option<State> {
         let input = Input::singleton();
 
+        // Stop switching back and forth between run states if the left and right buttons are pressed.
+        if input.is_action_pressed("left") && input.is_action_pressed("right") {
+            return None;
+        }
+
         if input.is_action_pressed("left") || input.is_action_pressed("right") {
             return Some(State::Run(player_fsm::run::RunState));
         }
