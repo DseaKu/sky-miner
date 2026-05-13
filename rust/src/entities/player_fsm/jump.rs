@@ -39,7 +39,7 @@ impl player_fsm::StateBehavior for JumpState {
         player.move_and_slide();
     }
 
-    fn handle_transitions(
+    fn get_poll_transition(
         &mut self,
         _player: &mut Gd<CharacterBody2D>,
         _delta: f64,

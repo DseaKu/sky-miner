@@ -1,6 +1,6 @@
 use crate::entities::player_fsm::{self, StateBehavior};
 use godot::prelude::*;
-use godot::classes::CharacterBody2D;
+use godot::classes::{CharacterBody2D, InputEvent};
 
 #[derive(GodotClass)]
 #[class(base=Node)]
@@ -32,11 +32,20 @@ impl INode for PlayerFsmNode {
         }
     }
 
+    fn input(&mut self, event: Gd<InputEvent>) {
+        let parent = self.base().get_parent();
+        if let Some(mut player) = parent.and_then(|p| p.try_cast::<CharacterBody2D>().ok()) {
+            if let Some(next_state) = self.fsm.get_input_transition(&mut player, event) {
+                self.fsm.transition_to(&mut player, next_state);
+            }
+        }
+    }
+
     fn physics_process(&mut self, delta: f64) {
         let parent = self.base().get_parent();
         if let Some(mut player) = parent.and_then(|p| p.try_cast::<CharacterBody2D>().ok()) {
             self.fsm.physics_update(&mut player, delta);
-            if let Some(next_state) = self.fsm.handle_transitions(&mut player, delta) {
+            if let Some(next_state) = self.fsm.get_poll_transition(&mut player, delta) {
                 self.fsm.transition_to(&mut player, next_state);
             }
         }

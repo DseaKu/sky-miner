@@ -1,5 +1,5 @@
 use enum_dispatch::enum_dispatch;
-use godot::classes::CharacterBody2D;
+use godot::classes::{CharacterBody2D, InputEvent};
 use godot::prelude::*;
 
 pub mod constants;
@@ -14,7 +14,14 @@ pub trait StateBehavior {
     fn on_enter(&mut self, _player: &mut Gd<CharacterBody2D>) {}
     fn on_exit(&mut self, _player: &mut Gd<CharacterBody2D>) {}
     fn physics_update(&mut self, _player: &mut Gd<CharacterBody2D>, _delta: f64) {}
-    fn handle_transitions(
+    fn get_input_transition(
+        &mut self,
+        _player: &mut Gd<CharacterBody2D>,
+        _event: Gd<InputEvent>,
+    ) -> Option<State> {
+        None
+    }
+    fn get_poll_transition(
         &mut self,
         _player: &mut Gd<CharacterBody2D>,
         _delta: f64,

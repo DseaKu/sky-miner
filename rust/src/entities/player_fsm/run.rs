@@ -1,6 +1,6 @@
 use crate::core::utils::FloatExt;
 use crate::entities::player_fsm::{self, State};
-use godot::classes::{CharacterBody2D, Input};
+use godot::classes::{CharacterBody2D, Input, InputEvent};
 use godot::prelude::*;
 const STATE_NAME: &str = "RUN";
 
@@ -39,7 +39,18 @@ impl player_fsm::StateBehavior for RunState {
         player.move_and_slide();
     }
 
-    fn handle_transitions(
+    fn get_input_transition(
+        &mut self,
+        _player: &mut Gd<CharacterBody2D>,
+        event: Gd<InputEvent>,
+    ) -> Option<State> {
+        if event.is_action_pressed("jump") {
+            return Some(State::Jump(player_fsm::jump::JumpState));
+        }
+        None
+    }
+
+    fn get_poll_transition(
         &mut self,
         _player: &mut Gd<CharacterBody2D>,
         _delta: f64,
@@ -48,10 +59,6 @@ impl player_fsm::StateBehavior for RunState {
         let direction = input.get_axis("left", "right");
         if direction == 0.0 {
             return Some(State::Idle(player_fsm::idle::IdleState));
-        }
-
-        if input.is_action_just_pressed("jump") {
-            return Some(State::Jump(player_fsm::jump::JumpState));
         }
 
         None
