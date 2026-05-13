@@ -1,6 +1,6 @@
 use super::constants::ground;
 use crate::core::utils::FloatExt;
-use crate::entities::player_fsm::{self, State};
+use crate::entities::player_fsm::{self, macros, State};
 use godot::classes::{CharacterBody2D, Input, InputEvent};
 use godot::prelude::*;
 const STATE_NAME: &str = "RUN";
@@ -14,14 +14,14 @@ impl player_fsm::StateBehavior for RunState {
     }
 
     fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>) {
-        player_fsm::macros::play_animation!(player, "run");
+        macros::play_animation!(player, "run");
     }
 
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
 
-        player_fsm::macros::flip_sprite!(player, direction);
+        macros::flip_sprite!(player, direction);
 
         let mut velocity = player.get_velocity();
 

@@ -17,6 +17,16 @@ macro_rules! flip_sprite {
         }
     };
 }
+macro_rules! apply_gravity {
+    ($velocity_y:expr, $delta:expr) => {
+        $velocity_y = $crate::core::utils::FloatExt::lerp(
+            $velocity_y,
+            $crate::entities::player_fsm::constants::in_air::MAX_SPEED,
+            $crate::entities::player_fsm::constants::in_air::ACCEL * $delta as f32,
+        )
+    };
+}
 
+pub(crate) use apply_gravity;
 pub(crate) use flip_sprite;
 pub(crate) use play_animation;
