@@ -27,13 +27,6 @@ macro_rules! apply_gravity {
     };
 }
 
-macro_rules! transition {
-    ($variant:ident, $state:expr) => {
-        return Some($crate::entities::player_fsm::State::$variant($state))
-    };
-}
-
 pub(crate) use apply_gravity;
 pub(crate) use flip_sprite;
 pub(crate) use play_animation;
-pub(crate) use transition;
