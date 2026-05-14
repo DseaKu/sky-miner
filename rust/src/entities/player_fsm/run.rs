@@ -21,9 +21,10 @@ impl player_fsm::StateBehavior for RunState {
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
 
-        macros::flip_sprite!(player, direction);
-
         let mut velocity = player.get_velocity();
+
+        macros::flip_sprite!(player, direction);
+        macros::apply_gravity!(velocity.y, delta);
 
         // Boost acceleration when changing directions to overcome existing momentum quickly and make turning feel more responsive.
         let mut accel = ground::ACCEL;

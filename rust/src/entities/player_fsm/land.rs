@@ -1,16 +1,12 @@
-use super::constants::jump;
-use crate::core::utils::FloatExt;
 use crate::entities::player_fsm::{self, macros, State};
 use godot::classes::{CharacterBody2D, Input};
 use godot::prelude::*;
-const STATE_NAME: &str = "JUMP";
+const STATE_NAME: &str = "LAND";
 
 #[derive(Default)]
-pub struct JumpState {
-    timer: f64,
-}
+pub struct LandState;
 
-impl player_fsm::StateBehavior for JumpState {
+impl player_fsm::StateBehavior for LandState {
     fn get_name(&self) -> Option<String> {
         Some(STATE_NAME.to_string())
     }
@@ -22,18 +18,12 @@ impl player_fsm::StateBehavior for JumpState {
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
-        self.timer += delta;
 
         macros::flip_sprite!(player, direction);
 
         let mut velocity = player.get_velocity();
 
-        if self.timer < jump::MAX_DURATION {
-            velocity.y = FloatExt::lerp(velocity.y, jump::MAX_SPEED, jump::ACCEL * delta as f32);
-        } else {
-            macros::apply_gravity!(velocity.y, delta);
-        }
-
+        macros::apply_gravity!(velocity.y, delta);
         player.set_velocity(velocity);
         player.move_and_slide();
     }
@@ -43,8 +33,8 @@ impl player_fsm::StateBehavior for JumpState {
         player: &mut Gd<CharacterBody2D>,
         _delta: f64,
     ) -> Option<State> {
-        if player.get_velocity().y >= 0.0 {
-            return Some(State::Land(player_fsm::land::LandState));
+        if player.is_on_floor() {
+            return Some(State::Idle(player_fsm::idle::IdleState));
         }
 
         None

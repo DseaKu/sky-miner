@@ -1,4 +1,5 @@
 use super::constants::ground;
+use super::macros;
 use crate::core::utils::FloatExt;
 use crate::entities::player_fsm::{self, State};
 use godot::classes::{CharacterBody2D, Input, InputEvent};
@@ -19,6 +20,7 @@ impl player_fsm::StateBehavior for IdleState {
 
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
         let mut velocity = player.get_velocity();
+        macros::apply_gravity!(velocity.y, delta);
         velocity.x = FloatExt::move_toward(velocity.x, 0.0, ground::FRICTION * delta as f32);
 
         player.set_velocity(velocity);
