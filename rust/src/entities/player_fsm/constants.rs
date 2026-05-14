@@ -22,4 +22,5 @@ pub mod jump {
     pub const MAX_SPEED: f32 = -500.0;
     pub const ACCEL: f32 = 10.0;
     pub const MAX_DURATION: f64 = 0.2;
+    pub const MAX_N_IN_AIR_JUMP: i32 = 1;
 }

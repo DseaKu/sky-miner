@@ -5,12 +5,31 @@ use godot::classes::{CharacterBody2D, Input};
 use godot::prelude::*;
 const STATE_NAME: &str = "JUMP";
 
-#[derive(Default)]
 pub struct JumpState {
     timer: f64,
     jump_released: bool,
+    in_air_jumps_left: i32,
 }
 
+impl JumpState {
+    fn transfer_jumps(jumps_left: i32) -> Self {
+        Self {
+            timer: 0.0,
+            jump_released: false,
+            in_air_jumps_left: jumps_left,
+        }
+    }
+}
+
+impl Default for JumpState {
+    fn default() -> Self {
+        Self {
+            timer: 0.0,
+            jump_released: false,
+            in_air_jumps_left: jump::MAX_N_IN_AIR_JUMP,
+        }
+    }
+}
 impl player_fsm::StateBehavior for JumpState {
     fn get_name(&self) -> Option<String> {
         Some(STATE_NAME.to_string())
@@ -18,13 +37,13 @@ impl player_fsm::StateBehavior for JumpState {
 
     fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>) {
         macros::play_animation!(player, "jump");
+        self.in_air_jumps_left -= 1;
     }
 
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
+        self.timer += delta;
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
-        self.timer += delta;
-        // macros::flip_sprite!(player, direction);
         let mut velocity = player.get_velocity();
 
         // Horizontal velocity
@@ -58,8 +77,14 @@ impl player_fsm::StateBehavior for JumpState {
         player: &mut Gd<CharacterBody2D>,
         _delta: f64,
     ) -> Option<State> {
+        let input = Input::singleton();
         if player.get_velocity().y >= 0.0 {
             return Some(State::Land(player_fsm::land::LandState));
+        }
+        if self.in_air_jumps_left >= 0 && input.is_action_just_pressed("jump") {
+            return Some(State::Land(player_fsm::jump::JumpState::transfer_jumps(
+                self.in_air_jumps_left,
+            )));
         }
 
         None
