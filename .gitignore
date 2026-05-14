@@ -19,3 +19,4 @@
 .idea/
 *.swp
 *.swo
+target/.rustc_info.json
