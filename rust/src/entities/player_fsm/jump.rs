@@ -8,6 +8,7 @@ const STATE_NAME: &str = "JUMP";
 #[derive(Default)]
 pub struct JumpState {
     timer: f64,
+    jump_released: bool,
 }
 
 impl player_fsm::StateBehavior for JumpState {
@@ -23,12 +24,14 @@ impl player_fsm::StateBehavior for JumpState {
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
         self.timer += delta;
-
         macros::flip_sprite!(player, direction);
-
         let mut velocity = player.get_velocity();
 
-        if self.timer < jump::MAX_DURATION {
+        if input.is_action_just_released("jump") {
+            self.jump_released = true;
+        }
+
+        if self.timer < jump::MAX_DURATION && !self.jump_released {
             velocity.y = FloatExt::lerp(velocity.y, jump::MAX_SPEED, jump::ACCEL * delta as f32);
         } else {
             macros::apply_gravity!(velocity.y, delta);
