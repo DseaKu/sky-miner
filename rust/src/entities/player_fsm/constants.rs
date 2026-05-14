@@ -8,12 +8,18 @@ pub mod ground {
 }
 // In Air
 pub mod in_air {
-    pub const ACCEL: f32 = 3.3;
-    pub const MAX_SPEED: f32 = 700.0;
+    use crate::entities::player_fsm::constants::ground;
+
+    pub const ACCEL_GRAVITY: f32 = 3.3;
+    pub const MAX_SPEED_GRAVITY: f32 = 700.0;
+
+    pub const ACCEL_X: f32 = ground::ACCEL;
+    pub const MAX_SPEED_X: f32 = ground::MAX_SPEED;
+    pub const FRICTION: f32 = 300.0;
 }
 // Jump
 pub mod jump {
-    pub const MAX_SPEED: f32 = -400.0;
+    pub const MAX_SPEED: f32 = -500.0;
     pub const ACCEL: f32 = 10.0;
     pub const MAX_DURATION: f64 = 0.2;
 }

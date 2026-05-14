@@ -1,4 +1,4 @@
-use super::constants::jump;
+use super::constants::{in_air, jump};
 use crate::core::utils::FloatExt;
 use crate::entities::player_fsm::{self, macros, State};
 use godot::classes::{CharacterBody2D, Input};
@@ -24,9 +24,21 @@ impl player_fsm::StateBehavior for JumpState {
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
         self.timer += delta;
-        macros::flip_sprite!(player, direction);
+        // macros::flip_sprite!(player, direction);
         let mut velocity = player.get_velocity();
 
+        // Horizontal velocity
+        if direction != 0.0 {
+            velocity.x = FloatExt::lerp(
+                velocity.x,
+                in_air::MAX_SPEED_X * direction,
+                in_air::ACCEL_X * delta as f32,
+            );
+        } else {
+            velocity.x = FloatExt::move_toward(velocity.x, 0.0, in_air::FRICTION * delta as f32)
+        }
+
+        // Vertical velocity
         if input.is_action_just_released("jump") {
             self.jump_released = true;
         }

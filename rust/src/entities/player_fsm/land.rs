@@ -1,3 +1,5 @@
+use super::constants::in_air;
+use crate::core::utils::FloatExt;
 use crate::entities::player_fsm::{self, macros, State};
 use godot::classes::{CharacterBody2D, Input};
 use godot::prelude::*;
@@ -24,6 +26,17 @@ impl player_fsm::StateBehavior for LandState {
         let mut velocity = player.get_velocity();
 
         macros::apply_gravity!(velocity.y, delta);
+
+        // Horizontal velocity
+        if direction != 0.0 {
+            velocity.x = FloatExt::lerp(
+                velocity.x,
+                in_air::MAX_SPEED_X * direction,
+                in_air::ACCEL_X * delta as f32,
+            );
+        } else {
+            velocity.x = FloatExt::move_toward(velocity.x, 0.0, in_air::FRICTION * delta as f32)
+        }
         player.set_velocity(velocity);
         player.move_and_slide();
     }
