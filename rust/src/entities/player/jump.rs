@@ -1,6 +1,7 @@
 use super::consts;
 use crate::core::utils::FloatExt;
 use crate::entities::player::{self, State};
+use godot::classes::text_server::Direction;
 use godot::classes::{Input, InputEvent};
 use godot::prelude::*;
 
@@ -8,6 +9,7 @@ use godot::prelude::*;
 pub struct JumpState {
     timer: f64,
     jump_released: bool,
+    is_in_air_jump: bool,
 }
 
 impl player::StateBehavior for JumpState {
@@ -16,11 +18,7 @@ impl player::StateBehavior for JumpState {
             ctx.play_animation("jump");
         } else {
             ctx.play_animation("air_slam");
-
-            // Immediately null downwards velocity to prevent self-canceling transition to FallState
-            let mut velocity = ctx.player.get_velocity();
-            velocity.y = 0.0;
-            ctx.player.set_velocity(velocity);
+            self.is_in_air_jump = true;
         }
     }
 
@@ -28,6 +26,8 @@ impl player::StateBehavior for JumpState {
         use consts::v_move::jump as jmp;
 
         self.timer += delta;
+
+        let mut velocity = ctx.player.get_velocity();
 
         // Horizontal velocity
         ctx.handle_h_move(delta, true);
@@ -39,9 +39,27 @@ impl player::StateBehavior for JumpState {
             self.jump_released = true;
         }
 
+        // Immediately null downwards velocity to prevent self-canceling transition to FallState
+        if self.is_in_air_jump {
+            velocity.y = 0.0;
+            self.is_in_air_jump = false;
+            let direction = ctx.get_input_axis();
+            if direction != 0.0 {
+                use consts::h_move::ground as gnd;
+                let mut accel = gnd::ACCEL_RUN;
+                if direction.signum() != velocity.x.signum() && velocity.x != 0.0_f32 {
+                    velocity.x = 0.0;
+                    accel = gnd::ACCEL_TURN;
+                }
+                velocity.x = crate::core::utils::FloatExt::lerp(
+                    velocity.x,
+                    direction * gnd::MAX_SPEED,
+                    accel * delta as f32,
+                );
+            }
+        }
         // Adding force to the upwards momentum
         if self.timer < jmp::MAX_DURATION && !self.jump_released {
-            let mut velocity = ctx.player.get_velocity();
             velocity.y = FloatExt::lerp(velocity.y, jmp::MAX_SPEED, jmp::ACCEL * delta as f32);
             ctx.player.set_velocity(velocity);
 
