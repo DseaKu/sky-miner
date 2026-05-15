@@ -57,7 +57,7 @@ layout_mode = 2
 [node name="IsFlyingLabel" type="Label" parent="MainPanel/PlayerPanel" unique_id=839011960]
 layout_mode = 2
 
-[node name="JumpsLeft" type="Label" parent="MainPanel/PlayerPanel" unique_id=2121352915]
+[node name="JumpsLeftLabel" type="Label" parent="MainPanel/PlayerPanel" unique_id=2121352915]
 layout_mode = 2
 
 [node name="GamePanel" type="VBoxContainer" parent="MainPanel" unique_id=2041708379]

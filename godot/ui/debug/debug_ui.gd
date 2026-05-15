@@ -181,4 +181,4 @@ func update_player_data() -> void:
 			INDENT_LABEL + "Jumps Left: " + str(player_fsm_node.get_jumps_left())
 		)
 	else:
-		jumps_left_label.text = INDENT_LABEL + "State: --"
+		jumps_left_label.text = INDENT_LABEL + "Jumps Left: --"
