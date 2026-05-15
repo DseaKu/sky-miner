@@ -5,19 +5,12 @@ use godot::classes::{CharacterBody2D, Input};
 use godot::prelude::*;
 const STATE_NAME: &str = "JUMP";
 
+#[derive(Default)]
 pub struct JumpState {
-    timer: f64,
+    jump_duration: f64,
     jump_released: bool,
 }
 
-impl Default for JumpState {
-    fn default() -> Self {
-        Self {
-            timer: 0.0,
-            jump_released: false,
-        }
-    }
-}
 impl player::StateBehavior for JumpState {
     fn get_name(&self) -> Option<String> {
         Some(STATE_NAME.to_string())
@@ -28,10 +21,11 @@ impl player::StateBehavior for JumpState {
     }
 
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
-        self.timer += delta;
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
         let mut velocity = player.get_velocity();
+
+        self.jump_duration += delta;
 
         // Horizontal velocity
         if direction != 0.0 {
@@ -49,7 +43,7 @@ impl player::StateBehavior for JumpState {
             self.jump_released = true;
         }
 
-        if self.timer < jump::MAX_DURATION && !self.jump_released {
+        if self.jump_duration < jump::MAX_DURATION && !self.jump_released {
             velocity.y = FloatExt::lerp(velocity.y, jump::MAX_SPEED, jump::ACCEL * delta as f32);
         } else {
             macros::apply_gravity!(velocity.y, delta);
@@ -65,7 +59,7 @@ impl player::StateBehavior for JumpState {
         _delta: f64,
     ) -> Option<State> {
         if player.get_velocity().y >= 0.0 {
-            return Some(State::Land(player::land::LandState::default()));
+            return Some(State::Fall(player::fall::FallState::default()));
         }
 
         None

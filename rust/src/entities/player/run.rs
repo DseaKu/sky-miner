@@ -20,7 +20,6 @@ impl player::StateBehavior for RunState {
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
-
         let mut velocity = player.get_velocity();
 
         macros::flip_sprite!(player, direction);
@@ -54,11 +53,16 @@ impl player::StateBehavior for RunState {
 
     fn get_poll_transition(
         &mut self,
-        _player: &mut Gd<CharacterBody2D>,
+        player: &mut Gd<CharacterBody2D>,
         _delta: f64,
     ) -> Option<State> {
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
+
+        if !player.is_on_floor() {
+            return Some(State::Fall(player::fall::FallState::default()));
+        }
+
         if direction == 0.0 {
             return Some(State::Idle(player::idle::IdleState));
         }

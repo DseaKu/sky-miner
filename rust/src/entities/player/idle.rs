@@ -20,7 +20,9 @@ impl player::StateBehavior for IdleState {
 
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
         let mut velocity = player.get_velocity();
+
         macros::apply_gravity!(velocity.y, delta);
+
         velocity.x = FloatExt::move_toward(velocity.x, 0.0, ground::FRICTION * delta as f32);
 
         player.set_velocity(velocity);
@@ -40,10 +42,14 @@ impl player::StateBehavior for IdleState {
 
     fn get_poll_transition(
         &mut self,
-        _player: &mut Gd<CharacterBody2D>,
+        player: &mut Gd<CharacterBody2D>,
         _delta: f64,
     ) -> Option<State> {
         let input = Input::singleton();
+
+        if !player.is_on_floor() {
+            return Some(State::Fall(player::fall::FallState::default()));
+        }
 
         // Stop switching back and forth between run states if the left and right buttons are pressed.
         if input.is_action_pressed("left") && input.is_action_pressed("right") {

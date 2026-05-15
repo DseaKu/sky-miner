@@ -3,9 +3,9 @@ use godot::classes::{CharacterBody2D, InputEvent};
 use godot::prelude::*;
 
 pub mod constants;
+pub mod fall;
 pub mod idle;
 pub mod jump;
-pub mod land;
 pub mod macros;
 pub mod player_fsm_node;
 pub mod run;
@@ -39,7 +39,7 @@ pub enum State {
     Idle(idle::IdleState),
     Run(run::RunState),
     Jump(jump::JumpState),
-    Land(land::LandState),
+    Fall(fall::FallState),
 }
 
 impl State {
