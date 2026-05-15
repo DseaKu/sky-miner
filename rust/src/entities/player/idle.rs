@@ -1,8 +1,5 @@
-use super::consts;
-use super::macros;
-use crate::core::utils::FloatExt;
 use crate::entities::player::{self, State};
-use godot::classes::{CharacterBody2D, Input, InputEvent};
+use godot::classes::{Input, InputEvent};
 use godot::prelude::*;
 const STATE_NAME: &str = "IDLE";
 
@@ -10,55 +7,34 @@ const STATE_NAME: &str = "IDLE";
 pub struct IdleState;
 
 impl player::StateBehavior for IdleState {
-    fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>, _data: &mut player::PlayerData) {
-        player::macros::play_animation!(player, STATE_NAME.to_lowercase());
+    fn on_enter(&mut self, ctx: &mut player::PlayerContext) {
+        ctx.play_animation(&STATE_NAME.to_lowercase());
     }
 
-    fn physics_update(
-        &mut self,
-        player: &mut Gd<CharacterBody2D>,
-        _data: &mut player::PlayerData,
-        delta: f64,
-    ) {
-        let mut velocity = player.get_velocity();
-
-        macros::apply_gravity!(velocity.y, delta);
-
-        velocity.x = FloatExt::move_toward(
-            velocity.x,
-            0.0,
-            consts::h_move::ground::FRICTION * delta as f32,
-        );
-
-        player.set_velocity(velocity);
-        player.move_and_slide();
+    fn physics_update(&mut self, ctx: &mut player::PlayerContext, delta: f64) {
+        ctx.apply_gravity(delta);
+        ctx.handle_h_move(delta, false);
+        ctx.move_and_slide();
     }
 
     fn get_input_transition(
         &mut self,
-        _player: &mut Gd<CharacterBody2D>,
-        data: &mut player::PlayerData,
+        ctx: &mut player::PlayerContext,
         event: Gd<InputEvent>,
     ) -> Option<State> {
-        if data.jumps_left > 0 && event.is_action_pressed("jump") {
+        if ctx.data.jumps_left > 0 && event.is_action_pressed("jump") {
             return Some(State::Jump(player::jump::JumpState::default()));
         }
         None
     }
 
-    fn get_poll_transition(
-        &mut self,
-        player: &mut Gd<CharacterBody2D>,
-        data: &mut player::PlayerData,
-        _delta: f64,
-    ) -> Option<State> {
-        let input = Input::singleton();
-
-        if !player.is_on_floor() {
-            data.jumps_left -= 1;
+    fn get_poll_transition(&mut self, ctx: &mut player::PlayerContext, _delta: f64) -> Option<State> {
+        if !ctx.player.is_on_floor() {
+            ctx.data.jumps_left -= 1;
             return Some(State::Fall(player::fall::FallState));
         }
 
+        let input = Input::singleton();
         // Stop switching back and forth between run states if the left and right buttons are pressed.
         if input.is_action_pressed("left") && input.is_action_pressed("right") {
             return None;
