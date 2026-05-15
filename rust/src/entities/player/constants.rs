@@ -10,7 +10,7 @@ pub mod ground {
 pub mod in_air {
     use crate::entities::player::constants::ground;
 
-    pub const ACCEL_GRAVITY: f32 = 0.3;
+    pub const ACCEL_GRAVITY: f32 = 3.3;
     pub const MAX_SPEED_GRAVITY: f32 = 700.0;
 
     pub const ACCEL_X: f32 = ground::ACCEL;

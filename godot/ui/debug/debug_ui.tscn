@@ -1,79 +1,82 @@
-[gd_scene load_steps=2 format=3 uid="uid://cvy1dgbtpqipp"]
+[gd_scene format=3 uid="uid://cvy1dgbtpqipp"]
 
 [ext_resource type="Script" uid="uid://b211ft71804m0" path="res://ui/debug/debug_ui.gd" id="1_nb4k0"]
 
-[node name="DebugUI" type="CanvasLayer"]
+[node name="DebugUI" type="CanvasLayer" unique_id=1149335838]
 script = ExtResource("1_nb4k0")
 
-[node name="MainPanel" type="VBoxContainer" parent="."]
+[node name="MainPanel" type="VBoxContainer" parent="." unique_id=746237281]
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="ErrorPanel" type="Label" parent="MainPanel"]
+[node name="ErrorPanel" type="Label" parent="MainPanel" unique_id=1894087947]
 layout_mode = 2
 
-[node name="SystemPanel" type="VBoxContainer" parent="MainPanel"]
+[node name="SystemPanel" type="VBoxContainer" parent="MainPanel" unique_id=253874180]
 layout_mode = 2
 
-[node name="SystemHeader" type="Label" parent="MainPanel/SystemPanel"]
+[node name="SystemHeader" type="Label" parent="MainPanel/SystemPanel" unique_id=1754065893]
 layout_mode = 2
 
-[node name="FPSLabel" type="Label" parent="MainPanel/SystemPanel"]
+[node name="FPSLabel" type="Label" parent="MainPanel/SystemPanel" unique_id=1519445268]
 layout_mode = 2
 
-[node name="MemoryLabel" type="Label" parent="MainPanel/SystemPanel"]
+[node name="MemoryLabel" type="Label" parent="MainPanel/SystemPanel" unique_id=1690147587]
 layout_mode = 2
 
-[node name="DrawCalls" type="Label" parent="MainPanel/SystemPanel"]
+[node name="DrawCalls" type="Label" parent="MainPanel/SystemPanel" unique_id=546351863]
 layout_mode = 2
 
-[node name="ProcessTime" type="Label" parent="MainPanel/SystemPanel"]
+[node name="ProcessTime" type="Label" parent="MainPanel/SystemPanel" unique_id=1965000234]
 layout_mode = 2
 
-[node name="PhysicsTime" type="Label" parent="MainPanel/SystemPanel"]
+[node name="PhysicsTime" type="Label" parent="MainPanel/SystemPanel" unique_id=845915525]
 layout_mode = 2
 
-[node name="PlayerPanel" type="VBoxContainer" parent="MainPanel"]
+[node name="PlayerPanel" type="VBoxContainer" parent="MainPanel" unique_id=1376059171]
 layout_mode = 2
 
-[node name="PlayerHeader" type="Label" parent="MainPanel/PlayerPanel"]
+[node name="PlayerHeader" type="Label" parent="MainPanel/PlayerPanel" unique_id=991723576]
 layout_mode = 2
 
-[node name="PosLabel" type="Label" parent="MainPanel/PlayerPanel"]
+[node name="PosLabel" type="Label" parent="MainPanel/PlayerPanel" unique_id=815933004]
 layout_mode = 2
 
-[node name="GridPosLabel" type="Label" parent="MainPanel/PlayerPanel"]
+[node name="GridPosLabel" type="Label" parent="MainPanel/PlayerPanel" unique_id=464802219]
 layout_mode = 2
 
-[node name="ChunkPosLabel" type="Label" parent="MainPanel/PlayerPanel"]
+[node name="ChunkPosLabel" type="Label" parent="MainPanel/PlayerPanel" unique_id=1406580342]
 layout_mode = 2
 
-[node name="StateLabel" type="Label" parent="MainPanel/PlayerPanel"]
+[node name="StateLabel" type="Label" parent="MainPanel/PlayerPanel" unique_id=807335509]
 layout_mode = 2
 
-[node name="VelocityLabel" type="Label" parent="MainPanel/PlayerPanel"]
+[node name="VelocityLabel" type="Label" parent="MainPanel/PlayerPanel" unique_id=690058852]
 layout_mode = 2
 
-[node name="IsFlyingLabel" type="Label" parent="MainPanel/PlayerPanel"]
+[node name="IsFlyingLabel" type="Label" parent="MainPanel/PlayerPanel" unique_id=839011960]
 layout_mode = 2
 
-[node name="GamePanel" type="VBoxContainer" parent="MainPanel"]
+[node name="JumpsLeft" type="Label" parent="MainPanel/PlayerPanel" unique_id=2121352915]
 layout_mode = 2
 
-[node name="GameHeader" type="Label" parent="MainPanel/GamePanel"]
+[node name="GamePanel" type="VBoxContainer" parent="MainPanel" unique_id=2041708379]
 layout_mode = 2
 
-[node name="IsleSpawnPenality" type="Label" parent="MainPanel/GamePanel"]
+[node name="GameHeader" type="Label" parent="MainPanel/GamePanel" unique_id=1642125320]
 layout_mode = 2
 
-[node name="OreTreshLabel" type="Label" parent="MainPanel/GamePanel"]
+[node name="IsleSpawnPenality" type="Label" parent="MainPanel/GamePanel" unique_id=325754759]
 layout_mode = 2
 
-[node name="GemTreshLabel" type="Label" parent="MainPanel/GamePanel"]
+[node name="OreTreshLabel" type="Label" parent="MainPanel/GamePanel" unique_id=398034540]
 layout_mode = 2
 
-[node name="ToolRightLabel" type="Label" parent="MainPanel/GamePanel"]
+[node name="GemTreshLabel" type="Label" parent="MainPanel/GamePanel" unique_id=612498939]
 layout_mode = 2
 
-[node name="ToolLeftLabel" type="Label" parent="MainPanel/GamePanel"]
+[node name="ToolRightLabel" type="Label" parent="MainPanel/GamePanel" unique_id=1732962796]
+layout_mode = 2
+
+[node name="ToolLeftLabel" type="Label" parent="MainPanel/GamePanel" unique_id=419168895]
 layout_mode = 2

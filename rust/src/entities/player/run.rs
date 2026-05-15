@@ -13,11 +13,17 @@ impl player::StateBehavior for RunState {
         Some(STATE_NAME.to_string())
     }
 
-    fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>) {
+    fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>, data: &mut player::PlayerData) {
         macros::play_animation!(player, "run");
+        data.jumps_left = player::constants::in_air::MAX_N_JUMP;
     }
 
-    fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
+    fn physics_update(
+        &mut self,
+        player: &mut Gd<CharacterBody2D>,
+        _data: &mut player::PlayerData,
+        delta: f64,
+    ) {
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
         let mut velocity = player.get_velocity();
@@ -43,6 +49,7 @@ impl player::StateBehavior for RunState {
     fn get_input_transition(
         &mut self,
         _player: &mut Gd<CharacterBody2D>,
+        _data: &mut player::PlayerData,
         event: Gd<InputEvent>,
     ) -> Option<State> {
         if event.is_action_pressed("jump") {
@@ -54,6 +61,7 @@ impl player::StateBehavior for RunState {
     fn get_poll_transition(
         &mut self,
         player: &mut Gd<CharacterBody2D>,
+        _data: &mut player::PlayerData,
         _delta: f64,
     ) -> Option<State> {
         let input = Input::singleton();
