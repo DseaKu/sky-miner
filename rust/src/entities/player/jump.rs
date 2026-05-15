@@ -1,7 +1,6 @@
 use super::consts;
 use crate::core::utils::FloatExt;
 use crate::entities::player::{self, State};
-use godot::classes::text_server::Direction;
 use godot::classes::{Input, InputEvent};
 use godot::prelude::*;
 
@@ -9,16 +8,31 @@ use godot::prelude::*;
 pub struct JumpState {
     timer: f64,
     jump_released: bool,
-    is_in_air_jump: bool,
+    is_midair: bool,
 }
 
 impl player::StateBehavior for JumpState {
     fn on_enter(&mut self, ctx: &mut player::PlayerContext) {
-        if ctx.player.is_on_floor() {
+        self.is_midair = !ctx.player.is_on_floor();
+
+        if !self.is_midair {
             ctx.play_animation("jump");
         } else {
+            use consts::v_move::jump as jmp;
             ctx.play_animation("air_slam");
-            self.is_in_air_jump = true;
+
+            // Air Jump: Reset vertical momentum to make the jump feel snappy.
+            let mut velocity = ctx.player.get_velocity();
+            velocity.y = 0.0;
+
+            // If the player is trying to move in the opposite direction,
+            // kill horizontal momentum for an "instant turn" feel.
+            let input_dir = ctx.get_input_axis();
+            if input_dir != 0.0 && input_dir.signum() != velocity.x.signum() {
+                velocity.x = jmp::IMMEDIATE_TURNING_SPEED * input_dir;
+            }
+
+            ctx.player.set_velocity(velocity);
         }
     }
 
@@ -27,37 +41,17 @@ impl player::StateBehavior for JumpState {
 
         self.timer += delta;
 
-        let mut velocity = ctx.player.get_velocity();
-
         // Horizontal velocity
         ctx.handle_h_move(delta, true);
 
         // Vertical velocity
+        let mut velocity = ctx.player.get_velocity();
         let input = Input::singleton();
 
         if !input.is_action_pressed("jump") && self.timer > jmp::MIN_DURATION {
             self.jump_released = true;
         }
 
-        // Immediately null downwards velocity to prevent self-canceling transition to FallState
-        if self.is_in_air_jump {
-            velocity.y = 0.0;
-            self.is_in_air_jump = false;
-            let direction = ctx.get_input_axis();
-            if direction != 0.0 {
-                use consts::h_move::ground as gnd;
-                let mut accel = gnd::ACCEL_RUN;
-                if direction.signum() != velocity.x.signum() && velocity.x != 0.0_f32 {
-                    velocity.x = 0.0;
-                    accel = gnd::ACCEL_TURN;
-                }
-                velocity.x = crate::core::utils::FloatExt::lerp(
-                    velocity.x,
-                    direction * gnd::MAX_SPEED,
-                    accel * delta as f32,
-                );
-            }
-        }
         // Adding force to the upwards momentum
         if self.timer < jmp::MAX_DURATION && !self.jump_released {
             velocity.y = FloatExt::lerp(velocity.y, jmp::MAX_SPEED, jmp::ACCEL * delta as f32);
@@ -69,17 +63,6 @@ impl player::StateBehavior for JumpState {
         }
 
         ctx.move_and_slide();
-    }
-
-    fn get_input_transition(
-        &mut self,
-        ctx: &mut player::PlayerContext,
-        event: Gd<InputEvent>,
-    ) -> Option<State> {
-        if ctx.data.jumps_left > 0 && event.is_action_pressed("jump") {
-            return Some(State::Jump(player::jump::JumpState::default()));
-        }
-        None
     }
 
     fn on_exit(&mut self, ctx: &mut player::PlayerContext) {
