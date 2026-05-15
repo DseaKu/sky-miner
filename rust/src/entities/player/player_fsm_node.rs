@@ -13,8 +13,14 @@ pub struct PlayerFsmNode {
 #[godot_api]
 impl PlayerFsmNode {
     #[func]
-    pub fn get_state_name(&self) -> String {
-        self.fsm.get_name().unwrap_or_else(|| "Unknown".to_string())
+    pub fn get_state_name(&self) -> StringName {
+        match &self.fsm {
+            player::State::Idle(_) => StringName::from("IDLE"),
+            player::State::Run(_) => StringName::from("RUN"),
+            player::State::Jump(_) => StringName::from("JUMP"),
+            player::State::Fall(_) => StringName::from("FALL"),
+            player::State::Land(_) => StringName::from("LAND"),
+        }
     }
 
     #[func]

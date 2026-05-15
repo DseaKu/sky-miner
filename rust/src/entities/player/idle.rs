@@ -10,13 +10,8 @@ const STATE_NAME: &str = "IDLE";
 pub struct IdleState;
 
 impl player::StateBehavior for IdleState {
-    fn get_name(&self) -> Option<String> {
-        Some(STATE_NAME.to_string())
-    }
-
-    fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>, data: &mut player::PlayerData) {
-        player::macros::play_animation!(player, "idle");
-        data.jumps_left = player::constants::in_air::MAX_N_JUMP;
+    fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>, _data: &mut player::PlayerData) {
+        player::macros::play_animation!(player, STATE_NAME.to_lowercase());
     }
 
     fn physics_update(
@@ -56,7 +51,7 @@ impl player::StateBehavior for IdleState {
         let input = Input::singleton();
 
         if !player.is_on_floor() {
-            return Some(State::Fall(player::fall::FallState::default()));
+            return Some(State::Fall(player::fall::FallState));
         }
 
         // Stop switching back and forth between run states if the left and right buttons are pressed.

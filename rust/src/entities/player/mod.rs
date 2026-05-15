@@ -6,6 +6,7 @@ pub mod constants;
 pub mod fall;
 pub mod idle;
 pub mod jump;
+pub mod land;
 pub mod macros;
 pub mod player_fsm_node;
 pub mod run;
@@ -37,9 +38,6 @@ pub trait StateBehavior {
     ) -> Option<State> {
         None
     }
-    fn get_name(&self) -> Option<String> {
-        None
-    }
 }
 
 pub struct PlayerData {
@@ -52,6 +50,7 @@ pub enum State {
     Run(run::RunState),
     Jump(jump::JumpState),
     Fall(fall::FallState),
+    Land(land::LandState),
 }
 
 impl State {

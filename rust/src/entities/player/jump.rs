@@ -7,18 +7,13 @@ const STATE_NAME: &str = "JUMP";
 
 #[derive(Default)]
 pub struct JumpState {
-    jump_duration: f64,
+    timer: f64,
     jump_released: bool,
 }
 
 impl player::StateBehavior for JumpState {
-    fn get_name(&self) -> Option<String> {
-        Some(STATE_NAME.to_string())
-    }
-
-    fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>, data: &mut player::PlayerData) {
-        macros::play_animation!(player, "jump");
-        data.jumps_left -= 1;
+    fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>, _data: &mut player::PlayerData) {
+        macros::play_animation!(player, STATE_NAME.to_lowercase());
     }
 
     fn physics_update(
@@ -31,7 +26,7 @@ impl player::StateBehavior for JumpState {
         let direction = input.get_axis("left", "right");
         let mut velocity = player.get_velocity();
 
-        self.jump_duration += delta;
+        self.timer += delta;
 
         // Horizontal velocity
         if direction != 0.0 {
@@ -49,7 +44,7 @@ impl player::StateBehavior for JumpState {
             self.jump_released = true;
         }
 
-        if self.jump_duration < jump::MAX_DURATION && !self.jump_released {
+        if self.timer < jump::DURATION && !self.jump_released {
             velocity.y = FloatExt::lerp(velocity.y, jump::MAX_SPEED, jump::ACCEL * delta as f32);
         } else {
             macros::apply_gravity!(velocity.y, delta);
@@ -78,7 +73,7 @@ impl player::StateBehavior for JumpState {
         _delta: f64,
     ) -> Option<State> {
         if player.get_velocity().y >= 0.0 {
-            return Some(State::Fall(player::fall::FallState::default()));
+            return Some(State::Fall(player::fall::FallState));
         }
 
         None

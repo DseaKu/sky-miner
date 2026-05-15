@@ -5,6 +5,7 @@ pub mod ground {
     pub const MAX_SPEED: f32 = 400.0;
     pub const ACCEL: f32 = 1.5;
     pub const ACCEL_TURN: f32 = 10.0;
+    pub const LAND_DURATION: f64 = 0.2;
 }
 // In Air
 pub mod in_air {
@@ -22,5 +23,5 @@ pub mod in_air {
 pub mod jump {
     pub const MAX_SPEED: f32 = -500.0;
     pub const ACCEL: f32 = 10.0;
-    pub const MAX_DURATION: f64 = 0.2;
+    pub const DURATION: f64 = 0.2;
 }
