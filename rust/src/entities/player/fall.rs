@@ -56,7 +56,7 @@ impl player::StateBehavior for FallState {
     ) -> Option<State> {
         let input = Input::singleton();
 
-        if self.jumps_left >= 0 && input.is_action_just_pressed("jump") {
+        if self.jumps_left >= 0 && input.is_action_pressed("jump") {
             return Some(State::Jump(player::jump::JumpState::default()));
         }
 
