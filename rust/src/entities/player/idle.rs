@@ -1,7 +1,7 @@
 use super::constants::ground;
 use super::macros;
 use crate::core::utils::FloatExt;
-use crate::entities::player_fsm::{self, State};
+use crate::entities::player::{self, State};
 use godot::classes::{CharacterBody2D, Input, InputEvent};
 use godot::prelude::*;
 const STATE_NAME: &str = "IDLE";
@@ -9,13 +9,13 @@ const STATE_NAME: &str = "IDLE";
 #[derive(Default)]
 pub struct IdleState;
 
-impl player_fsm::StateBehavior for IdleState {
+impl player::StateBehavior for IdleState {
     fn get_name(&self) -> Option<String> {
         Some(STATE_NAME.to_string())
     }
 
     fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>) {
-        player_fsm::macros::play_animation!(player, "idle");
+        player::macros::play_animation!(player, "idle");
     }
 
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
@@ -33,7 +33,7 @@ impl player_fsm::StateBehavior for IdleState {
         event: Gd<InputEvent>,
     ) -> Option<State> {
         if event.is_action_pressed("jump") {
-            return Some(State::Jump(player_fsm::jump::JumpState::default()));
+            return Some(State::Jump(player::jump::JumpState::default()));
         }
         None
     }
@@ -51,7 +51,7 @@ impl player_fsm::StateBehavior for IdleState {
         }
 
         if input.is_action_pressed("left") || input.is_action_pressed("right") {
-            return Some(State::Run(player_fsm::run::RunState));
+            return Some(State::Run(player::run::RunState));
         }
 
         None

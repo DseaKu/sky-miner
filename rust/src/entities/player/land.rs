@@ -1,6 +1,6 @@
 use super::constants::in_air;
 use crate::core::utils::FloatExt;
-use crate::entities::player_fsm::{self, macros, State};
+use crate::entities::player::{self, macros, State};
 use godot::classes::{CharacterBody2D, Input};
 use godot::prelude::*;
 const STATE_NAME: &str = "LAND";
@@ -8,7 +8,7 @@ const STATE_NAME: &str = "LAND";
 #[derive(Default)]
 pub struct LandState;
 
-impl player_fsm::StateBehavior for LandState {
+impl player::StateBehavior for LandState {
     fn get_name(&self) -> Option<String> {
         Some(STATE_NAME.to_string())
     }
@@ -47,7 +47,7 @@ impl player_fsm::StateBehavior for LandState {
         _delta: f64,
     ) -> Option<State> {
         if player.is_on_floor() {
-            return Some(State::Idle(player_fsm::idle::IdleState));
+            return Some(State::Idle(player::idle::IdleState));
         }
 
         None

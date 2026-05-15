@@ -1,11 +1,11 @@
-use crate::entities::player_fsm::{self, StateBehavior};
-use godot::prelude::*;
+use crate::entities::player::{self, StateBehavior};
 use godot::classes::{CharacterBody2D, InputEvent};
+use godot::prelude::*;
 
 #[derive(GodotClass)]
 #[class(base=Node)]
 pub struct PlayerFsmNode {
-    fsm: player_fsm::State,
+    fsm: player::State,
     base: Base<Node>,
 }
 
@@ -20,7 +20,7 @@ impl PlayerFsmNode {
 #[godot_api]
 impl INode for PlayerFsmNode {
     fn init(base: Base<Node>) -> Self {
-        let fsm = player_fsm::State::Idle(player_fsm::idle::IdleState);
+        let fsm = player::State::Idle(player::idle::IdleState);
 
         Self { fsm, base }
     }

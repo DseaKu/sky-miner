@@ -1,1 +1,1 @@
-mod player_fsm;
+mod player;

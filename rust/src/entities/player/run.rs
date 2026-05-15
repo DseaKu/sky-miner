@@ -1,6 +1,6 @@
 use super::constants::ground;
 use crate::core::utils::FloatExt;
-use crate::entities::player_fsm::{self, macros, State};
+use crate::entities::player::{self, macros, State};
 use godot::classes::{CharacterBody2D, Input, InputEvent};
 use godot::prelude::*;
 const STATE_NAME: &str = "RUN";
@@ -8,7 +8,7 @@ const STATE_NAME: &str = "RUN";
 #[derive(Default)]
 pub struct RunState;
 
-impl player_fsm::StateBehavior for RunState {
+impl player::StateBehavior for RunState {
     fn get_name(&self) -> Option<String> {
         Some(STATE_NAME.to_string())
     }
@@ -47,7 +47,7 @@ impl player_fsm::StateBehavior for RunState {
         event: Gd<InputEvent>,
     ) -> Option<State> {
         if event.is_action_pressed("jump") {
-            return Some(State::Jump(player_fsm::jump::JumpState::default()));
+            return Some(State::Jump(player::jump::JumpState::default()));
         }
         None
     }
@@ -60,7 +60,7 @@ impl player_fsm::StateBehavior for RunState {
         let input = Input::singleton();
         let direction = input.get_axis("left", "right");
         if direction == 0.0 {
-            return Some(State::Idle(player_fsm::idle::IdleState));
+            return Some(State::Idle(player::idle::IdleState));
         }
 
         None
