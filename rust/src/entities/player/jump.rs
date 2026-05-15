@@ -12,16 +12,16 @@ pub struct JumpState {
 
 impl player::StateBehavior for JumpState {
     fn on_enter(&mut self, ctx: &mut player::PlayerContext) {
-        if ctx.data.jumps_left == consts::v_move::jump::MAX_JUMPS {
+        if ctx.player.is_on_floor() {
             ctx.play_animation("jump");
         } else {
             ctx.play_animation("air_slam");
-        }
 
-        // Immediately apply upward impulse to prevent self-canceling transition to FallState
-        let mut velocity = ctx.player.get_velocity();
-        velocity.y = 0.0;
-        ctx.player.set_velocity(velocity);
+            // Immediately null downwards velocity to prevent self-canceling transition to FallState
+            let mut velocity = ctx.player.get_velocity();
+            velocity.y = 0.0;
+            ctx.player.set_velocity(velocity);
+        }
     }
 
     fn physics_update(&mut self, ctx: &mut player::PlayerContext, delta: f64) {
