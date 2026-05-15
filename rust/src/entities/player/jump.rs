@@ -65,7 +65,7 @@ impl player::StateBehavior for JumpState {
         _delta: f64,
     ) -> Option<State> {
         if player.get_velocity().y >= 0.0 {
-            return Some(State::Land(player::land::LandState));
+            return Some(State::Land(player::land::LandState::default()));
         }
 
         None

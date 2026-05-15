@@ -16,7 +16,7 @@ pub mod in_air {
     pub const ACCEL_X: f32 = ground::ACCEL;
     pub const MAX_SPEED_X: f32 = ground::MAX_SPEED;
     pub const FRICTION: f32 = 300.0;
-    // pub const MAX_N_JUMP: i32 = 1;
+    pub const MAX_N_JUMP: i32 = 1;
 }
 // Jump
 pub mod jump {

@@ -5,9 +5,17 @@ use godot::classes::{CharacterBody2D, Input};
 use godot::prelude::*;
 const STATE_NAME: &str = "LAND";
 
-#[derive(Default)]
-pub struct LandState;
+pub struct LandState {
+    jumps_left: i32,
+}
 
+impl Default for LandState {
+    fn default() -> Self {
+        Self {
+            jumps_left: in_air::MAX_N_JUMP,
+        }
+    }
+}
 impl player::StateBehavior for LandState {
     fn get_name(&self) -> Option<String> {
         Some(STATE_NAME.to_string())
@@ -15,6 +23,7 @@ impl player::StateBehavior for LandState {
 
     fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>) {
         macros::play_animation!(player, "jump");
+        self.jumps_left -= 1;
     }
 
     fn physics_update(&mut self, player: &mut Gd<CharacterBody2D>, delta: f64) {
