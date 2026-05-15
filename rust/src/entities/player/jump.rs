@@ -19,9 +19,8 @@ impl player::StateBehavior for JumpState {
         }
 
         // Immediately apply upward impulse to prevent self-canceling transition to FallState
-        // if the player is currently falling fast.
         let mut velocity = ctx.player.get_velocity();
-        velocity.y = consts::v_move::jump::MAX_SPEED;
+        velocity.y = 0.0;
         ctx.player.set_velocity(velocity);
     }
 
