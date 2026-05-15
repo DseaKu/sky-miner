@@ -34,7 +34,7 @@ impl INode for PlayerFsmNode {
     fn init(base: Base<Node>) -> Self {
         let fsm = player::State::Idle(player::idle::IdleState);
         let data = player::PlayerData {
-            jumps_left: player::constants::in_air::MAX_N_JUMP,
+            jumps_left: player::consts::v_move::jump::MAX_JUMPS,
         };
 
         Self { fsm, data, base }

@@ -1,4 +1,4 @@
-use super::constants::in_air;
+use super::consts;
 use crate::core::utils::FloatExt;
 use crate::entities::player::{self, macros, State};
 use godot::classes::{CharacterBody2D, Input, InputEvent};
@@ -11,9 +11,7 @@ pub struct FallState;
 impl player::StateBehavior for FallState {
     fn on_enter(&mut self, player: &mut Gd<CharacterBody2D>, data: &mut player::PlayerData) {
         macros::play_animation!(player, STATE_NAME.to_lowercase());
-        if data.jumps_left == in_air::MAX_N_JUMP {
-            data.jumps_left -= 1;
-        }
+        if data.jumps_left == consts::v_move::jump::MAX_JUMPS {}
     }
 
     fn physics_update(
@@ -29,15 +27,19 @@ impl player::StateBehavior for FallState {
         macros::flip_sprite!(player, direction);
         macros::apply_gravity!(velocity.y, delta);
 
-        // Horizontal velocity
+        // Horizontal Movement
         if direction != 0.0 {
             velocity.x = FloatExt::lerp(
                 velocity.x,
-                in_air::MAX_SPEED_X * direction,
-                in_air::ACCEL_X * delta as f32,
+                consts::h_move::air::MAX_SPEED * direction,
+                consts::h_move::air::ACCEL * delta as f32,
             );
         } else {
-            velocity.x = FloatExt::move_toward(velocity.x, 0.0, in_air::FRICTION * delta as f32)
+            velocity.x = FloatExt::move_toward(
+                velocity.x,
+                0.0,
+                consts::h_move::air::FRICTION * delta as f32,
+            )
         }
 
         player.set_velocity(velocity);
@@ -50,7 +52,7 @@ impl player::StateBehavior for FallState {
         data: &mut player::PlayerData,
         event: Gd<InputEvent>,
     ) -> Option<State> {
-        if data.jumps_left >= 0 && event.is_action_pressed("jump") {
+        if data.jumps_left > 0 && event.is_action_pressed("jump") {
             return Some(State::Jump(player::jump::JumpState::default()));
         }
         None

@@ -21,8 +21,8 @@ macro_rules! apply_gravity {
     ($velocity_y:expr, $delta:expr) => {
         $velocity_y = $crate::core::utils::FloatExt::lerp(
             $velocity_y,
-            $crate::entities::player::constants::in_air::MAX_SPEED_GRAVITY,
-            $crate::entities::player::constants::in_air::ACCEL_GRAVITY * $delta as f32,
+            $crate::entities::player::consts::v_move::gravity::MAX_SPEED,
+            $crate::entities::player::consts::v_move::gravity::ACCEL * $delta as f32,
         )
     };
 }

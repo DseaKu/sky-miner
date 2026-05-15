@@ -1,4 +1,4 @@
-use super::constants::{in_air, jump};
+use super::consts;
 use crate::core::utils::FloatExt;
 use crate::entities::player::{self, macros, State};
 use godot::classes::{CharacterBody2D, Input, InputEvent};
@@ -32,11 +32,15 @@ impl player::StateBehavior for JumpState {
         if direction != 0.0 {
             velocity.x = FloatExt::lerp(
                 velocity.x,
-                in_air::MAX_SPEED_X * direction,
-                in_air::ACCEL_X * delta as f32,
+                consts::h_move::air::MAX_SPEED * direction,
+                consts::h_move::air::ACCEL * delta as f32,
             );
         } else {
-            velocity.x = FloatExt::move_toward(velocity.x, 0.0, in_air::FRICTION * delta as f32)
+            velocity.x = FloatExt::move_toward(
+                velocity.x,
+                0.0,
+                consts::h_move::air::FRICTION * delta as f32,
+            )
         }
 
         // Vertical velocity
@@ -44,8 +48,12 @@ impl player::StateBehavior for JumpState {
             self.jump_released = true;
         }
 
-        if self.timer < jump::DURATION && !self.jump_released {
-            velocity.y = FloatExt::lerp(velocity.y, jump::MAX_SPEED, jump::ACCEL * delta as f32);
+        if self.timer < consts::v_move::jump::DURATION && !self.jump_released {
+            velocity.y = FloatExt::lerp(
+                velocity.y,
+                consts::v_move::jump::MAX_SPEED,
+                consts::v_move::jump::ACCEL * delta as f32,
+            );
         } else {
             macros::apply_gravity!(velocity.y, delta);
         }
@@ -64,6 +72,10 @@ impl player::StateBehavior for JumpState {
             return Some(State::Jump(player::jump::JumpState::default()));
         }
         None
+    }
+
+    fn on_exit(&mut self, _player: &mut Gd<CharacterBody2D>, data: &mut player::PlayerData) {
+        data.jumps_left -= 1;
     }
 
     fn get_poll_transition(

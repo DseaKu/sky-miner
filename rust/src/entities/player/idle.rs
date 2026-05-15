@@ -1,4 +1,4 @@
-use super::constants::ground;
+use super::consts;
 use super::macros;
 use crate::core::utils::FloatExt;
 use crate::entities::player::{self, State};
@@ -24,7 +24,11 @@ impl player::StateBehavior for IdleState {
 
         macros::apply_gravity!(velocity.y, delta);
 
-        velocity.x = FloatExt::move_toward(velocity.x, 0.0, ground::FRICTION * delta as f32);
+        velocity.x = FloatExt::move_toward(
+            velocity.x,
+            0.0,
+            consts::h_move::ground::FRICTION * delta as f32,
+        );
 
         player.set_velocity(velocity);
         player.move_and_slide();
@@ -33,10 +37,10 @@ impl player::StateBehavior for IdleState {
     fn get_input_transition(
         &mut self,
         _player: &mut Gd<CharacterBody2D>,
-        _data: &mut player::PlayerData,
+        data: &mut player::PlayerData,
         event: Gd<InputEvent>,
     ) -> Option<State> {
-        if event.is_action_pressed("jump") {
+        if data.jumps_left > 0 && event.is_action_pressed("jump") {
             return Some(State::Jump(player::jump::JumpState::default()));
         }
         None
@@ -45,12 +49,13 @@ impl player::StateBehavior for IdleState {
     fn get_poll_transition(
         &mut self,
         player: &mut Gd<CharacterBody2D>,
-        _data: &mut player::PlayerData,
+        data: &mut player::PlayerData,
         _delta: f64,
     ) -> Option<State> {
         let input = Input::singleton();
 
         if !player.is_on_floor() {
+            data.jumps_left -= 1;
             return Some(State::Fall(player::fall::FallState));
         }
 
