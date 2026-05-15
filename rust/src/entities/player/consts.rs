@@ -19,12 +19,12 @@ pub mod v_move {
         pub const MAX_SPEED: f32 = -500.0;
         pub const ACCEL: f32 = 10.0;
         pub const MAX_DURATION: f64 = 0.2;
-        pub const MIN_DURATION: f64 = 0.05;
+        pub const MIN_DURATION: f64 = 0.01;
 
         pub const MAX_JUMPS: i32 = 2;
     }
     pub mod gravity {
-        pub const ACCEL: f32 = 2.3;
+        pub const ACCEL: f32 = 2.7;
         pub const MAX_SPEED: f32 = 700.0;
     }
 }
