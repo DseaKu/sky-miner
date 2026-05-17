@@ -1,6 +1,4 @@
-use super::consts;
 use godot::prelude::*;
-use noise;
 use rand::{self, Rng};
 
 pub struct MapGenerator {

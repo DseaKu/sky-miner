@@ -32,12 +32,14 @@ impl PlayerFsmNode {
 #[godot_api]
 impl INode for PlayerFsmNode {
     fn init(base: Base<Node>) -> Self {
+        godot_print!("\n##############################");
+        godot_print!("#### Init Player FSM Node ####");
+        godot_print!("##############################");
         let fsm = player::State::Idle(player::idle::IdleState);
         let data = player::PlayerData {
             jumps_left: player::consts::v_move::jump::MAX_JUMPS,
         };
 
-        godot_print!("Initilaize Player Finite State Machine Node");
         Self { fsm, data, base }
     }
 
