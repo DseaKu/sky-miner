@@ -1,13 +1,19 @@
+use super::consts;
+use godot::prelude::*;
 use noise;
+use rand::{self, Rng};
 
 pub struct MapGenerator {
     perlin: noise::Perlin,
 }
 
-pub const NOISE_SEED: u32 = 1337;
 impl MapGenerator {
     pub fn new() -> Self {
-        let perlin = noise::Perlin::new(NOISE_SEED);
+        godot_print!("Initialize MapGenerator Module");
+        let mut rng = rand::thread_rng();
+        let rnd_num: u32 = rng.gen();
+        godot_print!("Seed: {}", rnd_num);
+        let perlin = noise::Perlin::new(rnd_num);
         Self { perlin }
     }
     pub fn initialize(&self) {}
