@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://b5npnmjesv2a1"]
+[gd_scene format=3 uid="uid://b5npnmjesv2a1"]
 
 [ext_resource type="Script" uid="uid://720yg4so05x5" path="res://entities/terrain/terrain.gd" id="1_b5q0i"]
 [ext_resource type="Texture2D" uid="uid://dwps6r7qfbgd8" path="res://entities/terrain/assets/tilemap32x32.png" id="1_kdop1"]
@@ -49,8 +49,10 @@ sources/0 = SubResource("TileSetAtlasSource_2ny8j")
 sources/1 = SubResource("TileSetAtlasSource_6uf52")
 sources/2 = SubResource("TileSetAtlasSource_iejk7")
 
-[node name="Terrain" type="Node2D"]
+[node name="Terrain" type="Node2D" unique_id=741256088]
 script = ExtResource("1_b5q0i")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="." groups=["terrain"]]
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=324914903 groups=["terrain"]]
 tile_set = SubResource("TileSet_2ny8j")
+
+[node name="MapGenNode" type="MapGenNode" parent="." unique_id=159903934]

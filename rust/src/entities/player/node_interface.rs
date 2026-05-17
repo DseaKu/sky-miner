@@ -37,6 +37,7 @@ impl INode for PlayerFsmNode {
             jumps_left: player::consts::v_move::jump::MAX_JUMPS,
         };
 
+        godot_print!("Initilaize Player Finite State Machine Node");
         Self { fsm, data, base }
     }
 
