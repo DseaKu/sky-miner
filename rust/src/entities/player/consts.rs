@@ -19,7 +19,7 @@ pub mod v_move {
         pub const MAX_SPEED: f32 = -550.0;
         pub const ACCEL: f32 = 10.0;
         pub const MAX_DURATION: f64 = 0.2;
-        pub const MIN_DURATION: f64 = 0.01;
+        pub const MIN_DURATION: f64 = 0.08;
         pub const MAX_JUMPS: i32 = 2;
         pub const IMMEDIATE_TURNING_SPEED: f32 = 100.0;
     }

@@ -1,7 +1,7 @@
 use super::consts;
 use crate::core::utils::FloatExt;
 use crate::entities::player::{self, State};
-use godot::classes::{Input, InputEvent};
+use godot::classes::Input;
 use godot::prelude::*;
 
 #[derive(Default)]
@@ -18,18 +18,16 @@ impl player::StateBehavior for JumpState {
         if !self.is_midair {
             ctx.play_animation("jump");
         } else {
-            use consts::v_move::jump as jmp;
             ctx.play_animation("air_slam");
 
-            // Air Jump: Reset vertical momentum to make the jump feel snappy.
+            // Kill Vertical velocity, to avoid instant transitioning to FallState
             let mut velocity = ctx.player.get_velocity();
             velocity.y = 0.0;
 
-            // If the player is trying to move in the opposite direction,
-            // kill horizontal momentum for an "instant turn" feel.
+            // Kill and add horizontal momentum for an instant turn
             let input_dir = ctx.get_input_axis();
             if input_dir != 0.0 && input_dir.signum() != velocity.x.signum() {
-                velocity.x = jmp::IMMEDIATE_TURNING_SPEED * input_dir;
+                velocity.x = consts::v_move::jump::IMMEDIATE_TURNING_SPEED * input_dir;
             }
 
             ctx.player.set_velocity(velocity);
