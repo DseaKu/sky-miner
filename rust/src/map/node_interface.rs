@@ -2,7 +2,7 @@ use super::generator;
 use godot::classes::TileMapLayer;
 use godot::prelude::*;
 
-const MAP_GEN_NODE_STR: &str = "- MapGenNode: ";
+const MAP_GEN_NODE_STR: &str = "[mine_world] MapGenNode: ";
 
 #[derive(GodotClass)]
 #[class(base=Node)]
@@ -16,7 +16,7 @@ pub struct MapGenNode {
 #[godot_api]
 impl INode for MapGenNode {
     fn init(base: Base<Node>) -> Self {
-        godot_print!("Init MapGenNode");
+        godot_print!("{}Initializing...", MAP_GEN_NODE_STR);
         Self {
             player_node: None,
             tile_map_node: None,
@@ -29,11 +29,11 @@ impl INode for MapGenNode {
         // Try to fetch Player Node
         let player_path = "../../Player";
         if let Some(player) = self.base().try_get_node_as::<Node2D>(player_path) {
-            godot_print!("{}fetching Player Node", MAP_GEN_NODE_STR);
+            godot_print!("{}Linked to Player node", MAP_GEN_NODE_STR);
             self.player_node = Some(player);
         } else {
             godot_warn!(
-                "{}Could not fetch Player node: {}",
+                "{}Could not fetch Player node at {}",
                 MAP_GEN_NODE_STR,
                 player_path
             );
@@ -42,11 +42,11 @@ impl INode for MapGenNode {
         // Try to fetch Tile Map Node
         let tile_map_path = "../TileMapLayer";
         if let Some(tile_map) = self.base().try_get_node_as::<TileMapLayer>(tile_map_path) {
-            godot_print!("{}fetching Tile Map Node", MAP_GEN_NODE_STR);
+            godot_print!("{}Linked to TileMapLayer node", MAP_GEN_NODE_STR);
             self.tile_map_node = Some(tile_map);
         } else {
             godot_warn!(
-                "{}Could not fetch TileMapLayer node: {}",
+                "{}Could not fetch TileMapLayer node at {}",
                 MAP_GEN_NODE_STR,
                 tile_map_path
             );
@@ -66,7 +66,7 @@ impl MapGenNode {
             }
         }
         godot_warn!(
-            "{}Cannot get player position. Player node is no longer avialable",
+            "{}Cannot get player position. Player node is no longer available",
             MAP_GEN_NODE_STR
         );
         None
