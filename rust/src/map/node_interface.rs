@@ -13,86 +13,15 @@ pub struct MapGenNode {
 }
 
 #[godot_api]
-impl INode for MapGenNode {
-    fn init(base: Base<Node>) -> Self {
-        crate::gd_print!("{}Initializing...", path::MAP_GEN_NODE_STR);
-        Self {
-            player_node: None,
-            tile_map_node: None,
-            map_gen: generator::MapGenerator::new(),
-            base,
-        }
-    }
-
-    fn ready(&mut self) {
-        // Try to fetch Player Node
-        if let Some(player) = self
-            .base()
-            .try_get_node_as::<Node2D>(path::PLAYER_NODE_PATH)
-        {
-            let mut player_to_connect = player.clone();
-            player_to_connect.connect(
-                "tree_exiting",
-                &self.base().callable("on_player_tree_exiting"),
-            );
-            self.player_node = Some(player);
-            crate::gd_print!("{}Linked to Player node", path::MAP_GEN_NODE_STR);
-        } else {
-            crate::gd_warn!(
-                "{}Could not fetch Player node at {}",
-                path::MAP_GEN_NODE_STR,
-                path::PLAYER_NODE_PATH
-            );
-        }
-
-        // Try to fetch Tile Map Node
-        if let Some(tile_map) = self
-            .base()
-            .try_get_node_as::<TileMapLayer>(path::TILE_MAP_LAYER_NODE_PATH)
-        {
-            let mut tile_map_to_connect = tile_map.clone();
-            tile_map_to_connect.connect(
-                "tree_exiting",
-                &self.base().callable("on_tile_map_layer_exiting"),
-            );
-            self.tile_map_node = Some(tile_map);
-            crate::gd_print!("{}Linked to TileMapLayer node", path::MAP_GEN_NODE_STR);
-        } else {
-            crate::gd_warn!(
-                "{}Could not fetch TileMapLayer node at {}",
-                path::MAP_GEN_NODE_STR,
-                path::TILE_MAP_LAYER_NODE_PATH
-            );
-        }
-    }
-
-    fn process(&mut self, delta: f64) {
-        if let Some(grid_pos) = self.get_player_grid_pos() {
-            self.map_gen.update(delta, grid_pos);
-        }
-    }
-}
-
-#[godot_api]
 impl MapGenNode {
     #[func]
     fn on_player_tree_exiting(&mut self) {
-        crate::gd_print!(
-            "{}Player node exiting tree. Stopping processing.",
-            path::MAP_GEN_NODE_STR
-        );
-        self.player_node = None;
-        self.base_mut().set_process(false);
+        crate::on_exit_stop_process!(self, player_node, "Player");
     }
 
     #[func]
     fn on_tile_map_layer_exiting(&mut self) {
-        crate::gd_print!(
-            "{}Tile Map Layer node exiting tree. Stopping processing.",
-            path::MAP_GEN_NODE_STR
-        );
-        self.tile_map_node = None;
-        self.base_mut().set_process(false);
+        crate::on_exit_stop_process!(self, tile_map_node, "Tile Map Layer");
     }
 
     fn get_player_pos(&self) -> Option<Vector2> {
@@ -112,5 +41,44 @@ impl MapGenNode {
             return Some(grid_pos);
         }
         None
+    }
+}
+
+#[godot_api]
+impl INode for MapGenNode {
+    fn init(base: Base<Node>) -> Self {
+        crate::map_print!("Initializing...");
+        Self {
+            player_node: None,
+            tile_map_node: None,
+            map_gen: generator::MapGenerator::new(),
+            base,
+        }
+    }
+
+    fn ready(&mut self) {
+        crate::link_node!(
+            self,
+            Node2D,
+            path::PLAYER_NODE_PATH,
+            player_node,
+            "Player",
+            "on_player_tree_exiting"
+        );
+
+        crate::link_node!(
+            self,
+            TileMapLayer,
+            path::TILE_MAP_LAYER_NODE_PATH,
+            tile_map_node,
+            "TileMapLayer",
+            "on_tile_map_layer_exiting"
+        );
+    }
+
+    fn process(&mut self, delta: f64) {
+        if let Some(grid_pos) = self.get_player_grid_pos() {
+            self.map_gen.update(delta, grid_pos);
+        }
     }
 }
