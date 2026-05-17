@@ -3,6 +3,8 @@ use godot::classes::TileMapLayer;
 use godot::prelude::*;
 
 const MAP_GEN_NODE_STR: &str = "[mine_world] MapGenNode: ";
+const PLAYER_NODE_PATH: &str = "../../Player";
+const TILE_MAP_LAYER_NODE_PATH: &str = "../TileMapLayer";
 
 #[derive(GodotClass)]
 #[class(base=Node)]
@@ -27,28 +29,39 @@ impl INode for MapGenNode {
 
     fn ready(&mut self) {
         // Try to fetch Player Node
-        let player_path = "../../Player";
-        if let Some(player) = self.base().try_get_node_as::<Node2D>(player_path) {
-            godot_print!("{}Linked to Player node", MAP_GEN_NODE_STR);
+        if let Some(player) = self.base().try_get_node_as::<Node2D>(PLAYER_NODE_PATH) {
+            let mut player_to_connect = player.clone();
+            player_to_connect.connect(
+                "tree_exiting",
+                &self.base().callable("on_player_tree_exiting"),
+            );
             self.player_node = Some(player);
+            godot_print!("{}Linked to Player node", MAP_GEN_NODE_STR);
         } else {
             godot_warn!(
                 "{}Could not fetch Player node at {}",
                 MAP_GEN_NODE_STR,
-                player_path
+                PLAYER_NODE_PATH
             );
         }
 
         // Try to fetch Tile Map Node
-        let tile_map_path = "../TileMapLayer";
-        if let Some(tile_map) = self.base().try_get_node_as::<TileMapLayer>(tile_map_path) {
-            godot_print!("{}Linked to TileMapLayer node", MAP_GEN_NODE_STR);
+        if let Some(tile_map) = self
+            .base()
+            .try_get_node_as::<TileMapLayer>(TILE_MAP_LAYER_NODE_PATH)
+        {
+            let mut tile_map_to_connect = tile_map.clone();
+            tile_map_to_connect.connect(
+                "tree_exiting",
+                &self.base().callable("on_tile_map_layer_exiting"),
+            );
             self.tile_map_node = Some(tile_map);
+            godot_print!("{}Linked to TileMapLayer node", MAP_GEN_NODE_STR);
         } else {
             godot_warn!(
                 "{}Could not fetch TileMapLayer node at {}",
                 MAP_GEN_NODE_STR,
-                tile_map_path
+                TILE_MAP_LAYER_NODE_PATH
             );
         }
     }
@@ -58,17 +71,31 @@ impl INode for MapGenNode {
     }
 }
 
+#[godot_api]
 impl MapGenNode {
-    pub fn get_player_pos(&self) -> Option<Vector2> {
-        if let Some(player) = &self.player_node {
-            if player.is_instance_valid() {
-                return Some(player.get_global_position());
-            }
-        }
-        godot_warn!(
-            "{}Cannot get player position. Player node is no longer available",
+    #[func]
+    fn on_player_tree_exiting(&mut self) {
+        godot_print!(
+            "{}Player node exiting tree. Stopping processing.",
             MAP_GEN_NODE_STR
         );
-        None
+        self.player_node = None;
+        self.base_mut().set_process(false);
+    }
+
+    #[func]
+    fn on_tile_map_layer_exiting(&mut self) {
+        godot_print!(
+            "{}Tile Map Layer node exiting tree. Stopping processing.",
+            MAP_GEN_NODE_STR
+        );
+        self.tile_map_node = None;
+        self.base_mut().set_process(false);
+    }
+
+    pub fn get_player_pos(&self) -> Option<Vector2> {
+        self.player_node
+            .as_ref()
+            .map(|player| player.get_global_position())
     }
 }

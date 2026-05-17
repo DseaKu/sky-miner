@@ -10,13 +10,18 @@ impl MapGenerator {
         // Setup Perlin
         let mut rng = rand::thread_rng();
         let rnd_num: u32 = rng.gen();
-        godot_print!("[mine_world] MapGenerator: Initialized with seed {}", rnd_num);
+        godot_print!(
+            "[mine_world] MapGenerator: Initialized with seed {}",
+            rnd_num
+        );
         let perlin = noise::Perlin::new(rnd_num);
 
         Self { perlin }
     }
     pub fn update(&self, _delta: f64) {
 
-        // Get local position
+        // Get player's grid position
+        // var local_pos = tile_map.to_local(player_node.global_position)
+        // var grid_pos = tile_map.local_to_map(local_pos)
     }
 }
