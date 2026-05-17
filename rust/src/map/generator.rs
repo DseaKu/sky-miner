@@ -18,5 +18,5 @@ impl MapGenerator {
 
         Self { perlin }
     }
-    pub fn update(&self, delta: f64, grid_pos: Vector2i) {}
+    pub fn update(&self, _delta: f64, _grid_pos: Vector2i) {}
 }
