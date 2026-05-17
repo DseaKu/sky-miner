@@ -18,10 +18,5 @@ impl MapGenerator {
 
         Self { perlin }
     }
-    pub fn update(&self, _delta: f64) {
-
-        // Get player's grid position
-        // var local_pos = tile_map.to_local(player_node.global_position)
-        // var grid_pos = tile_map.local_to_map(local_pos)
-    }
+    pub fn update(&self, delta: f64, grid_pos: Vector2i) {}
 }

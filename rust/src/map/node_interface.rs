@@ -1,10 +1,7 @@
+use super::consts::path::*;
 use super::generator;
 use godot::classes::TileMapLayer;
 use godot::prelude::*;
-
-const MAP_GEN_NODE_STR: &str = "[mine_world] MapGenNode: ";
-const PLAYER_NODE_PATH: &str = "../../Player";
-const TILE_MAP_LAYER_NODE_PATH: &str = "../TileMapLayer";
 
 #[derive(GodotClass)]
 #[class(base=Node)]
@@ -67,7 +64,9 @@ impl INode for MapGenNode {
     }
 
     fn process(&mut self, delta: f64) {
-        self.map_gen.update(delta);
+        if let Some(grid_pos) = self.get_player_grid_pos() {
+            self.map_gen.update(delta, grid_pos);
+        }
     }
 }
 
@@ -93,9 +92,24 @@ impl MapGenNode {
         self.base_mut().set_process(false);
     }
 
-    pub fn get_player_pos(&self) -> Option<Vector2> {
-        self.player_node
-            .as_ref()
-            .map(|player| player.get_global_position())
+    fn get_player_pos(&self) -> Option<Vector2> {
+        if let Some(player) = &self.player_node {
+            if player.is_instance_valid() {
+                return Some(player.get_global_position());
+            }
+        }
+        None
+    }
+
+    fn get_player_grid_pos(&self) -> Option<Vector2i> {
+        if let (Some(player), Some(tile_map)) = (&self.player_node, &self.tile_map_node) {
+            if player.is_instance_valid() && tile_map.is_instance_valid() {
+                let global_pos = player.get_global_position();
+                let local_pos = tile_map.to_local(global_pos);
+                let grid_pos = tile_map.local_to_map(local_pos);
+                return Some(grid_pos);
+            }
+        }
+        None
     }
 }
