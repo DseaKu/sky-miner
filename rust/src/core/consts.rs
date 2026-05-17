@@ -1,1 +1,1 @@
-pub const PROJECT_NAME: &str = "sky_runner";
+pub const PROJECT_NAME: &str = env!("CARGO_PKG_NAME");

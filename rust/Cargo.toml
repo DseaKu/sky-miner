@@ -1,5 +1,5 @@
 [package]
-name = "mine_world"
+name = "sky_runner"
 version = "0.1.0"   # You can leave version and edition as-is for now.
 edition = "2021"
 

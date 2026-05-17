@@ -152,16 +152,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8ca58f447f06ed17d5fc4043ce1b10dd205e060fb3ce5b979b8ed8e59ff3f79"
 
 [[package]]
-name = "mine_world"
-version = "0.1.0"
-dependencies = [
- "enum_dispatch",
- "godot",
- "noise",
- "rand",
-]
-
-[[package]]
 name = "nanoserde"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -296,6 +286,16 @@ name = "regex-syntax"
 version = "0.8.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc897dd8d9e8bd1ed8cdad82b5966c3e0ecae09fb1907d58efaa013543185d0a"
+
+[[package]]
+name = "sky_runner"
+version = "0.1.0"
+dependencies = [
+ "enum_dispatch",
+ "godot",
+ "noise",
+ "rand",
+]
 
 [[package]]
 name = "syn"
