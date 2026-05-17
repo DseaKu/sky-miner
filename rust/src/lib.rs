@@ -2,6 +2,7 @@ use godot::prelude::*;
 
 mod core;
 mod entities;
+mod map;
 
 struct MyExtension;
 
