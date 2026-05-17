@@ -15,7 +15,7 @@ pub struct MapGenNode {
 #[godot_api]
 impl INode for MapGenNode {
     fn init(base: Base<Node>) -> Self {
-        godot_print!("{}Initializing...", path::MAP_GEN_NODE_STR);
+        crate::gd_print!("{}Initializing...", path::MAP_GEN_NODE_STR);
         Self {
             player_node: None,
             tile_map_node: None,
@@ -36,9 +36,9 @@ impl INode for MapGenNode {
                 &self.base().callable("on_player_tree_exiting"),
             );
             self.player_node = Some(player);
-            godot_print!("{}Linked to Player node", path::MAP_GEN_NODE_STR);
+            crate::gd_print!("{}Linked to Player node", path::MAP_GEN_NODE_STR);
         } else {
-            godot_warn!(
+            crate::gd_warn!(
                 "{}Could not fetch Player node at {}",
                 path::MAP_GEN_NODE_STR,
                 path::PLAYER_NODE_PATH
@@ -56,9 +56,9 @@ impl INode for MapGenNode {
                 &self.base().callable("on_tile_map_layer_exiting"),
             );
             self.tile_map_node = Some(tile_map);
-            godot_print!("{}Linked to TileMapLayer node", path::MAP_GEN_NODE_STR);
+            crate::gd_print!("{}Linked to TileMapLayer node", path::MAP_GEN_NODE_STR);
         } else {
-            godot_warn!(
+            crate::gd_warn!(
                 "{}Could not fetch TileMapLayer node at {}",
                 path::MAP_GEN_NODE_STR,
                 path::TILE_MAP_LAYER_NODE_PATH
@@ -77,7 +77,7 @@ impl INode for MapGenNode {
 impl MapGenNode {
     #[func]
     fn on_player_tree_exiting(&mut self) {
-        godot_print!(
+        crate::gd_print!(
             "{}Player node exiting tree. Stopping processing.",
             path::MAP_GEN_NODE_STR
         );
@@ -87,7 +87,7 @@ impl MapGenNode {
 
     #[func]
     fn on_tile_map_layer_exiting(&mut self) {
-        godot_print!(
+        crate::gd_print!(
             "{}Tile Map Layer node exiting tree. Stopping processing.",
             path::MAP_GEN_NODE_STR
         );

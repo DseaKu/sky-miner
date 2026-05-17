@@ -10,7 +10,7 @@ impl MapGenerator {
         // Setup Perlin
         let mut rng = rand::thread_rng();
         let rnd_num: u32 = rng.gen();
-        godot_print!(" MapGenerator: Initialized with seed {}", rnd_num);
+        crate::gd_print!("MapGenerator: Initialized with seed {}", rnd_num);
         let perlin = noise::Perlin::new(rnd_num);
 
         Self { perlin }

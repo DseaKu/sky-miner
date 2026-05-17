@@ -32,7 +32,7 @@ impl PlayerFsmNode {
 #[godot_api]
 impl INode for PlayerFsmNode {
     fn init(base: Base<Node>) -> Self {
-        godot_print!(" PlayerFsmNode: Initializing...");
+        crate::gd_print!("PlayerFsmNode: Initializing...");
         let fsm = player::State::Idle(player::idle::IdleState);
         let data = player::PlayerData {
             jumps_left: player::consts::v_move::jump::MAX_JUMPS,
