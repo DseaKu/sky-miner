@@ -1,14 +1,14 @@
 #[macro_export]
 macro_rules! map_print {
     ($($arg:tt)*) => {
-        $crate::gd_print!("{}{}", $crate::map::consts::path::MAP_GEN_NODE_STR, format_args!($($arg)*));
+        $crate::gd_print!("{}{}", $crate::terrain::consts::path::MAP_GEN_NODE_STR, format_args!($($arg)*));
     }
 }
 
 #[macro_export]
 macro_rules! map_warn {
     ($($arg:tt)*) => {
-        $crate::gd_warn!("{}{}", $crate::map::consts::path::MAP_GEN_NODE_STR, format_args!($($arg)*));
+        $crate::gd_warn!("{}{}", $crate::terrain::consts::path::MAP_GEN_NODE_STR, format_args!($($arg)*));
     }
 }
 

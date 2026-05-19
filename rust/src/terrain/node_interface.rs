@@ -24,15 +24,6 @@ impl MapGenNode {
         crate::on_exit_stop_process!(self, tile_map_node, "Tile Map Layer");
     }
 
-    fn get_player_pos(&self) -> Option<Vector2> {
-        if let Some(player) = &self.player_node {
-            if player.is_instance_valid() {
-                return Some(player.get_global_position());
-            }
-        }
-        None
-    }
-
     fn get_player_grid_pos(&self) -> Option<Vector2i> {
         if let (Some(player), Some(tile_map)) = (&self.player_node, &self.tile_map_node) {
             let global_pos = player.get_global_position();

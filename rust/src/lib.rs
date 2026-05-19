@@ -1,8 +1,11 @@
+// #![deny(warnings)]
+#![deny(clippy::redundant_clone)]
+#![deny(clippy::unwrap_used)]
 use godot::prelude::*;
 
 mod core;
 mod entities;
-mod map;
+mod terrain;
 
 struct MyExtension;
 
