@@ -27,6 +27,38 @@ impl PlayerFsmNode {
     pub fn get_jumps_left(&self) -> i32 {
         self.data.jumps_left
     }
+
+    #[func]
+    pub fn save_config(&self) {
+        self.data.config.save();
+    }
+
+    #[func]
+    pub fn print_config_info(&self) {
+        use godot::classes::ProjectSettings;
+        let user_path = ProjectSettings::singleton().globalize_path("user://");
+
+        crate::gd_print!("--- Player Configuration Info ---");
+        crate::gd_print!("Config Path: {}player_config.json", user_path);
+        crate::gd_print!("Current Settings:");
+        crate::gd_print!(
+            "  - Ground Speed: {}",
+            self.data.config.h_move.ground.max_speed
+        );
+        crate::gd_print!(
+            "  - Air Speed:    {}",
+            self.data.config.h_move.air.max_speed
+        );
+        crate::gd_print!(
+            "  - Jump Force:   {}",
+            self.data.config.h_move.air.max_speed
+        );
+        crate::gd_print!(
+            "  - Jumps Max:    {}",
+            self.data.config.v_move.jump.max_jumps
+        );
+        crate::gd_print!("---------------------------------");
+    }
 }
 
 #[godot_api]
@@ -34,8 +66,10 @@ impl INode for PlayerFsmNode {
     fn init(base: Base<Node>) -> Self {
         crate::gd_print!("PlayerFsmNode: Initializing...");
         let fsm = player::State::Idle(player::idle::IdleState);
+        let config = player::config::PlayerConfig::load();
         let data = player::PlayerData {
-            jumps_left: player::consts::v_move::jump::MAX_JUMPS,
+            jumps_left: config.v_move.jump.max_jumps,
+            config,
         };
 
         Self { fsm, data, base }

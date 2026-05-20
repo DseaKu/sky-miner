@@ -2,6 +2,7 @@ use enum_dispatch::enum_dispatch;
 use godot::classes::{CharacterBody2D, InputEvent};
 use godot::prelude::*;
 
+pub mod config;
 pub mod consts;
 pub mod fall;
 pub mod idle;
@@ -29,6 +30,7 @@ pub trait StateBehavior {
 
 pub struct PlayerData {
     pub jumps_left: i32,
+    pub config: config::PlayerConfig,
 }
 
 pub struct PlayerContext<'a> {
@@ -49,10 +51,11 @@ impl<'a> PlayerContext<'a> {
 
     pub fn apply_gravity(&mut self, delta: f64) {
         let mut velocity = self.player.get_velocity();
+        let grav = &self.data.config.v_move.gravity;
         velocity.y = crate::core::utils::FloatExt::lerp(
             velocity.y,
-            consts::v_move::gravity::MAX_SPEED,
-            consts::v_move::gravity::ACCEL * delta as f32,
+            grav.max_speed,
+            grav.accel * delta as f32,
         );
         self.player.set_velocity(velocity);
     }
@@ -74,37 +77,37 @@ impl<'a> PlayerContext<'a> {
         }
 
         if is_air {
-            use consts::h_move::air;
+            let air = &self.data.config.h_move.air;
             if direction != 0.0 {
                 velocity.x = crate::core::utils::FloatExt::lerp(
                     velocity.x,
-                    air::MAX_SPEED * direction,
-                    air::ACCEL * delta as f32,
+                    air.max_speed * direction,
+                    air.accel * delta as f32,
                 );
             } else {
                 velocity.x = crate::core::utils::FloatExt::move_toward(
                     velocity.x,
                     0.0,
-                    air::FRICTION * delta as f32,
+                    air.friction * delta as f32,
                 );
             }
         } else {
-            use consts::h_move::ground as gnd;
+            let gnd = &self.data.config.h_move.ground;
             if direction != 0.0 {
-                let mut accel = gnd::ACCEL_RUN;
+                let mut accel = gnd.accel_run;
                 if direction.signum() != velocity.x.signum() && velocity.x != 0.0_f32 {
-                    accel = gnd::ACCEL_TURN;
+                    accel = gnd.accel_turn;
                 }
                 velocity.x = crate::core::utils::FloatExt::lerp(
                     velocity.x,
-                    direction * gnd::MAX_SPEED,
+                    direction * gnd.max_speed,
                     accel * delta as f32,
                 );
             } else {
                 velocity.x = crate::core::utils::FloatExt::move_toward(
                     velocity.x,
                     0.0,
-                    gnd::FRICTION * delta as f32,
+                    gnd.friction * delta as f32,
                 );
             }
         }

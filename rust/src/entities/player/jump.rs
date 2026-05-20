@@ -1,4 +1,3 @@
-use super::consts;
 use crate::core::utils::FloatExt;
 use crate::entities::player::{self, State};
 use godot::classes::Input;
@@ -27,7 +26,7 @@ impl player::StateBehavior for JumpState {
             // Kill and add horizontal momentum for an instant turn
             let input_dir = ctx.get_input_axis();
             if input_dir != 0.0 && input_dir.signum() != velocity.x.signum() {
-                velocity.x = consts::v_move::jump::IMMEDIATE_TURNING_SPEED * input_dir;
+                velocity.x = ctx.data.config.v_move.jump.immediate_turning_speed * input_dir;
             }
 
             ctx.player.set_velocity(velocity);
@@ -35,7 +34,10 @@ impl player::StateBehavior for JumpState {
     }
 
     fn physics_update(&mut self, ctx: &mut player::PlayerContext, delta: f64) {
-        use consts::v_move::jump as jmp;
+        let (min_duration, max_duration, max_speed, accel) = {
+            let jmp = &ctx.data.config.v_move.jump;
+            (jmp.min_duration, jmp.max_duration, jmp.max_speed, jmp.accel)
+        };
 
         self.timer += delta;
 
@@ -46,13 +48,13 @@ impl player::StateBehavior for JumpState {
         let mut velocity = ctx.player.get_velocity();
         let input = Input::singleton();
 
-        if !input.is_action_pressed("jump") && self.timer > jmp::MIN_DURATION {
+        if !input.is_action_pressed("jump") && self.timer > min_duration {
             self.jump_released = true;
         }
 
         // Adding force to the upwards momentum
-        if self.timer < jmp::MAX_DURATION && !self.jump_released {
-            velocity.y = FloatExt::lerp(velocity.y, jmp::MAX_SPEED, jmp::ACCEL * delta as f32);
+        if self.timer < max_duration && !self.jump_released {
+            velocity.y = FloatExt::lerp(velocity.y, max_speed, accel * delta as f32);
             ctx.player.set_velocity(velocity);
 
         // Reducing momentum
@@ -74,7 +76,7 @@ impl player::StateBehavior for JumpState {
     ) -> Option<State> {
         // Only allow transitioning to Fall if we are actually moving downwards
         // AND we have finished the initial jump impulse duration.
-        if self.timer >= consts::v_move::jump::MIN_DURATION && ctx.player.get_velocity().y >= 0.0 {
+        if self.timer >= ctx.data.config.v_move.jump.min_duration && ctx.player.get_velocity().y >= 0.0 {
             return Some(State::Fall(player::fall::FallState));
         }
         None

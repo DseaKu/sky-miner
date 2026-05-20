@@ -1,4 +1,4 @@
-use super::{consts, State};
+use super::State;
 use crate::entities::player;
 use godot::classes::InputEvent;
 use godot::prelude::*;
@@ -13,7 +13,7 @@ pub struct LandState {
 impl player::StateBehavior for LandState {
     fn on_enter(&mut self, ctx: &mut player::PlayerContext) {
         ctx.play_animation(&STATE_NAME.to_lowercase());
-        ctx.data.jumps_left = consts::v_move::jump::MAX_JUMPS;
+        ctx.data.jumps_left = ctx.data.config.v_move.jump.max_jumps;
     }
 
     fn physics_update(&mut self, ctx: &mut player::PlayerContext, delta: f64) {
@@ -34,8 +34,8 @@ impl player::StateBehavior for LandState {
         None
     }
 
-    fn get_poll_transition(&mut self, _ctx: &mut player::PlayerContext, _delta: f64) -> Option<State> {
-        if self.timer > consts::h_move::ground::LAND_DURATION {
+    fn get_poll_transition(&mut self, ctx: &mut player::PlayerContext, _delta: f64) -> Option<State> {
+        if self.timer > ctx.data.config.h_move.ground.land_duration {
             return Some(State::Idle(player::idle::IdleState));
         }
         None

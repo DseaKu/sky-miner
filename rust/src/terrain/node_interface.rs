@@ -15,6 +15,16 @@ pub struct MapGenNode {
 #[godot_api]
 impl MapGenNode {
     #[func]
+    pub fn save_world(&self) {
+        self.map_gen.save_to_disk();
+    }
+
+    #[func]
+    pub fn load_world(&mut self) {
+        self.map_gen.load_from_disk();
+    }
+
+    #[func]
     fn on_player_tree_exiting(&mut self) {
         crate::on_exit_stop_process!(self, player_node, "Player");
     }
