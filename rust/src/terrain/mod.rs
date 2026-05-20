@@ -28,16 +28,15 @@ impl Coord {
 }
 
 pub struct Chunk {
-    pub position: Coord,
+    pub _position: Coord,
     pub tiles: [TileType; (CS * CS) as usize],
 }
 
 impl Chunk {
-    pub fn new(size: i32) -> Self {
-        let count = (size * size) as usize;
+    pub fn new() -> Self {
         Self {
-            position: Coord::default(),
-            tiles: vec![TileType::Void; count],
+            _position: Coord::default(),
+            tiles: [TileType::Void; (CS * CS) as usize],
         }
     }
 }
