@@ -13,6 +13,12 @@ pub struct MapGenerator {
     chunks: HashMap<Coord, Chunk>,
 }
 
+/*
+* First get on block beneath the player
+*
+*
+*/
+
 impl MapGenerator {
     fn calc_height_penalty(&self, cur_pos: &f32) -> f32 {
         use consts::gen as G;
@@ -43,35 +49,6 @@ impl MapGenerator {
 
                 if !self.chunks.contains_key(&chunk_coord) {
                     self.generate_chunk(chunk_coord);
-                }
-            }
-        }
-    }
-
-    pub fn save_to_disk(&self) {
-        use godot::classes::file_access::ModeFlags;
-        use godot::classes::FileAccess;
-        let path = "user://world.json";
-        if let Ok(content) = serde_json::to_string(&self.chunks) {
-            let file = FileAccess::open(path, ModeFlags::WRITE);
-            if let Some(mut file) = file {
-                file.store_string(&content);
-                crate::gd_print!("MapGenerator: Saved {} chunks to {}", self.chunks.len(), path);
-            }
-        }
-    }
-
-    pub fn load_from_disk(&mut self) {
-        use godot::classes::file_access::ModeFlags;
-        use godot::classes::FileAccess;
-        let path = "user://world.json";
-        if FileAccess::file_exists(path) {
-            let file = FileAccess::open(path, ModeFlags::READ);
-            if let Some(file) = file {
-                let content = file.get_as_text();
-                if let Ok(chunks) = serde_json::from_str::<HashMap<Coord, Chunk>>(&content.to_string()) {
-                    self.chunks = chunks;
-                    crate::gd_print!("MapGenerator: Loaded {} chunks from {}", self.chunks.len(), path);
                 }
             }
         }

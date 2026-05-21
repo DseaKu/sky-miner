@@ -4,20 +4,14 @@ pub mod macros;
 pub mod node_interface;
 
 use consts::gen::CHUNK_SIZE as CS;
-use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TileType {
     Void,
     Stone,
 }
-impl TileType {
-    // pub fn new() {
-    //
-    // }
-}
 
-#[derive(Default, Eq, PartialEq, Clone, Hash, Serialize, Deserialize)]
+#[derive(Default, Eq, PartialEq, Clone, Hash)]
 pub struct Coord {
     pub x: i32,
     pub y: i32,
@@ -29,7 +23,6 @@ impl Coord {
     }
 }
 
-#[derive(Serialize, Deserialize)]
 pub struct Chunk {
     pub _position: Coord,
     pub tiles: Vec<TileType>,
