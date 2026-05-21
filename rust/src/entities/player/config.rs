@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Main configuration container for all player physics and movement settings.
-/// Serialize/Deserialize allows converting this entire tree to/from JSON.
+/// Serialize/Deserialize allows converting this entire tree to/from TOML.
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct PlayerConfig {
     pub h_move: HMoveConfig,
@@ -53,7 +53,7 @@ pub struct GravityConfig {
 }
 
 impl PlayerConfig {
-    /// Attempts to load config from 'user://player_config.json'.
+    /// Attempts to load config from 'user://player_config.toml'.
     /// Returns default constants if the file is missing or corrupted.
     pub fn load() -> Self {
         use godot::classes::file_access::ModeFlags;
@@ -61,19 +61,20 @@ impl PlayerConfig {
         use godot::classes::ProjectSettings;
         use godot::obj::Singleton;
 
-        let path = "user://player_config.json";
+        let path = "user://player_config.toml";
         let absolute_path = ProjectSettings::singleton().globalize_path(path);
+        let absolute_dir = ProjectSettings::singleton().globalize_path("user://");
 
         if FileAccess::file_exists(path) {
             let file = FileAccess::open(path, ModeFlags::READ);
             if let Some(file) = file {
                 let content = file.get_as_text();
-                match serde_json::from_str::<PlayerConfig>(&content.to_string()) {
+                match toml::from_str::<PlayerConfig>(&content.to_string()) {
                     Ok(config) => {
                         crate::gd_print!(
-                            "PlayerConfig: Successfully loaded from {}\n => ({})",
+                            "PlayerConfig: Successfully loaded from {}\n => \"{}\"",
                             path,
-                            absolute_path
+                            absolute_dir
                         );
                         return config;
                     }
@@ -93,29 +94,29 @@ impl PlayerConfig {
         let default = Self::default();
         default.save();
         crate::gd_print!(
-            "PlayerConfig: Created default template at {} ({})",
+            "PlayerConfig: Created default template at {}\n => \"{}\"",
             path,
-            absolute_path
+            absolute_dir
         );
         default
     }
 
-    /// Saves the current configuration as a pretty-printed JSON file.
+    /// Saves the current configuration as a pretty-printed TOML file.
     pub fn save(&self) {
         use godot::classes::file_access::ModeFlags;
         use godot::classes::FileAccess;
         use godot::classes::ProjectSettings;
         use godot::obj::Singleton;
 
-        let path = "user://player_config.json";
-        let absolute_path = ProjectSettings::singleton().globalize_path(path);
+        let path = "user://player_config.toml";
 
-        // Convert Rust structs into a human-readable JSON string
-        if let Ok(content) = serde_json::to_string_pretty(self) {
+        // Convert Rust structs into a human-readable TOML string
+        if let Ok(content) = toml::to_string_pretty(self) {
             let file = FileAccess::open(path, ModeFlags::WRITE);
             if let Some(mut file) = file {
                 file.store_string(&content);
-                crate::gd_print!("PlayerConfig: Saved to {} ({})", path, absolute_path);
+                let absolute_dir = ProjectSettings::singleton().globalize_path("user://");
+                crate::gd_print!("PlayerConfig: Saved to {}\n => \"{}\"", path, absolute_dir);
             }
         }
     }
