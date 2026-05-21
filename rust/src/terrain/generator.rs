@@ -14,8 +14,6 @@ pub struct MapGenerator {
 }
 
 /*
-* Toggle gd map gen
-* Harden debug ui, should run without dependencies
 * First get on block beneath the player
 *
 *
