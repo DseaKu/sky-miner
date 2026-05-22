@@ -16,12 +16,12 @@ pub struct MapGenNode {
 impl MapGenNode {
     #[func]
     fn on_player_tree_exiting(&mut self) {
-        crate::on_exit_stop_process!(self, player_node, "Player");
+        crate::on_map_exit_stop_process!(self, player_node, "Player");
     }
 
     #[func]
     fn on_tile_map_layer_exiting(&mut self) {
-        crate::on_exit_stop_process!(self, tile_map_node, "Tile Map Layer");
+        crate::on_map_exit_stop_process!(self, tile_map_node, "Tile Map Layer");
     }
 
     fn get_player_grid_pos(&self) -> Option<Vector2i> {
@@ -59,7 +59,7 @@ impl INode for MapGenNode {
     }
 
     fn ready(&mut self) {
-        crate::link_node!(
+        crate::link_map_node!(
             self,
             Node2D,
             path::PLAYER_NODE_PATH,
@@ -68,7 +68,7 @@ impl INode for MapGenNode {
             "on_player_tree_exiting"
         );
 
-        crate::link_node!(
+        crate::link_map_node!(
             self,
             TileMapLayer,
             path::TILE_MAP_LAYER_NODE_PATH,

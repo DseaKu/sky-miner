@@ -1,7 +1,7 @@
+use super::consts::{path, spawn};
 use crate::entities::player::{self, StateBehavior};
 use godot::classes::{CharacterBody2D, InputEvent};
 use godot::prelude::*;
-use super::consts::path;
 
 #[derive(GodotClass)]
 #[class(base=Node)]
@@ -87,6 +87,7 @@ impl INode for PlayerFsmNode {
     }
 
     fn ready(&mut self) {
+        use spawn::position as pos;
         crate::player_print!("Initializing...");
         crate::link_player_node!(
             self,
@@ -100,6 +101,7 @@ impl INode for PlayerFsmNode {
         if let Some(player) = self.player_node.as_mut() {
             let mut ctx = player::PlayerContext::new(player, &mut self.data);
             self.fsm.on_enter(&mut ctx);
+            player.set_position(Vector2::new(pos::X, pos::Y));
         }
     }
 

@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 pub struct PlayerConfig {
     pub h_move: HMoveConfig,
     pub v_move: VMoveConfig,
+    pub spawn: SpawnConfig,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -50,6 +51,16 @@ pub struct JumpConfig {
 pub struct GravityConfig {
     pub accel: f32,
     pub max_speed: f32,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct SpawnConfig {
+    pub position: PositionConfig,
+}
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct PositionConfig {
+    pub x: f32,
+    pub y: f32,
 }
 
 impl PlayerConfig {
@@ -153,6 +164,12 @@ impl Default for PlayerConfig {
                 gravity: GravityConfig {
                     accel: v_move::gravity::ACCEL,
                     max_speed: v_move::gravity::MAX_SPEED,
+                },
+            },
+            spawn: SpawnConfig {
+                position: PositionConfig {
+                    x: spawn::position::X,
+                    y: spawn::position::Y,
                 },
             },
         }
