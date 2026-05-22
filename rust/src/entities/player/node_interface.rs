@@ -39,33 +39,6 @@ impl PlayerFsmNode {
     pub fn save_config(&self) {
         self.data.config.save();
     }
-
-    #[func]
-    pub fn print_config_info(&self) {
-        use godot::classes::ProjectSettings;
-        let user_path = ProjectSettings::singleton().globalize_path("user://");
-
-        crate::player_print!("--- Player Configuration Info ---");
-        crate::player_print!("Config Path: {}player_config.json", user_path);
-        crate::player_print!("Current Settings:");
-        crate::player_print!(
-            "  - Ground Speed: {}",
-            self.data.config.h_move.ground.max_speed
-        );
-        crate::player_print!(
-            "  - Air Speed:    {}",
-            self.data.config.h_move.air.max_speed
-        );
-        crate::player_print!(
-            "  - Jump Force:   {}",
-            self.data.config.h_move.air.max_speed
-        );
-        crate::player_print!(
-            "  - Jumps Max:    {}",
-            self.data.config.v_move.jump.max_jumps
-        );
-        crate::player_print!("---------------------------------");
-    }
 }
 
 #[godot_api]
