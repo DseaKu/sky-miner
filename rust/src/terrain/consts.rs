@@ -13,6 +13,18 @@ pub mod gen {
         pub const ISLAND_THRESHOLD: f32 = 0.25;
     }
 }
+
+pub mod atlas_coords {
+    pub const SOURCE_ID: i32 = 2;
+
+    // (x,y)
+    pub const DIRT: (i32, i32) = (0, 0);
+    // pub const STONE: (i32, i32) = (1, 0);
+    // pub const ORE: (i32, i32) = (2, 0);
+    // pub const GEM: (i32, i32) = (0, 1);
+    // pub const EMPTY_CELL: (i32, i32) = (3, 3);
+    // pub const NONE_EXISTING_CELL: (i32, i32) = (-1, -1);
+}
 // const CHUNK_SIZE = 16
 // const RENDER_DISTANCE = 10
 //

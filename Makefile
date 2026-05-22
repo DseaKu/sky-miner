@@ -10,3 +10,6 @@ build:
 
 run: 
 	@/Applications/Godot.app/Contents/MacOS/Godot --path godot
+
+config:
+	@nvim "/Users/minimop/Library/Application Support/Godot/app_userdata/sky_miner/"

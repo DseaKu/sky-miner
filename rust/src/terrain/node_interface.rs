@@ -1,3 +1,6 @@
+use crate::core::utils::ToVector2i;
+use crate::terrain::consts::atlas_coords::{DIRT, SOURCE_ID};
+
 use super::consts::path;
 use super::generator;
 use godot::classes::TileMapLayer;
@@ -36,12 +39,11 @@ impl MapGenNode {
 
     pub fn set_cell(&mut self) {
         if let Some(tile_map) = &mut self.tile_map_node {
-            // 3. Use set_cell_ex() for optional parameters, and remove named args
             tile_map
                 .set_cell_ex(Vector2i::new(0, 0))
-                .source_id(2)
-                .atlas_coords(Vector2i::new(1, 0))
-                .done(); // You must call .done()
+                .source_id(SOURCE_ID)
+                .atlas_coords(DIRT.to_vector2i())
+                .done(); // Must call .done()
         }
     }
 }
