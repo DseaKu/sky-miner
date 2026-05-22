@@ -3,6 +3,8 @@ use crate::entities::player::{self, StateBehavior};
 use godot::classes::{CharacterBody2D, InputEvent};
 use godot::prelude::*;
 
+const PRINT_PREFIX: &str = "PlayerFSM: ";
+
 #[derive(GodotClass)]
 #[class(base=Node)]
 pub struct PlayerFSM {
@@ -16,7 +18,7 @@ pub struct PlayerFSM {
 impl PlayerFSM {
     #[func]
     fn on_player_tree_exiting(&mut self) {
-        crate::on_player_exit_stop_process!(self, player_node, "Player");
+        crate::on_exit_stop_process!(self, player_node, "Player", PRINT_PREFIX);
     }
 
     #[func]
@@ -60,14 +62,15 @@ impl INode for PlayerFSM {
     }
 
     fn ready(&mut self) {
-        crate::player_print!("Initializing...");
-        crate::link_player_node!(
+        crate::node_print!(PRINT_PREFIX, "Initializing...");
+        crate::link_node!(
             self,
             CharacterBody2D,
             path::PARENT_NODE_PATH,
             player_node,
             "Player",
-            "on_player_tree_exiting"
+            "on_player_tree_exiting",
+            PRINT_PREFIX
         );
 
         if let Some(player) = self.player_node.as_mut() {

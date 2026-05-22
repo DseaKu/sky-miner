@@ -1,5 +1,4 @@
 pub mod path {
-    pub const PLAYER_FSM_NODE_STR: &str = "PlayerFsmNode: ";
     pub const PARENT_NODE_PATH: &str = "..";
 }
 
