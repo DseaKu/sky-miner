@@ -55,4 +55,4 @@ script = ExtResource("1_b5q0i")
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=324914903 groups=["terrain"]]
 tile_set = SubResource("TileSet_2ny8j")
 
-[node name="MapGenNode" type="MapGenNode" parent="." unique_id=159903934]
+[node name="TerrainGenerator" type="TerrainGenerator" parent="." unique_id=1294635679]

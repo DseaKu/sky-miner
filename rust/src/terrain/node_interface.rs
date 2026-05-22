@@ -10,7 +10,7 @@ use godot::prelude::*;
 
 #[derive(GodotClass)]
 #[class(base=Node)]
-pub struct MapGenNode {
+pub struct TerrainGenerator {
     player_node: Option<Gd<Node2D>>,
     tile_map_node: Option<Gd<TileMapLayer>>,
     map_gen: generator::MapGenerator,
@@ -18,7 +18,7 @@ pub struct MapGenNode {
 }
 
 #[godot_api]
-impl MapGenNode {
+impl TerrainGenerator {
     #[func]
     fn on_player_tree_exiting(&mut self) {
         crate::on_map_exit_stop_process!(self, player_node, "Player");
@@ -51,7 +51,7 @@ impl MapGenNode {
 }
 
 #[godot_api]
-impl INode for MapGenNode {
+impl INode for TerrainGenerator {
     fn process(&mut self, _delta: f64) {
         if let Some(p_pos) = self.get_player_grid_pos() {
             use consts::gen::CHUNK_SIZE as C_S;

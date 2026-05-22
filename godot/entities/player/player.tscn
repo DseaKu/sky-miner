@@ -453,4 +453,4 @@ libraries/ = SubResource("AnimationLibrary_bls4j")
 zoom = Vector2(3, 3)
 script = ExtResource("9_b2kln")
 
-[node name="PlayerFsmNode" type="PlayerFsmNode" parent="." unique_id=1315070689]
+[node name="PlayerFSM" type="PlayerFSM" parent="." unique_id=2044664641]

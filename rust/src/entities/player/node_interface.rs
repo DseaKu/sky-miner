@@ -5,7 +5,7 @@ use godot::prelude::*;
 
 #[derive(GodotClass)]
 #[class(base=Node)]
-pub struct PlayerFsmNode {
+pub struct PlayerFSM {
     player_node: Option<Gd<CharacterBody2D>>,
     fsm: player::State,
     data: player::PlayerData,
@@ -13,7 +13,7 @@ pub struct PlayerFsmNode {
 }
 
 #[godot_api]
-impl PlayerFsmNode {
+impl PlayerFSM {
     #[func]
     fn on_player_tree_exiting(&mut self) {
         crate::on_player_exit_stop_process!(self, player_node, "Player");
@@ -42,7 +42,7 @@ impl PlayerFsmNode {
 }
 
 #[godot_api]
-impl INode for PlayerFsmNode {
+impl INode for PlayerFSM {
     fn init(base: Base<Node>) -> Self {
         let fsm = player::State::Idle(player::idle::IdleState);
         let config = player::config::PlayerConfig::load();
