@@ -2,22 +2,15 @@ use crate::core::utils::FloatExt;
 use crate::terrain::*;
 
 use super::consts;
-use godot::prelude::*;
 use rand::{self, RngExt};
 use std::collections::HashMap;
 
 #[derive(Default)]
 pub struct MapGenerator {
     _perlin: noise::Perlin,
-    cur_p_chunk: Coord,
+    cur_chunk: Coord,
     chunks: HashMap<Coord, Chunk>,
 }
-
-/*
-* First get on block beneath the player
-*
-*
-*/
 
 impl MapGenerator {
     fn calc_height_penalty(&self, cur_pos: &f32) -> f32 {
@@ -39,12 +32,12 @@ impl MapGenerator {
         self.chunks.insert(coord, chunk);
     }
 
-    fn update_chunks(&mut self) {
-        use consts::gen::RENDER_DISTANCE as RD;
-        let pc = self.cur_p_chunk.clone();
+    pub fn update_chunks(&mut self) {
+        use consts::gen::RENDER_DISTANCE as R_D;
+        let pc = self.cur_chunk.clone();
 
-        for cx in (pc.x - RD)..=(pc.x + RD) {
-            for cy in (pc.y - RD)..=(pc.y + RD) {
+        for cx in (pc.x - R_D)..=(pc.x + R_D) {
+            for cy in (pc.y - R_D)..=(pc.y + R_D) {
                 let chunk_coord = Coord::new(cx, cy);
 
                 if !self.chunks.contains_key(&chunk_coord) {
@@ -61,19 +54,14 @@ impl MapGenerator {
 
         Self {
             _perlin: noise::Perlin::new(rnd_num),
-            cur_p_chunk: Coord::default(),
+            cur_chunk: Coord::default(),
             chunks: HashMap::new(),
         }
     }
-
-    pub fn update(&mut self, _delta: f64, grid_pos: Vector2i) {
-        use consts::gen::CHUNK_SIZE as CS;
-        let new_p_chunk = Coord::new(grid_pos.x / CS, grid_pos.y / CS);
-
-        // Set a new player chunk if the player moves out of the old one.
-        if new_p_chunk != self.cur_p_chunk {
-            self.cur_p_chunk = new_p_chunk;
-            self.update_chunks();
-        }
+    pub fn has_chunk_changed(&self, new_chunk: &Coord) -> bool {
+        *new_chunk != self.cur_chunk
+    }
+    pub fn set_cur_chunk(&mut self, new_chunk: Coord) {
+        self.cur_chunk = new_chunk;
     }
 }

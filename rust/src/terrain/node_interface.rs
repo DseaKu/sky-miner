@@ -1,6 +1,8 @@
 use crate::core::utils::ToVector2i;
 use crate::terrain::consts::atlas_coords::{DIRT, SOURCE_ID};
+use crate::terrain::Coord;
 
+use super::consts;
 use super::consts::path;
 use super::generator;
 use godot::classes::TileMapLayer;
@@ -50,6 +52,19 @@ impl MapGenNode {
 
 #[godot_api]
 impl INode for MapGenNode {
+    fn process(&mut self, _delta: f64) {
+        if let Some(p_pos) = self.get_player_grid_pos() {
+            use consts::gen::CHUNK_SIZE as C_S;
+
+            let g = &mut self.map_gen;
+            let p_chunk = Coord::new(p_pos.x / C_S, p_pos.y / C_S);
+
+            if g.has_chunk_changed(&p_chunk) {
+                g.set_cur_chunk(p_chunk);
+                g.update_chunks();
+            }
+        }
+    }
     fn init(base: Base<Node>) -> Self {
         crate::map_print!("Initializing...");
         Self {
@@ -80,11 +95,5 @@ impl INode for MapGenNode {
         );
 
         self.set_cell();
-    }
-
-    fn process(&mut self, delta: f64) {
-        if let Some(grid_pos) = self.get_player_grid_pos() {
-            self.map_gen.update(delta, grid_pos);
-        }
     }
 }
