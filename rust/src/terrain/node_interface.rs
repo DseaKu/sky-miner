@@ -1,6 +1,6 @@
 use super::consts::path;
 use super::generator;
-use godot::classes::{tile_map, TileMapLayer};
+use godot::classes::TileMapLayer;
 use godot::prelude::*;
 
 #[derive(GodotClass)]

@@ -1,10 +1,12 @@
 use crate::entities::player::{self, StateBehavior};
 use godot::classes::{CharacterBody2D, InputEvent};
 use godot::prelude::*;
+use super::consts::path;
 
 #[derive(GodotClass)]
 #[class(base=Node)]
 pub struct PlayerFsmNode {
+    player_node: Option<Gd<CharacterBody2D>>,
     fsm: player::State,
     data: player::PlayerData,
     base: Base<Node>,
@@ -12,6 +14,11 @@ pub struct PlayerFsmNode {
 
 #[godot_api]
 impl PlayerFsmNode {
+    #[func]
+    fn on_player_tree_exiting(&mut self) {
+        crate::on_player_exit_stop_process!(self, player_node, "Player");
+    }
+
     #[func]
     pub fn get_state_name(&self) -> StringName {
         match &self.fsm {
@@ -38,33 +45,32 @@ impl PlayerFsmNode {
         use godot::classes::ProjectSettings;
         let user_path = ProjectSettings::singleton().globalize_path("user://");
 
-        crate::gd_print!("--- Player Configuration Info ---");
-        crate::gd_print!("Config Path: {}player_config.json", user_path);
-        crate::gd_print!("Current Settings:");
-        crate::gd_print!(
+        crate::player_print!("--- Player Configuration Info ---");
+        crate::player_print!("Config Path: {}player_config.json", user_path);
+        crate::player_print!("Current Settings:");
+        crate::player_print!(
             "  - Ground Speed: {}",
             self.data.config.h_move.ground.max_speed
         );
-        crate::gd_print!(
+        crate::player_print!(
             "  - Air Speed:    {}",
             self.data.config.h_move.air.max_speed
         );
-        crate::gd_print!(
+        crate::player_print!(
             "  - Jump Force:   {}",
             self.data.config.h_move.air.max_speed
         );
-        crate::gd_print!(
+        crate::player_print!(
             "  - Jumps Max:    {}",
             self.data.config.v_move.jump.max_jumps
         );
-        crate::gd_print!("---------------------------------");
+        crate::player_print!("---------------------------------");
     }
 }
 
 #[godot_api]
 impl INode for PlayerFsmNode {
     fn init(base: Base<Node>) -> Self {
-        crate::gd_print!("PlayerFsmNode: Initializing...");
         let fsm = player::State::Idle(player::idle::IdleState);
         let config = player::config::PlayerConfig::load();
         let data = player::PlayerData {
@@ -72,21 +78,34 @@ impl INode for PlayerFsmNode {
             config,
         };
 
-        Self { fsm, data, base }
+        Self {
+            player_node: None,
+            fsm,
+            data,
+            base,
+        }
     }
 
     fn ready(&mut self) {
-        let parent = self.base().get_parent();
-        if let Some(mut player) = parent.and_then(|p| p.try_cast::<CharacterBody2D>().ok()) {
-            let mut ctx = player::PlayerContext::new(&mut player, &mut self.data);
+        crate::player_print!("Initializing...");
+        crate::link_player_node!(
+            self,
+            CharacterBody2D,
+            path::PARENT_NODE_PATH,
+            player_node,
+            "Player",
+            "on_player_tree_exiting"
+        );
+
+        if let Some(player) = self.player_node.as_mut() {
+            let mut ctx = player::PlayerContext::new(player, &mut self.data);
             self.fsm.on_enter(&mut ctx);
         }
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
-        let parent = self.base().get_parent();
-        if let Some(mut player) = parent.and_then(|p| p.try_cast::<CharacterBody2D>().ok()) {
-            let mut ctx = player::PlayerContext::new(&mut player, &mut self.data);
+        if let Some(player) = self.player_node.as_mut() {
+            let mut ctx = player::PlayerContext::new(player, &mut self.data);
             if let Some(next_state) = self.fsm.get_input_transition(&mut ctx, event) {
                 self.fsm.transition_to(&mut ctx, next_state);
             }
@@ -94,9 +113,8 @@ impl INode for PlayerFsmNode {
     }
 
     fn physics_process(&mut self, delta: f64) {
-        let parent = self.base().get_parent();
-        if let Some(mut player) = parent.and_then(|p| p.try_cast::<CharacterBody2D>().ok()) {
-            let mut ctx = player::PlayerContext::new(&mut player, &mut self.data);
+        if let Some(player) = self.player_node.as_mut() {
+            let mut ctx = player::PlayerContext::new(player, &mut self.data);
             self.fsm.physics_update(&mut ctx, delta);
             if let Some(next_state) = self.fsm.get_poll_transition(&mut ctx, delta) {
                 self.fsm.transition_to(&mut ctx, next_state);

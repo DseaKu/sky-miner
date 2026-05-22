@@ -8,6 +8,7 @@ pub mod fall;
 pub mod idle;
 pub mod jump;
 pub mod land;
+pub mod macros;
 pub mod node_interface;
 pub mod run;
 

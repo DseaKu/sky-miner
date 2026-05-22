@@ -89,7 +89,7 @@ func setup_noise() -> void:
 
 
 func _process(_delta: float) -> void:
-	return
+	# return
 	if not player_node:
 		return
 
