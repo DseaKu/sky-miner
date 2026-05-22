@@ -1,6 +1,6 @@
 use super::consts::path;
 use super::generator;
-use godot::classes::TileMapLayer;
+use godot::classes::{tile_map, TileMapLayer};
 use godot::prelude::*;
 
 #[derive(GodotClass)]
@@ -32,6 +32,17 @@ impl MapGenNode {
             return Some(grid_pos);
         }
         None
+    }
+
+    pub fn set_cell(&mut self) {
+        if let Some(tile_map) = &mut self.tile_map_node {
+            // 3. Use set_cell_ex() for optional parameters, and remove named args
+            tile_map
+                .set_cell_ex(Vector2i::new(0, 0))
+                .source_id(2)
+                .atlas_coords(Vector2i::new(1, 0))
+                .done(); // You must call .done()
+        }
     }
 }
 
@@ -65,6 +76,8 @@ impl INode for MapGenNode {
             "TileMapLayer",
             "on_tile_map_layer_exiting"
         );
+
+        self.set_cell();
     }
 
     fn process(&mut self, delta: f64) {
