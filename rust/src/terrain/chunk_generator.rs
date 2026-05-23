@@ -1,3 +1,4 @@
+use super::tile_generator;
 use crate::terrain::*;
 
 use super::consts;
@@ -13,7 +14,18 @@ pub struct ChunkGenerator {
 
 impl ChunkGenerator {
     fn generate_chunk(&mut self, _coord: &Coord) -> Chunk {
-        Chunk::new()
+        use consts::CHUNK_SIZE as C_S;
+        let t_g = tile_generator::TileGenerator;
+        let mut new_chunk = Chunk::new();
+
+        for x in 0..C_S {
+            for y in 0..C_S {
+                let index = (y * C_S + x) as usize;
+                new_chunk.tiles[index] = t_g.generate_tile(x, y);
+            }
+        }
+
+        new_chunk
     }
 
     pub fn update_chunks(&mut self) {
@@ -49,10 +61,4 @@ impl ChunkGenerator {
     pub fn set_center_chunk(&mut self, new_chunk: Coord) {
         self.center = new_chunk;
     }
-    // fn _calc_height_penalty(&self, cur_pos: &f32) -> f32 {
-    //     use consts::{isle, HEIGHT_PENALTY};
-    //     let move_toward = utils::FloatExt::move_toward;
-    //
-    //     move_toward(isle::ISLAND_THRESHOLD, 0.0, cur_pos * HEIGHT_PENALTY)
-    // }
 }

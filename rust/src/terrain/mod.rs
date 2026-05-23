@@ -1,13 +1,15 @@
 pub mod chunk_generator;
 pub mod consts;
 pub mod node_interface;
+pub mod tile_generator;
 
 use consts::CHUNK_SIZE as CS;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Default, Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TileType {
     Void,
-    _Stone,
+    #[default]
+    Stone,
 }
 
 #[derive(Default, Eq, PartialEq, Clone, Hash)]
@@ -23,13 +25,13 @@ impl Coord {
 }
 
 pub struct Chunk {
-    pub _tiles: Vec<TileType>,
+    pub tiles: Vec<TileType>,
 }
 
 impl Chunk {
     pub fn new() -> Self {
         Self {
-            _tiles: vec![TileType::Void; (CS * CS) as usize],
+            tiles: vec![TileType::Void; (CS * CS) as usize],
         }
     }
 }
