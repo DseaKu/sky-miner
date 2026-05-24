@@ -1,5 +1,7 @@
 use crate::core::utils::ToVector2i;
+use crate::terrain::consts::atlas_coords;
 use crate::terrain::Coord;
+use crate::terrain::TileType;
 
 use super::chunk_generator;
 use super::consts;
@@ -39,26 +41,14 @@ impl TerrainGenerator {
         None
     }
 
-    pub fn set_cell(&mut self) {
-        if let Some(tile_map) = &mut self.tile_map_node {
-            use consts::atlas_coords as a_c;
-            tile_map
-                .set_cell_ex(Vector2i::new(0, 0))
-                .source_id(a_c::SOURCE_ID)
-                .atlas_coords(a_c::DIRT.to_vector2i())
-                .done(); // Must call .done()
-        }
+    pub fn get_player_coord(player_pos: &Vector2i) -> Coord {
+        use consts::CHUNK_SIZE as C_S;
+        Coord::new(player_pos.x / C_S, player_pos.y / C_S)
     }
-}
-
-#[godot_api]
-impl INode for TerrainGenerator {
-    fn process(&mut self, _delta: f64) {
+    pub fn evalute_chunks(&mut self) {
         if let Some(p_pos) = self.get_player_grid_pos() {
-            use consts::CHUNK_SIZE as C_S;
-
+            let p_chunk = Self::get_player_coord(&p_pos);
             let c_g = &mut self.chunk_generator;
-            let p_chunk = Coord::new(p_pos.x / C_S, p_pos.y / C_S);
 
             if c_g.has_center_changed(&p_chunk) {
                 c_g.set_center_chunk(p_chunk);
@@ -66,6 +56,43 @@ impl INode for TerrainGenerator {
             }
         }
     }
+    pub fn set_cell(&mut self, x: i32, y: i32, atlas_coords: Vector2i) {
+        if let Some(tile_map) = &mut self.tile_map_node {
+            use consts::atlas_coords as a_c;
+            tile_map
+                .set_cell_ex(Vector2i::new(x, y))
+                .source_id(a_c::SOURCE_ID)
+                .atlas_coords(atlas_coords)
+                .done(); // Must call .done()
+        }
+    }
+
+    pub fn process_spawning_queue(&self) {
+        use consts::CHUNK_SIZE as C_S;
+        let s_q = &self.chunk_generator.spawn_queue;
+
+        if s_q.is_empty() {
+            return;
+        }
+        for (chunk, coord) in s_q {
+            for (index, tile_type) in chunk.tiles.iter().enumerate() {
+                if *tile_type == TileType::Void {
+                    continue;
+                }
+                // set cell
+                //
+            }
+        }
+    }
+}
+
+#[godot_api]
+impl INode for TerrainGenerator {
+    fn process(&mut self, _delta: f64) {
+        Self::evalute_chunks(self);
+        Self::process_spawning_queue(self);
+    }
+
     fn init(base: Base<Node>) -> Self {
         crate::node_print!(PRINT_PREFIX, "Initializing...");
         Self {
@@ -99,6 +126,14 @@ impl INode for TerrainGenerator {
             PRINT_PREFIX
         );
 
-        self.set_cell();
+        // Spawn chunks initial
+        if let Some(p_pos) = self.get_player_grid_pos() {
+            let p_chunk = Self::get_player_coord(&p_pos);
+
+            self.chunk_generator.set_center_chunk(p_chunk);
+            self.chunk_generator.update_chunks();
+        }
+
+        self.set_cell(0, 0, TileType::Stone.to_atlas_coords());
     }
 }

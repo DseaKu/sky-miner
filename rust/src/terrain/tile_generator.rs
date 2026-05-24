@@ -3,7 +3,7 @@ use crate::terrain::TileType;
 pub struct TileGenerator;
 
 impl TileGenerator {
-    pub fn generate_tile(&self, x: i32, y: i32) -> TileType {
+    pub fn generate_tile(&self, _x: i32, _y: i32) -> TileType {
         TileType::default()
     }
     // fn _calc_height_penalty(&self, cur_pos: &f32) -> f32 {

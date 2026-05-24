@@ -10,6 +10,7 @@ pub struct ChunkGenerator {
     _perlin: noise::Perlin,
     center: Coord,
     chunks: HashMap<Coord, Chunk>,
+    pub spawn_queue: Vec<(Chunk, Coord)>,
 }
 
 impl ChunkGenerator {
@@ -36,10 +37,17 @@ impl ChunkGenerator {
             for y in (c.y - R_D)..=(c.y + R_D) {
                 let coord = Coord::new(x, y);
 
-                if !self.chunks.contains_key(&coord) {
-                    let new_chunk = self.generate_chunk(&coord);
-                    self.chunks.insert(coord, new_chunk);
+                if self.chunks.contains_key(&coord) {
+                    continue;
                 }
+
+                let mut new_chunk = self.generate_chunk(&coord);
+
+                if new_chunk.state == ChunkState::Unspawned {
+                    self.spawn_queue.push((new_chunk.clone(), Coord::new(x, y)));
+                    new_chunk.state = ChunkState::PendingSpawn;
+                }
+                self.chunks.insert(coord, new_chunk);
             }
         }
     }
@@ -53,6 +61,7 @@ impl ChunkGenerator {
             _perlin: noise::Perlin::new(rnd_num),
             center: Coord::default(),
             chunks: HashMap::new(),
+            spawn_queue: Vec::new(),
         }
     }
     pub fn has_center_changed(&self, new_chunk: &Coord) -> bool {
