@@ -1,9 +1,9 @@
 pub mod chunk_generator;
+pub mod config;
 pub mod consts;
 pub mod node_interface;
 pub mod tile_generator;
 
-use consts::CHUNK_SIZE as CS;
 use godot::classes::class_macros::private::virtuals::Os::Vector2i;
 
 use crate::core::utils::ToVector2i;
@@ -16,14 +16,14 @@ pub enum TileType {
     // Dirt,
 }
 impl TileType {
-    pub fn to_atlas_coords(self) -> Vector2i {
-        use consts::atlas_coords as ac;
+    pub fn to_atlas_coords(self, config: &config::TerrainConfig) -> Vector2i {
+        let ac = &config.atlas_coords;
         use TileType::*;
 
         match self {
-            Void => ac::EMPTY_CELL,
-            Stone => ac::STONE,
-            // Dirt => a_c::DIRT,
+            Void => ac.empty_cell,
+            Stone => ac.stone,
+            // Dirt => ac.dirt,
         }
         .to_vector2i()
     }
@@ -45,9 +45,9 @@ pub struct Chunk {
 }
 
 impl Chunk {
-    pub fn new() -> Self {
+    pub fn new(chunk_size: i32) -> Self {
         Self {
-            tiles: vec![TileType::Void; (CS * CS) as usize],
+            tiles: vec![TileType::Void; (chunk_size * chunk_size) as usize],
             state: ChunkState::default(),
         }
     }
@@ -76,12 +76,10 @@ impl LocalCoord {
         Self { x, y }
     }
 
-    pub fn to_global(self, chunk: ChunkCoord) -> GlobalCoord {
-        use crate::terrain::consts::CHUNK_SIZE as CS;
-
+    pub fn to_global(self, chunk: ChunkCoord, chunk_size: i32) -> GlobalCoord {
         GlobalCoord {
-            x: (chunk.x * CS) + self.x,
-            y: (chunk.y * CS) + self.y,
+            x: (chunk.x * chunk_size) + self.x,
+            y: (chunk.y * chunk_size) + self.y,
         }
     }
 }
@@ -97,14 +95,12 @@ impl GlobalCoord {
         Self { x, y }
     }
 
-    pub fn to_chunk(self) -> ChunkCoord {
-        use crate::terrain::consts::CHUNK_SIZE as CS;
-
+    pub fn to_chunk(self, chunk_size: i32) -> ChunkCoord {
         // Division truncates toward zero in Rust, but for procedural grids
         // spanning negative numbers, you generally want Euclidean division (div_euclid).
         ChunkCoord {
-            x: self.x.div_euclid(CS),
-            y: self.y.div_euclid(CS),
+            x: self.x.div_euclid(chunk_size),
+            y: self.y.div_euclid(chunk_size),
         }
     }
 }

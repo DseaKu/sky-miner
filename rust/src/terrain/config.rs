@@ -1,0 +1,97 @@
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct TerrainConfig {
+    pub chunk_size: i32,
+    pub render_distance: i32,
+    pub atlas_coords: AtlasCoordsConfig,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct AtlasCoordsConfig {
+    pub source_id: i32,
+    pub dirt: (i32, i32),
+    pub stone: (i32, i32),
+    pub empty_cell: (i32, i32),
+}
+
+impl TerrainConfig {
+    pub fn load() -> Self {
+        use godot::classes::file_access::ModeFlags;
+        use godot::classes::FileAccess;
+        use godot::classes::ProjectSettings;
+        use godot::obj::Singleton;
+
+        let path = "user://terrain_config.toml";
+        let absolute_path = ProjectSettings::singleton().globalize_path(path);
+        let absolute_dir = ProjectSettings::singleton().globalize_path("user://");
+
+        if FileAccess::file_exists(path) {
+            let file = FileAccess::open(path, ModeFlags::READ);
+            if let Some(file) = file {
+                let content = file.get_as_text();
+                match toml::from_str::<TerrainConfig>(&content.to_string()) {
+                    Ok(config) => {
+                        crate::gd_print!(
+                            "TerrainConfig: Successfully loaded from {}\n => \"{}\"",
+                            path,
+                            absolute_dir
+                        );
+                        return config;
+                    }
+                    Err(e) => {
+                        crate::gd_error!(
+                            "TerrainConfig: Failed to parse {} ({}) - Error: {}",
+                            path,
+                            absolute_path,
+                            e
+                        );
+                    }
+                }
+            }
+        }
+
+        let default = Self::default();
+        default.save();
+        crate::gd_print!(
+            "TerrainConfig: Created default template at {}\n => \"{}\"",
+            path,
+            absolute_dir
+        );
+        default
+    }
+
+    pub fn save(&self) {
+        use godot::classes::file_access::ModeFlags;
+        use godot::classes::FileAccess;
+        use godot::classes::ProjectSettings;
+        use godot::obj::Singleton;
+
+        let path = "user://terrain_config.toml";
+
+        if let Ok(content) = toml::to_string_pretty(self) {
+            let file = FileAccess::open(path, ModeFlags::WRITE);
+            if let Some(mut file) = file {
+                file.store_string(&content);
+                let absolute_dir = ProjectSettings::singleton().globalize_path("user://");
+                crate::gd_print!("TerrainConfig: Saved to {}\n => \"{}\"", path, absolute_dir);
+            }
+        }
+    }
+}
+
+impl Default for TerrainConfig {
+    fn default() -> Self {
+        use super::consts::*;
+        Self {
+            chunk_size: CHUNK_SIZE,
+            render_distance: RENDER_DISTANCE,
+            atlas_coords: AtlasCoordsConfig {
+                source_id: atlas_coords::SOURCE_ID,
+                dirt: atlas_coords::DIRT,
+                stone: atlas_coords::STONE,
+                empty_cell: atlas_coords::EMPTY_CELL,
+            },
+        }
+    }
+}

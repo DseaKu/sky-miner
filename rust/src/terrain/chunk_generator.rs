@@ -1,7 +1,6 @@
 use super::tile_generator;
 use crate::terrain::*;
 
-use super::consts;
 use rand::{self, RngExt};
 use std::collections::HashMap;
 
@@ -11,20 +10,21 @@ pub struct ChunkGenerator {
     center: ChunkCoord,
     chunks: HashMap<ChunkCoord, Chunk>,
     pub spawn_queue: Vec<(Chunk, ChunkCoord)>,
+    pub config: config::TerrainConfig,
 }
 
 impl ChunkGenerator {
     fn generate_chunk(&mut self, coord: &ChunkCoord) -> Chunk {
-        use consts::CHUNK_SIZE as CS;
+        let cs = self.config.chunk_size;
         let tg = tile_generator::TileGenerator;
-        let mut new_chunk = Chunk::new();
+        let mut new_chunk = Chunk::new(cs);
 
-        for x in 0..CS {
-            for y in 0..CS {
-                let index = (y * CS + x) as usize;
+        for x in 0..cs {
+            for y in 0..cs {
+                let index = (y * cs + x) as usize;
 
                 let local = LocalCoord::new(x, y);
-                let global = local.to_global(*coord);
+                let global = local.to_global(*coord, cs);
 
                 new_chunk.tiles[index] = tg.generate_tile(global.x, global.y);
             }
@@ -33,11 +33,11 @@ impl ChunkGenerator {
         new_chunk
     }
     pub fn update_chunks(&mut self) {
-        use consts::RENDER_DISTANCE as RD;
+        let rd = self.config.render_distance;
         let c = &self.center.clone();
 
-        for x in (c.x - RD)..=(c.x + RD) {
-            for y in (c.y - RD)..=(c.y + RD) {
+        for x in (c.x - rd)..=(c.x + rd) {
+            for y in (c.y - rd)..=(c.y + rd) {
                 let coord = ChunkCoord::new(x, y);
 
                 if self.chunks.contains_key(&coord) {
@@ -56,7 +56,7 @@ impl ChunkGenerator {
         }
     }
 
-    pub fn new() -> Self {
+    pub fn new(config: config::TerrainConfig) -> Self {
         let mut rng = rand::rng();
         let rnd_num: u32 = rng.random();
         crate::gd_print!("MapGenerator: Initialized with seed {}", rnd_num);
@@ -66,6 +66,7 @@ impl ChunkGenerator {
             center: ChunkCoord::default(),
             chunks: HashMap::new(),
             spawn_queue: Vec::new(),
+            config,
         }
     }
     pub fn has_center_changed(&self, new_chunk: &ChunkCoord) -> bool {
