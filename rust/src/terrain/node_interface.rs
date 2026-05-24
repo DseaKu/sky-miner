@@ -1,5 +1,3 @@
-use crate::core::utils::ToVector2i;
-use crate::terrain::consts::atlas_coords;
 use crate::terrain::Coord;
 use crate::terrain::TileType;
 
@@ -45,6 +43,7 @@ impl TerrainGenerator {
         use consts::CHUNK_SIZE as C_S;
         Coord::new(player_pos.x / C_S, player_pos.y / C_S)
     }
+
     pub fn evalute_chunks(&mut self) {
         if let Some(p_pos) = self.get_player_grid_pos() {
             let p_chunk = Self::get_player_coord(&p_pos);
@@ -56,31 +55,35 @@ impl TerrainGenerator {
             }
         }
     }
-    pub fn set_cell(&mut self, x: i32, y: i32, atlas_coords: Vector2i) {
+
+    pub fn process_spawning_queue(&mut self) {
+        use consts::CHUNK_SIZE as CS;
+
         if let Some(tile_map) = &mut self.tile_map_node {
-            use consts::atlas_coords as a_c;
-            tile_map
-                .set_cell_ex(Vector2i::new(x, y))
-                .source_id(a_c::SOURCE_ID)
-                .atlas_coords(atlas_coords)
-                .done(); // Must call .done()
-        }
-    }
+            let s_q = &self.chunk_generator.spawn_queue;
 
-    pub fn process_spawning_queue(&self) {
-        use consts::CHUNK_SIZE as C_S;
-        let s_q = &self.chunk_generator.spawn_queue;
+            if s_q.is_empty() {
+                return;
+            }
 
-        if s_q.is_empty() {
-            return;
-        }
-        for (chunk, coord) in s_q {
-            for (index, tile_type) in chunk.tiles.iter().enumerate() {
-                if *tile_type == TileType::Void {
-                    continue;
+            for (chunk, coord) in s_q {
+                for (index, tile_type) in chunk.tiles.iter().enumerate() {
+                    if *tile_type == TileType::Void {
+                        continue;
+                    }
+
+                    let local_x = (index % CS as usize) as i32;
+                    let local_y = (index / CS as usize) as i32;
+
+                    let global_x = (coord.x * CS) + local_x;
+                    let global_y = (coord.y * CS) + local_y;
+
+                    tile_map
+                        .set_cell_ex(Vector2i::new(global_x, global_y))
+                        .source_id(consts::atlas_coords::SOURCE_ID)
+                        .atlas_coords(tile_type.to_atlas_coords())
+                        .done();
                 }
-                // set cell
-                //
             }
         }
     }
@@ -133,7 +136,5 @@ impl INode for TerrainGenerator {
             self.chunk_generator.set_center_chunk(p_chunk);
             self.chunk_generator.update_chunks();
         }
-
-        self.set_cell(0, 0, TileType::Stone.to_atlas_coords());
     }
 }

@@ -13,6 +13,7 @@ pub enum TileType {
     #[default]
     Void,
     Stone,
+    // Dirt,
 }
 impl TileType {
     pub fn to_atlas_coords(self) -> Vector2i {
@@ -22,6 +23,7 @@ impl TileType {
         match self {
             Void => a_c::EMPTY_CELL,
             Stone => a_c::STONE,
+            // Dirt => a_c::DIRT,
         }
         .to_vector2i()
     }
@@ -59,6 +61,49 @@ impl Chunk {
         Self {
             tiles: vec![TileType::Void; (CS * CS) as usize],
             state: ChunkState::default(),
+        }
+    }
+}
+
+#[derive(Default, Eq, PartialEq, Clone, Hash, Debug, Copy)]
+pub struct ChunkCoord {
+    pub x: i32,
+    pub y: i32,
+}
+
+#[derive(Default, Eq, PartialEq, Clone, Hash, Debug, Copy)]
+pub struct LocalCoord {
+    pub x: i32,
+    pub y: i32,
+}
+
+#[derive(Default, Eq, PartialEq, Clone, Hash, Debug, Copy)]
+pub struct GlobalCoord {
+    pub x: i32,
+    pub y: i32,
+}
+impl LocalCoord {
+    /// Converts a local chunk index into an absolute global map position
+    pub fn to_global(self, chunk: ChunkCoord) -> GlobalCoord {
+        use crate::terrain::consts::gen::CHUNK_SIZE as CS;
+
+        GlobalCoord {
+            x: (chunk.x * CS) + self.x,
+            y: (chunk.y * CS) + self.y,
+        }
+    }
+}
+
+impl GlobalCoord {
+    /// Converts an absolute global map position down into a Chunk coordinate
+    pub fn to_chunk(self) -> ChunkCoord {
+        use crate::terrain::consts::gen::CHUNK_SIZE as CS;
+
+        // Division truncates toward zero in Rust, but for procedural grids
+        // spanning negative numbers, you generally want Euclidean division (div_euclid).
+        ChunkCoord {
+            x: self.x.div_euclid(CS),
+            y: self.y.div_euclid(CS),
         }
     }
 }

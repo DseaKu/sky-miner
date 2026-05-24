@@ -14,7 +14,7 @@ pub struct ChunkGenerator {
 }
 
 impl ChunkGenerator {
-    fn generate_chunk(&mut self, _coord: &Coord) -> Chunk {
+    fn generate_chunk(&mut self, coord: &Coord) -> Chunk {
         use consts::CHUNK_SIZE as C_S;
         let t_g = tile_generator::TileGenerator;
         let mut new_chunk = Chunk::new();
@@ -22,13 +22,16 @@ impl ChunkGenerator {
         for x in 0..C_S {
             for y in 0..C_S {
                 let index = (y * C_S + x) as usize;
-                new_chunk.tiles[index] = t_g.generate_tile(x, y);
+
+                let global_x = (coord.x * C_S) + x;
+                let global_y = (coord.y * C_S) + y;
+
+                new_chunk.tiles[index] = t_g.generate_tile(global_x, global_y);
             }
         }
 
         new_chunk
     }
-
     pub fn update_chunks(&mut self) {
         use consts::RENDER_DISTANCE as R_D;
         let c = &self.center.clone();
