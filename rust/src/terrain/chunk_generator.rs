@@ -35,8 +35,9 @@ impl ChunkGenerator {
     }
     pub fn update_chunks(&mut self) {
         let rd = self.config.render_distance;
-        let c = &self.center.clone();
+        let c = self.center;
 
+        // 1. Spawning logic
         for x in (c.x - rd)..=(c.x + rd) {
             for y in (c.y - rd)..=(c.y + rd) {
                 let coord = ChunkCoord::new(x, y);
@@ -53,6 +54,20 @@ impl ChunkGenerator {
                     new_chunk.state = ChunkState::PendingSpawn;
                 }
                 self.chunks.insert(coord, new_chunk);
+            }
+        }
+
+        // 2. Despawning logic
+        let to_remove: Vec<ChunkCoord> = self
+            .chunks
+            .keys()
+            .filter(|coord| (coord.x - c.x).abs() > rd || (coord.y - c.y).abs() > rd)
+            .cloned()
+            .collect();
+
+        for coord in to_remove {
+            if let Some(chunk) = self.chunks.remove(&coord) {
+                self.despawn_queue.push((chunk, coord));
             }
         }
     }

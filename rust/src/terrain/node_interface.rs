@@ -100,20 +100,13 @@ impl TerrainGenerator {
             }
 
             for (chunk, coord) in d_q.drain(..) {
-                for (index, tile_type) in chunk.tiles.iter().enumerate() {
-                    if *tile_type == TileType::Void {
-                        continue;
-                    }
-
+                for index in 0..chunk.tiles.len() {
                     let local =
                         LocalCoord::new((index % cs as usize) as i32, (index / cs as usize) as i32);
 
                     let global = local.to_global(coord, cs);
 
-                    tile_map
-                        .set_cell_ex(Vector2i::new(global.x, global.y))
-                        .source_id(-1) // -1 tells Godot to remove the tile at this coordinate
-                        .done();
+                    tile_map.set_cell(Vector2i::new(global.x, global.y));
                 }
             }
         }
@@ -130,6 +123,7 @@ impl INode for TerrainGenerator {
     fn process(&mut self, _delta: f64) {
         self.evalute_chunks();
         self.process_spawning_queue();
+        self.process_despawning_queue();
     }
 
     fn init(base: Base<Node>) -> Self {
@@ -166,5 +160,13 @@ impl INode for TerrainGenerator {
             "on_tile_map_layer_exiting",
             PRINT_PREFIX
         );
+
+        // Spawn chunks initial
+        if let Some(p_pos) = self.get_player_grid_pos() {
+            let p_chunk = self.get_player_coord(&p_pos);
+
+            self.chunk_generator.set_center_chunk(p_chunk);
+            self.chunk_generator.update_chunks();
+        }
     }
 }
