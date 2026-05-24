@@ -89,6 +89,36 @@ impl TerrainGenerator {
         }
     }
 
+    pub fn process_despawning_queue(&mut self) {
+        let cs = self.config.chunk_size;
+
+        if let Some(tile_map) = &mut self.tile_map_node {
+            let d_q = &mut self.chunk_generator.despawn_queue;
+
+            if d_q.is_empty() {
+                return;
+            }
+
+            for (chunk, coord) in d_q.drain(..) {
+                for (index, tile_type) in chunk.tiles.iter().enumerate() {
+                    if *tile_type == TileType::Void {
+                        continue;
+                    }
+
+                    let local =
+                        LocalCoord::new((index % cs as usize) as i32, (index / cs as usize) as i32);
+
+                    let global = local.to_global(coord, cs);
+
+                    tile_map
+                        .set_cell_ex(Vector2i::new(global.x, global.y))
+                        .source_id(-1) // -1 tells Godot to remove the tile at this coordinate
+                        .done();
+                }
+            }
+        }
+    }
+
     #[func]
     pub fn save_config(&self) {
         self.config.save();

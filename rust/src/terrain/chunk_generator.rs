@@ -10,6 +10,7 @@ pub struct ChunkGenerator {
     center: ChunkCoord,
     chunks: HashMap<ChunkCoord, Chunk>,
     pub spawn_queue: Vec<(Chunk, ChunkCoord)>,
+    pub despawn_queue: Vec<(Chunk, ChunkCoord)>,
     pub config: config::TerrainConfig,
 }
 
@@ -66,6 +67,7 @@ impl ChunkGenerator {
             center: ChunkCoord::default(),
             chunks: HashMap::new(),
             spawn_queue: Vec::new(),
+            despawn_queue: Vec::new(),
             config,
         }
     }
