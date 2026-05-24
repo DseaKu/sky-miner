@@ -1,4 +1,6 @@
-use crate::terrain::Coord;
+use crate::terrain::ChunkCoord;
+use crate::terrain::GlobalCoord;
+use crate::terrain::LocalCoord;
 use crate::terrain::TileType;
 
 use super::chunk_generator;
@@ -39,9 +41,8 @@ impl TerrainGenerator {
         None
     }
 
-    pub fn get_player_coord(player_pos: &Vector2i) -> Coord {
-        use consts::CHUNK_SIZE as C_S;
-        Coord::new(player_pos.x / C_S, player_pos.y / C_S)
+    pub fn get_player_coord(player_pos: &Vector2i) -> ChunkCoord {
+        GlobalCoord::new(player_pos.x, player_pos.y).to_chunk()
     }
 
     pub fn evalute_chunks(&mut self) {
@@ -60,26 +61,25 @@ impl TerrainGenerator {
         use consts::CHUNK_SIZE as CS;
 
         if let Some(tile_map) = &mut self.tile_map_node {
-            let s_q = &self.chunk_generator.spawn_queue;
+            let s_q = &mut self.chunk_generator.spawn_queue;
 
             if s_q.is_empty() {
                 return;
             }
 
-            for (chunk, coord) in s_q {
+            for (chunk, coord) in s_q.drain(..) {
                 for (index, tile_type) in chunk.tiles.iter().enumerate() {
                     if *tile_type == TileType::Void {
                         continue;
                     }
 
-                    let local_x = (index % CS as usize) as i32;
-                    let local_y = (index / CS as usize) as i32;
+                    let local =
+                        LocalCoord::new((index % CS as usize) as i32, (index / CS as usize) as i32);
 
-                    let global_x = (coord.x * CS) + local_x;
-                    let global_y = (coord.y * CS) + local_y;
+                    let global = local.to_global(coord);
 
                     tile_map
-                        .set_cell_ex(Vector2i::new(global_x, global_y))
+                        .set_cell_ex(Vector2i::new(global.x, global.y))
                         .source_id(consts::atlas_coords::SOURCE_ID)
                         .atlas_coords(tile_type.to_atlas_coords())
                         .done();

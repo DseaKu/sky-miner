@@ -17,27 +17,15 @@ pub enum TileType {
 }
 impl TileType {
     pub fn to_atlas_coords(self) -> Vector2i {
-        use consts::atlas_coords as a_c;
+        use consts::atlas_coords as ac;
         use TileType::*;
 
         match self {
-            Void => a_c::EMPTY_CELL,
-            Stone => a_c::STONE,
+            Void => ac::EMPTY_CELL,
+            Stone => ac::STONE,
             // Dirt => a_c::DIRT,
         }
         .to_vector2i()
-    }
-}
-
-#[derive(Default, Eq, PartialEq, Clone, Hash)]
-pub struct Coord {
-    pub x: i32,
-    pub y: i32,
-}
-
-impl Coord {
-    pub fn new(x: i32, y: i32) -> Self {
-        Self { x, y }
     }
 }
 
@@ -71,21 +59,25 @@ pub struct ChunkCoord {
     pub y: i32,
 }
 
+impl ChunkCoord {
+    pub fn new(x: i32, y: i32) -> Self {
+        Self { x, y }
+    }
+}
+
 #[derive(Default, Eq, PartialEq, Clone, Hash, Debug, Copy)]
 pub struct LocalCoord {
     pub x: i32,
     pub y: i32,
 }
 
-#[derive(Default, Eq, PartialEq, Clone, Hash, Debug, Copy)]
-pub struct GlobalCoord {
-    pub x: i32,
-    pub y: i32,
-}
 impl LocalCoord {
-    /// Converts a local chunk index into an absolute global map position
+    pub fn new(x: i32, y: i32) -> Self {
+        Self { x, y }
+    }
+
     pub fn to_global(self, chunk: ChunkCoord) -> GlobalCoord {
-        use crate::terrain::consts::gen::CHUNK_SIZE as CS;
+        use crate::terrain::consts::CHUNK_SIZE as CS;
 
         GlobalCoord {
             x: (chunk.x * CS) + self.x,
@@ -94,10 +86,19 @@ impl LocalCoord {
     }
 }
 
+#[derive(Default, Eq, PartialEq, Clone, Hash, Debug, Copy)]
+pub struct GlobalCoord {
+    pub x: i32,
+    pub y: i32,
+}
+
 impl GlobalCoord {
-    /// Converts an absolute global map position down into a Chunk coordinate
+    pub fn new(x: i32, y: i32) -> Self {
+        Self { x, y }
+    }
+
     pub fn to_chunk(self) -> ChunkCoord {
-        use crate::terrain::consts::gen::CHUNK_SIZE as CS;
+        use crate::terrain::consts::CHUNK_SIZE as CS;
 
         // Division truncates toward zero in Rust, but for procedural grids
         // spanning negative numbers, you generally want Euclidean division (div_euclid).

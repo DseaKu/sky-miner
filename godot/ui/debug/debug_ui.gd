@@ -123,7 +123,7 @@ func update_game_data() -> void:
 
 
 func update_player_data() -> void:
-	var player_fsm_node = _player.get_node_or_null("PlayerFsmNode")
+	var player_fsm = _player.get_node_or_null("PlayerFSM")
 
 	player_header.text = "Player:"
 
@@ -158,8 +158,8 @@ func update_player_data() -> void:
 		chunk_pos_label.text = INDENT_LABEL + "Chunk: --"
 
 	# Update State
-	if player_fsm_node and player_fsm_node.has_method("get_state_name"):
-		state_label.text = INDENT_LABEL + "State: " + player_fsm_node.get_state_name()
+	if player_fsm and player_fsm.has_method("get_state_name"):
+		state_label.text = INDENT_LABEL + "State: " + player_fsm.get_state_name()
 	else:
 		state_label.text = INDENT_LABEL + "State: --"
 
@@ -176,9 +176,7 @@ func update_player_data() -> void:
 
 	is_flying_label.text = INDENT_LABEL + "Is Flying: " + str(_player.is_flying)
 
-	if player_fsm_node and player_fsm_node.has_method("get_jumps_left"):
-		jumps_left_label.text = (
-			INDENT_LABEL + "Jumps Left: " + str(player_fsm_node.get_jumps_left())
-		)
+	if player_fsm and player_fsm.has_method("get_jumps_left"):
+		jumps_left_label.text = (INDENT_LABEL + "Jumps Left: " + str(player_fsm.get_jumps_left()))
 	else:
 		jumps_left_label.text = INDENT_LABEL + "Jumps Left: --"

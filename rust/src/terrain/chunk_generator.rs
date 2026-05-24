@@ -8,37 +8,37 @@ use std::collections::HashMap;
 #[derive(Default)]
 pub struct ChunkGenerator {
     _perlin: noise::Perlin,
-    center: Coord,
-    chunks: HashMap<Coord, Chunk>,
-    pub spawn_queue: Vec<(Chunk, Coord)>,
+    center: ChunkCoord,
+    chunks: HashMap<ChunkCoord, Chunk>,
+    pub spawn_queue: Vec<(Chunk, ChunkCoord)>,
 }
 
 impl ChunkGenerator {
-    fn generate_chunk(&mut self, coord: &Coord) -> Chunk {
-        use consts::CHUNK_SIZE as C_S;
-        let t_g = tile_generator::TileGenerator;
+    fn generate_chunk(&mut self, coord: &ChunkCoord) -> Chunk {
+        use consts::CHUNK_SIZE as CS;
+        let tg = tile_generator::TileGenerator;
         let mut new_chunk = Chunk::new();
 
-        for x in 0..C_S {
-            for y in 0..C_S {
-                let index = (y * C_S + x) as usize;
+        for x in 0..CS {
+            for y in 0..CS {
+                let index = (y * CS + x) as usize;
 
-                let global_x = (coord.x * C_S) + x;
-                let global_y = (coord.y * C_S) + y;
+                let local = LocalCoord::new(x, y);
+                let global = local.to_global(*coord);
 
-                new_chunk.tiles[index] = t_g.generate_tile(global_x, global_y);
+                new_chunk.tiles[index] = tg.generate_tile(global.x, global.y);
             }
         }
 
         new_chunk
     }
     pub fn update_chunks(&mut self) {
-        use consts::RENDER_DISTANCE as R_D;
+        use consts::RENDER_DISTANCE as RD;
         let c = &self.center.clone();
 
-        for x in (c.x - R_D)..=(c.x + R_D) {
-            for y in (c.y - R_D)..=(c.y + R_D) {
-                let coord = Coord::new(x, y);
+        for x in (c.x - RD)..=(c.x + RD) {
+            for y in (c.y - RD)..=(c.y + RD) {
+                let coord = ChunkCoord::new(x, y);
 
                 if self.chunks.contains_key(&coord) {
                     continue;
@@ -47,7 +47,8 @@ impl ChunkGenerator {
                 let mut new_chunk = self.generate_chunk(&coord);
 
                 if new_chunk.state == ChunkState::Unspawned {
-                    self.spawn_queue.push((new_chunk.clone(), Coord::new(x, y)));
+                    self.spawn_queue
+                        .push((new_chunk.clone(), ChunkCoord::new(x, y)));
                     new_chunk.state = ChunkState::PendingSpawn;
                 }
                 self.chunks.insert(coord, new_chunk);
@@ -62,15 +63,15 @@ impl ChunkGenerator {
 
         Self {
             _perlin: noise::Perlin::new(rnd_num),
-            center: Coord::default(),
+            center: ChunkCoord::default(),
             chunks: HashMap::new(),
             spawn_queue: Vec::new(),
         }
     }
-    pub fn has_center_changed(&self, new_chunk: &Coord) -> bool {
+    pub fn has_center_changed(&self, new_chunk: &ChunkCoord) -> bool {
         *new_chunk != self.center
     }
-    pub fn set_center_chunk(&mut self, new_chunk: Coord) {
+    pub fn set_center_chunk(&mut self, new_chunk: ChunkCoord) {
         self.center = new_chunk;
     }
 }
