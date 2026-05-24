@@ -12,6 +12,8 @@ pub struct AtlasCoordsConfig {
     pub source_id: i32,
     pub dirt: (i32, i32),
     pub stone: (i32, i32),
+    pub ore: (i32, i32),
+    pub gem: (i32, i32),
     pub empty_cell: (i32, i32),
 }
 
@@ -90,6 +92,8 @@ impl Default for TerrainConfig {
                 source_id: atlas_coords::SOURCE_ID,
                 dirt: atlas_coords::DIRT,
                 stone: atlas_coords::STONE,
+                ore: (2, 0),
+                gem: (0, 1),
                 empty_cell: atlas_coords::EMPTY_CELL,
             },
         }

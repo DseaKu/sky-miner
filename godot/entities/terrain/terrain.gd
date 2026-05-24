@@ -1,6 +1,7 @@
 extends Node2D
 
 @onready var tile_map = $TileMapLayer
+@onready var terrain_generator = $TerrainGenerator
 
 # Chunk Generation Settings
 const CHUNK_SIZE = 16
@@ -203,20 +204,4 @@ func generate_chunk(chunk_coord: Vector2i) -> void:
 
 
 func mine_tile(world_position: Vector2) -> bool:
-	var local_pos = tile_map.to_local(world_position)
-	var grid_pos = tile_map.local_to_map(local_pos)
-
-	# Check if there is a tile there
-	var tar_cell = tile_map.get_cell_atlas_coords(grid_pos)
-	if tar_cell != EMPTY_CELL and tar_cell != NONE_EXISTING_CELL:
-		var atlas_coords = tile_map.get_cell_atlas_coords(grid_pos)
-		if atlas_coords == ORE:
-			print("Mined Ore!")
-		elif atlas_coords == STONE:
-			print("Mined Stone.")
-		elif atlas_coords == DIRT:
-			print("Mined Dirt.")
-
-		tile_map.set_cell(grid_pos, TILE_SOURCE_ID, EMPTY_CELL)
-		return true
-	return false
+	return terrain_generator.mine_tile(world_position)

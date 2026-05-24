@@ -2,6 +2,7 @@ use crate::terrain::ChunkCoord;
 use crate::terrain::GlobalCoord;
 use crate::terrain::LocalCoord;
 use crate::terrain::TileType;
+use crate::core::utils::ToVector2i;
 
 use super::chunk_generator;
 use super::consts;
@@ -110,6 +111,53 @@ impl TerrainGenerator {
                 }
             }
         }
+    }
+
+    #[func]
+    pub fn mine_tile(&mut self, world_position: Vector2) -> bool {
+        let tile_map = match &mut self.tile_map_node {
+            Some(tm) => tm,
+            None => return false,
+        };
+
+        let local_pos = tile_map.to_local(world_position);
+        let grid_pos = tile_map.local_to_map(local_pos);
+
+        // Check if there is a tile there
+        let tar_cell = tile_map.get_cell_atlas_coords(grid_pos);
+        let empty_cell = self.config.atlas_coords.empty_cell.to_vector2i();
+        let none_existing_cell = Vector2i::new(-1, -1);
+
+        if tar_cell != empty_cell && tar_cell != none_existing_cell {
+            let ac = &self.config.atlas_coords;
+            if tar_cell == ac.ore.to_vector2i() {
+                crate::gd_print!("Mined Ore!");
+            } else if tar_cell == ac.stone.to_vector2i() {
+                crate::gd_print!("Mined Stone.");
+            } else if tar_cell == ac.dirt.to_vector2i() {
+                crate::gd_print!("Mined Dirt.");
+            } else if tar_cell == ac.gem.to_vector2i() {
+                crate::gd_print!("Mined Gem!");
+            }
+
+            tile_map.set_cell_ex(grid_pos)
+                .source_id(self.config.atlas_coords.source_id)
+                .atlas_coords(empty_cell)
+                .done();
+
+            // Mark the chunk as modified
+            self.mark_chunk_dirty(grid_pos);
+
+            return true;
+        }
+
+        false
+    }
+
+    #[func]
+    pub fn mark_chunk_dirty(&mut self, grid_pos: Vector2i) {
+        let coord = GlobalCoord::new(grid_pos.x, grid_pos.y).to_chunk(self.config.chunk_size);
+        self.chunk_generator.mark_dirty(&coord);
     }
 
     #[func]

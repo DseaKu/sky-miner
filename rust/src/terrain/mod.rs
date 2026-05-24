@@ -13,7 +13,9 @@ pub enum TileType {
     #[default]
     Void,
     Stone,
-    // Dirt,
+    Dirt,
+    Ore,
+    Gem,
 }
 impl TileType {
     pub fn to_atlas_coords(self, config: &config::TerrainConfig) -> Vector2i {
@@ -23,7 +25,9 @@ impl TileType {
         match self {
             Void => ac.empty_cell,
             Stone => ac.stone,
-            // Dirt => ac.dirt,
+            Dirt => ac.dirt,
+            Ore => ac.ore,
+            Gem => ac.gem,
         }
         .to_vector2i()
     }
@@ -34,7 +38,8 @@ pub enum ChunkState {
     #[default]
     Unspawned,
     PendingSpawn,
-    _Spawned,
+    Spawned,
+    Modified,
     _PendingDespawn,
 }
 

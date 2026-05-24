@@ -60,15 +60,24 @@ impl ChunkGenerator {
         // 2. Despawning logic
         let to_remove: Vec<ChunkCoord> = self
             .chunks
-            .keys()
-            .filter(|coord| (coord.x - c.x).abs() > rd || (coord.y - c.y).abs() > rd)
-            .cloned()
+            .iter()
+            .filter(|(coord, chunk)| {
+                let is_outside = (coord.x - c.x).abs() > rd || (coord.y - c.y).abs() > rd;
+                is_outside && chunk.state != ChunkState::Modified
+            })
+            .map(|(coord, _)| *coord)
             .collect();
 
         for coord in to_remove {
             if let Some(chunk) = self.chunks.remove(&coord) {
                 self.despawn_queue.push((chunk, coord));
             }
+        }
+    }
+
+    pub fn mark_dirty(&mut self, coord: &ChunkCoord) {
+        if let Some(chunk) = self.chunks.get_mut(coord) {
+            chunk.state = ChunkState::Modified;
         }
     }
 
