@@ -1,5 +1,5 @@
-pub const CHUNK_SIZE: i32 = 16;
-pub const RENDER_DISTANCE: i32 = 10;
+pub const CHUNK_SIZE: i32 = 4;
+pub const RENDER_DISTANCE: i32 = 1;
 // pub const HEIGHT_PENALTY: f32 = 0.00001;
 
 pub mod path {
