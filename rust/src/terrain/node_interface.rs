@@ -186,6 +186,8 @@ impl INode for TerrainGenerator {
         crate::node_print!(PRINT_PREFIX, "Initializing...");
         let config = crate::terrain::config::TerrainConfig::load();
 
+        chunk_generator::ChunkGenerator::clear_saved_chunks();
+
         let absolute_dir = ProjectSettings::singleton().globalize_path("user://chunks");
         crate::node_print!(
             PRINT_PREFIX,

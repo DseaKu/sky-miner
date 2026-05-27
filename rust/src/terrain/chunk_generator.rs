@@ -43,7 +43,6 @@ impl ChunkGenerator {
             }
         }
     }
-
     fn load_chunk(&self, coord: &ChunkCoord) -> Option<Chunk> {
         use godot::classes::file_access::ModeFlags;
         use godot::classes::FileAccess;
@@ -61,6 +60,25 @@ impl ChunkGenerator {
         None
     }
 
+    pub fn clear_saved_chunks() {
+        use godot::classes::DirAccess;
+
+        let path = "user://chunks";
+        if DirAccess::dir_exists_absolute(path) {
+            if let Some(mut dir) = DirAccess::open(path) {
+                dir.list_dir_begin();
+                let mut file_name = dir.get_next();
+                while !file_name.is_empty() {
+                    if !dir.current_is_dir() {
+                        dir.remove(&file_name);
+                    }
+                    file_name = dir.get_next();
+                }
+                dir.list_dir_end();
+                crate::gd_print!("ChunkGenerator: Cleared all saved chunks in\n => {}", path);
+            }
+        }
+    }
     fn generate_chunk(&mut self, coord: &ChunkCoord) -> Chunk {
         if let Some(saved_chunk) = self.load_chunk(coord) {
             return saved_chunk;
@@ -149,7 +167,7 @@ impl ChunkGenerator {
     pub fn new(config: config::TerrainConfig) -> Self {
         let mut rng = rand::rng();
         let rnd_num: u32 = rng.random();
-        crate::node_print!(PRINT_PREFIX, "Initialized with seed {}", rnd_num);
+        crate::node_print!(PRINT_PREFIX, "Initialized with seed\n => {}", rnd_num);
 
         Self {
             _perlin: noise::Perlin::new(rnd_num),
