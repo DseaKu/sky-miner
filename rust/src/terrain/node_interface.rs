@@ -159,6 +159,11 @@ impl TerrainGenerator {
     pub fn save_config(&self) {
         self.config.save();
     }
+
+    #[func]
+    pub fn get_chunk_size(&self) -> i32 {
+        self.config.chunk_size
+    }
 }
 
 #[godot_api]

@@ -6,6 +6,7 @@ use godot::prelude::*;
 mod core;
 mod entities;
 mod terrain;
+mod ui;
 
 struct MyExtension;
 

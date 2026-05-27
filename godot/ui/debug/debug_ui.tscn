@@ -2,8 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b211ft71804m0" path="res://ui/debug/debug_ui.gd" id="1_nb4k0"]
 
-[node name="DebugUI" type="CanvasLayer" unique_id=1149335838]
-script = ExtResource("1_nb4k0")
+[node name="DebugUI" type="DebugUI" unique_id=1149335838]
 
 [node name="MainPanel" type="VBoxContainer" parent="." unique_id=746237281]
 offset_right = 40.0
