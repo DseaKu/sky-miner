@@ -35,7 +35,7 @@ impl TileType {
     }
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Default, Clone, Serialize, Deserialize)]
 pub struct Chunk {
     pub tiles: Vec<TileType>,
     pub is_modified: bool,
@@ -47,6 +47,17 @@ impl Chunk {
             tiles: vec![TileType::Void; (chunk_size * chunk_size) as usize],
             is_modified: false,
         }
+    }
+}
+
+#[derive(Default)]
+pub struct ChunkData {
+    chunk: Chunk,
+    coord: ChunkCoord,
+}
+impl ChunkData {
+    pub fn new(chunk: Chunk, coord: ChunkCoord) -> Self {
+        Self { chunk, coord }
     }
 }
 
@@ -66,32 +77,34 @@ impl ChunkCoord {
     }
 }
 
+/// Tile Coordinate inside a chunk
 #[derive(Default, Eq, PartialEq, Clone, Hash, Debug, Copy)]
-pub struct LocalCoord {
+pub struct LocalTileCoord {
     pub x: i32,
     pub y: i32,
 }
 
-impl LocalCoord {
+impl LocalTileCoord {
     pub fn new(x: i32, y: i32) -> Self {
         Self { x, y }
     }
 
-    pub fn to_global(self, chunk: ChunkCoord, chunk_size: i32) -> GlobalCoord {
-        GlobalCoord {
+    pub fn to_tile(self, chunk: ChunkCoord, chunk_size: i32) -> TileCoord {
+        TileCoord {
             x: (chunk.x * chunk_size) + self.x,
             y: (chunk.y * chunk_size) + self.y,
         }
     }
 }
 
+/// Global Tile Coordinate
 #[derive(Default, Eq, PartialEq, Clone, Hash, Debug, Copy)]
-pub struct GlobalCoord {
+pub struct TileCoord {
     pub x: i32,
     pub y: i32,
 }
 
-impl GlobalCoord {
+impl TileCoord {
     pub fn new(x: i32, y: i32) -> Self {
         Self { x, y }
     }
@@ -103,5 +116,17 @@ impl GlobalCoord {
             x: self.x.div_euclid(chunk_size),
             y: self.y.div_euclid(chunk_size),
         }
+    }
+}
+
+impl From<Vector2i> for TileCoord {
+    fn from(v: Vector2i) -> Self {
+        Self { x: v.x, y: v.y }
+    }
+}
+
+impl From<TileCoord> for Vector2i {
+    fn from(t: TileCoord) -> Self {
+        Self::new(t.x, t.y)
     }
 }

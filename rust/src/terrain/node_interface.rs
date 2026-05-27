@@ -1,7 +1,8 @@
 use crate::core::utils::ToVector2i;
 use crate::terrain::ChunkCoord;
-use crate::terrain::GlobalCoord;
-use crate::terrain::LocalCoord;
+use crate::terrain::ChunkData;
+use crate::terrain::LocalTileCoord;
+use crate::terrain::TileCoord;
 use crate::terrain::TileType;
 
 use super::chunk_generator;
@@ -41,7 +42,7 @@ impl TerrainGenerator {
         let l_pos = tile_map.to_local(g_pos);
         let grid_pos = tile_map.local_to_map(l_pos);
 
-        Some(GlobalCoord::new(grid_pos.x, grid_pos.y).to_chunk(self.config.chunk_size))
+        Some(TileCoord::from(grid_pos).to_chunk(self.config.chunk_size))
     }
 
     pub fn evaluate_chunks(&mut self) {
@@ -68,21 +69,21 @@ impl TerrainGenerator {
             return;
         }
 
-        for (chunk, coord) in spawn_queue.drain(..) {
+        for ChunkData { chunk, coord } in spawn_queue.drain(..) {
             for (index, tile_type) in chunk.tiles.iter().enumerate() {
                 if *tile_type == TileType::Void {
                     continue;
                 }
 
-                let local = LocalCoord::new(
+                let local = LocalTileCoord::new(
                     (index % chunk_size as usize) as i32,
                     (index / chunk_size as usize) as i32,
                 );
 
-                let global = local.to_global(coord, chunk_size);
+                let tile = local.to_tile(coord, chunk_size);
 
                 tile_map
-                    .set_cell_ex(Vector2i::new(global.x, global.y))
+                    .set_cell_ex(Vector2i::from(tile))
                     .source_id(self.config.atlas_coords.source_id)
                     .atlas_coords(tile_type.to_atlas_coords(&self.config))
                     .done();
@@ -103,16 +104,16 @@ impl TerrainGenerator {
             return;
         }
 
-        for (chunk, coord) in despawn_queue.drain(..) {
+        for ChunkData { chunk, coord } in despawn_queue.drain(..) {
             for index in 0..chunk.tiles.len() {
-                let local = LocalCoord::new(
+                let local = LocalTileCoord::new(
                     (index % chunk_size as usize) as i32,
                     (index / chunk_size as usize) as i32,
                 );
 
-                let global = local.to_global(coord, chunk_size);
+                let tile = local.to_tile(coord, chunk_size);
 
-                tile_map.set_cell(Vector2i::new(global.x, global.y));
+                tile_map.set_cell(Vector2i::from(tile));
             }
         }
     }
@@ -150,7 +151,7 @@ impl TerrainGenerator {
 
     #[func]
     pub fn mark_chunk_dirty(&mut self, grid_pos: Vector2i) {
-        let coord = GlobalCoord::new(grid_pos.x, grid_pos.y).to_chunk(self.config.chunk_size);
+        let coord = TileCoord::from(grid_pos).to_chunk(self.config.chunk_size);
         self.chunk_generator.mark_dirty(&coord);
     }
 

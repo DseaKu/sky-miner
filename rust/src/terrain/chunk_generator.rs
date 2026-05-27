@@ -9,10 +9,10 @@ const PRINT_PREFIX: &str = "ChunkGenerator: ";
 #[derive(Default)]
 pub struct ChunkGenerator {
     center: ChunkCoord,
-    chunks: HashMap<ChunkCoord, Chunk>,
+    chunk_hash_map: HashMap<ChunkCoord, Chunk>,
     tile_gen: tile_generator::TileGenerator,
-    pub spawn_queue: Vec<(Chunk, ChunkCoord)>,
-    pub despawn_queue: Vec<(Chunk, ChunkCoord)>,
+    pub spawn_queue: Vec<ChunkData>,
+    pub despawn_queue: Vec<ChunkData>,
     pub config: config::TerrainConfig,
 }
 
@@ -90,10 +90,10 @@ impl ChunkGenerator {
             for y in 0..chunk_size {
                 let index = (y * chunk_size + x) as usize;
 
-                let local = LocalCoord::new(x, y);
-                let global = local.to_global(*coord, chunk_size);
+                let local = LocalTileCoord::new(x, y);
+                let tile = local.to_tile(*coord, chunk_size);
 
-                new_chunk.tiles[index] = self.tile_gen.generate_tile(global.x, global.y);
+                new_chunk.tiles[index] = self.tile_gen.generate_tile(tile.x, tile.y);
             }
         }
 
@@ -105,32 +105,32 @@ impl ChunkGenerator {
             for y in (center.y - render_dist)..=(center.y + render_dist) {
                 let coord = ChunkCoord::new(x, y);
 
-                if self.chunks.contains_key(&coord) {
+                if self.chunk_hash_map.contains_key(&coord) {
                     continue;
                 }
 
                 let new_chunk = self.generate_chunk(&coord);
                 self.spawn_queue
-                    .push((new_chunk.clone(), ChunkCoord::new(x, y)));
-                self.chunks.insert(coord, new_chunk);
+                    .push(ChunkData::new(new_chunk.clone(), ChunkCoord::new(x, y)));
+                self.chunk_hash_map.insert(coord, new_chunk);
             }
         }
     }
 
     fn despawn_logic(&mut self, center: ChunkCoord, render_dist: i32) {
         let to_remove: Vec<ChunkCoord> = self
-            .chunks
+            .chunk_hash_map
             .iter()
             .filter(|(coord, _)| coord.is_outside_render_distance(&center, render_dist))
             .map(|(coord, _)| *coord)
             .collect();
 
         for coord in to_remove {
-            if let Some(chunk) = self.chunks.remove(&coord) {
+            if let Some(chunk) = self.chunk_hash_map.remove(&coord) {
                 if chunk.is_modified {
                     Self::save_chunk(&coord, &chunk);
                 }
-                self.despawn_queue.push((chunk, coord));
+                self.despawn_queue.push(ChunkData::new(chunk, coord));
             }
         }
     }
@@ -143,16 +143,17 @@ impl ChunkGenerator {
     }
 
     pub fn mark_dirty(&mut self, coord: &ChunkCoord) {
-        if let Some(chunk) = self.chunks.get_mut(coord) {
+        if let Some(chunk) = self.chunk_hash_map.get_mut(coord) {
             chunk.is_modified = true;
         }
     }
 
     pub fn set_tile(&mut self, grid_pos: Vector2i, tile: TileType) {
         let chunk_size = self.config.chunk_size;
-        let coord = GlobalCoord::new(grid_pos.x, grid_pos.y).to_chunk(chunk_size);
+        let tile_coord = TileCoord::from(grid_pos);
+        let coord = tile_coord.to_chunk(chunk_size);
 
-        if let Some(chunk) = self.chunks.get_mut(&coord) {
+        if let Some(chunk) = self.chunk_hash_map.get_mut(&coord) {
             let local_x = grid_pos.x.rem_euclid(chunk_size);
             let local_y = grid_pos.y.rem_euclid(chunk_size);
             let index = (local_y * chunk_size + local_x) as usize;
@@ -166,7 +167,7 @@ impl ChunkGenerator {
     pub fn new(config: config::TerrainConfig) -> Self {
         Self {
             center: ChunkCoord::default(),
-            chunks: HashMap::new(),
+            chunk_hash_map: HashMap::new(),
             tile_gen: TileGenerator::new(),
             spawn_queue: Vec::new(),
             despawn_queue: Vec::new(),
