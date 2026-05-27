@@ -1,7 +1,7 @@
-pub const CHUNK_SIZE: i32 = 4;
-pub const RENDER_DISTANCE: i32 = 1;
-// pub const HEIGHT_PENALTY: f32 = 0.00001;
-
+pub mod chunk_gen {
+    pub const CHUNK_SIZE: i32 = 4;
+    pub const RENDER_DISTANCE: i32 = 1;
+}
 pub mod path {
     pub const PLAYER_NODE_PATH: &str = "../../Player";
     pub const TILE_MAP_LAYER_NODE_PATH: &str = "../TileMapLayer";
@@ -20,6 +20,11 @@ pub mod atlas_coords {
     // pub const ORE: (i32, i32) = (2, 0);
     // pub const GEM: (i32, i32) = (0, 1);
     pub const EMPTY_CELL: (i32, i32) = (-1, -1);
+}
+
+pub mod tile_gen {
+    pub const GROUND_LEVEL: i32 = 0;
+    // pub const HEIGHT_PENALTY: f32 = 0.00001;
 }
 // const CHUNK_SIZE = 16
 // const RENDER_DISTANCE = 10

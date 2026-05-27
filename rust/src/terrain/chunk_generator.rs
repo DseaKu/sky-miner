@@ -39,7 +39,8 @@ impl ChunkGenerator {
     }
 
     fn generate_chunk_internal(&mut self, coord: &ChunkCoord) -> Chunk {
-        let chunk_size = self.config.chunk_size;
+        let chunk_size = self.config.chunk_gen.chunk_size;
+        let cs_usize = chunk_size as usize; // Cast once outside the loop
         let mut new_chunk = Chunk::new(chunk_size);
 
         new_chunk
@@ -47,10 +48,10 @@ impl ChunkGenerator {
             .par_iter_mut()
             .enumerate()
             .for_each(|(index, tile_type)| {
-                let x = (index % chunk_size as usize) as i32;
-                let y = (index / chunk_size as usize) as i32;
+                // Inline the math directly into the constructor
+                let local =
+                    LocalTileCoord::new((index % cs_usize) as i32, (index / cs_usize) as i32);
 
-                let local = LocalTileCoord::new(x, y);
                 let tile = local.to_tile(*coord, chunk_size);
 
                 *tile_type = self.tile_gen.generate_tile(tile.x, tile.y);
@@ -127,7 +128,7 @@ impl ChunkGenerator {
         }
     }
     pub fn update_chunks(&mut self) {
-        let render_dist = self.config.render_distance;
+        let render_dist = self.config.chunk_gen.render_distance;
         let center = self.center;
 
         self.spawn_logic(center, render_dist);
@@ -141,7 +142,7 @@ impl ChunkGenerator {
     }
 
     pub fn set_tile(&mut self, grid_pos: Vector2i, tile: TileType) {
-        let chunk_size = self.config.chunk_size;
+        let chunk_size = self.config.chunk_gen.chunk_size;
         let tile_coord = TileCoord::from(grid_pos);
         let coord = tile_coord.to_chunk(chunk_size);
 

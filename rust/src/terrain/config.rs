@@ -3,11 +3,10 @@ use serde::{Deserialize, Serialize};
 const PRINT_PREFIX: &str = "PlayerConfig: ";
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct TerrainConfig {
-    pub chunk_size: i32,
-    pub render_distance: i32,
     pub atlas_coords: AtlasCoordsConfig,
+    pub chunk_gen: ChunkGen,
+    pub tile_gen: TileGen,
 }
-
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct AtlasCoordsConfig {
     pub source_id: i32,
@@ -18,6 +17,16 @@ pub struct AtlasCoordsConfig {
     pub empty_cell: (i32, i32),
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct ChunkGen {
+    pub chunk_size: i32,
+    pub render_distance: i32,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct TileGen {
+    pub ground_level: i32,
+}
 impl TerrainConfig {
     pub fn load() -> Self {
         use godot::classes::file_access::ModeFlags;
@@ -88,8 +97,6 @@ impl Default for TerrainConfig {
     fn default() -> Self {
         use super::consts::*;
         Self {
-            chunk_size: CHUNK_SIZE,
-            render_distance: RENDER_DISTANCE,
             atlas_coords: AtlasCoordsConfig {
                 source_id: atlas_coords::SOURCE_ID,
                 dirt: atlas_coords::DIRT,
@@ -97,6 +104,13 @@ impl Default for TerrainConfig {
                 ore: (2, 0),
                 gem: (0, 1),
                 empty_cell: atlas_coords::EMPTY_CELL,
+            },
+            chunk_gen: ChunkGen {
+                chunk_size: chunk_gen::CHUNK_SIZE,
+                render_distance: chunk_gen::RENDER_DISTANCE,
+            },
+            tile_gen: TileGen {
+                ground_level: tile_gen::GROUND_LEVEL,
             },
         }
     }

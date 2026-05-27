@@ -43,7 +43,7 @@ impl TerrainGenerator {
         let l_pos = tile_map.to_local(g_pos);
         let grid_pos = tile_map.local_to_map(l_pos);
 
-        Some(TileCoord::from(grid_pos).to_chunk(self.config.chunk_size))
+        Some(TileCoord::from(grid_pos).to_chunk(self.config.chunk_gen.chunk_size))
     }
 
     pub fn evaluate_chunks(&mut self) {
@@ -65,7 +65,7 @@ impl TerrainGenerator {
 
         let spawn_queue = &mut self.chunk_generator.spawn_queue;
 
-        let chunk_size = self.config.chunk_size;
+        let chunk_size = self.config.chunk_gen.chunk_size;
         if spawn_queue.is_empty() {
             return;
         }
@@ -97,7 +97,7 @@ impl TerrainGenerator {
             Some(tm) => tm,
             None => return,
         };
-        let chunk_size = self.config.chunk_size;
+        let chunk_size = self.config.chunk_gen.chunk_size;
 
         let despawn_queue = &mut self.chunk_generator.despawn_queue;
 
@@ -152,7 +152,7 @@ impl TerrainGenerator {
 
     #[func]
     pub fn mark_chunk_dirty(&mut self, grid_pos: Vector2i) {
-        let coord = TileCoord::from(grid_pos).to_chunk(self.config.chunk_size);
+        let coord = TileCoord::from(grid_pos).to_chunk(self.config.chunk_gen.chunk_size);
         self.chunk_generator.mark_dirty(&coord);
     }
 
@@ -163,7 +163,7 @@ impl TerrainGenerator {
 
     #[func]
     pub fn get_chunk_size(&self) -> i32 {
-        self.config.chunk_size
+        self.config.chunk_gen.chunk_size
     }
 }
 
