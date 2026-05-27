@@ -1,8 +1,8 @@
+use crate::core::utils::ToVector2i;
 use crate::terrain::ChunkCoord;
 use crate::terrain::GlobalCoord;
 use crate::terrain::LocalCoord;
 use crate::terrain::TileType;
-use crate::core::utils::ToVector2i;
 
 use super::chunk_generator;
 use super::consts;
@@ -140,12 +140,12 @@ impl TerrainGenerator {
                 crate::gd_print!("Mined Gem!");
             }
 
-            tile_map.set_cell_ex(grid_pos)
+            tile_map
+                .set_cell_ex(grid_pos)
                 .source_id(self.config.atlas_coords.source_id)
                 .atlas_coords(empty_cell)
                 .done();
 
-            // Mark the chunk as modified
             self.mark_chunk_dirty(grid_pos);
 
             return true;

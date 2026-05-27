@@ -33,11 +33,16 @@ impl ChunkGenerator {
 
         new_chunk
     }
+    pub fn spawn_logic(&mut self, center: ChunkCoord, render_dist: i32) {
+        let c = center;
+        let rd = render_dist;
+    }
     pub fn update_chunks(&mut self) {
         let rd = self.config.render_distance;
         let c = self.center;
 
-        // 1. Spawning logic
+        Self::spawn_logic(self, c, rd);
+        // Spawning logic
         for x in (c.x - rd)..=(c.x + rd) {
             for y in (c.y - rd)..=(c.y + rd) {
                 let coord = ChunkCoord::new(x, y);
@@ -57,7 +62,7 @@ impl ChunkGenerator {
             }
         }
 
-        // 2. Despawning logic
+        // Despawning logic
         let to_remove: Vec<ChunkCoord> = self
             .chunks
             .iter()
