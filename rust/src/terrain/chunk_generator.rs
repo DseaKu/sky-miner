@@ -2,16 +2,15 @@ use super::tile_generator::TileGenerator;
 use crate::terrain::*;
 use godot::prelude::PackedByteArray;
 
-use rand::{self, RngExt};
 use std::collections::HashMap;
 
 const PRINT_PREFIX: &str = "ChunkGenerator: ";
 
 #[derive(Default)]
 pub struct ChunkGenerator {
-    _perlin: noise::Perlin,
     center: ChunkCoord,
     chunks: HashMap<ChunkCoord, Chunk>,
+    tile_gen: tile_generator::TileGenerator,
     pub spawn_queue: Vec<(Chunk, ChunkCoord)>,
     pub despawn_queue: Vec<(Chunk, ChunkCoord)>,
     pub config: config::TerrainConfig,
@@ -94,7 +93,7 @@ impl ChunkGenerator {
                 let local = LocalCoord::new(x, y);
                 let global = local.to_global(*coord, chunk_size);
 
-                new_chunk.tiles[index] = TileGenerator.generate_tile(global.x, global.y);
+                new_chunk.tiles[index] = self.tile_gen.generate_tile(global.x, global.y);
             }
         }
 
@@ -165,14 +164,10 @@ impl ChunkGenerator {
     }
 
     pub fn new(config: config::TerrainConfig) -> Self {
-        let mut rng = rand::rng();
-        let rnd_num: u32 = rng.random();
-        crate::node_print!(PRINT_PREFIX, "Initialized with seed\n => {}", rnd_num);
-
         Self {
-            _perlin: noise::Perlin::new(rnd_num),
             center: ChunkCoord::default(),
             chunks: HashMap::new(),
+            tile_gen: TileGenerator::new(),
             spawn_queue: Vec::new(),
             despawn_queue: Vec::new(),
             config,

@@ -1,0 +1,4 @@
+- io-handler
+- complete procedural logic
+- ui element for displaying mined tiles
+- harpoon logic

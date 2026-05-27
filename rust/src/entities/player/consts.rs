@@ -35,6 +35,6 @@ pub mod v_move {
 pub mod spawn {
     pub mod position {
         pub const X: f32 = 0.0;
-        pub const Y: f32 = 0.0;
+        pub const Y: f32 = -30.0;
     }
 }
