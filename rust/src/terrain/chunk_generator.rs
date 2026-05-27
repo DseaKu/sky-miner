@@ -33,10 +33,10 @@ impl ChunkGenerator {
 
         new_chunk
     }
-    pub fn spawn_logic(&mut self, center: ChunkCoord, render_dist: i32) {
+
+    fn spawn_logic(&mut self, center: ChunkCoord, render_dist: i32) {
         let c = center;
         let rd = render_dist;
-        // Spawning logic
         for x in (c.x - rd)..=(c.x + rd) {
             for y in (c.y - rd)..=(c.y + rd) {
                 let coord = ChunkCoord::new(x, y);
@@ -56,13 +56,10 @@ impl ChunkGenerator {
             }
         }
     }
-    pub fn update_chunks(&mut self) {
-        let rd = self.config.render_distance;
-        let c = self.center;
 
-        Self::spawn_logic(self, c, rd);
-
-        // Despawning logic
+    fn despawn_logic(&mut self, center: ChunkCoord, render_dist: i32) {
+        let c = center;
+        let rd = render_dist;
         let to_remove: Vec<ChunkCoord> = self
             .chunks
             .iter()
@@ -78,6 +75,13 @@ impl ChunkGenerator {
                 self.despawn_queue.push((chunk, coord));
             }
         }
+    }
+    pub fn update_chunks(&mut self) {
+        let render_dist = self.config.render_distance;
+        let center = self.center;
+
+        self.spawn_logic(center, render_dist);
+        self.despawn_logic(center, render_dist);
     }
 
     pub fn mark_dirty(&mut self, coord: &ChunkCoord) {
