@@ -38,9 +38,7 @@ pub enum ChunkState {
     #[default]
     Unspawned,
     PendingSpawn,
-    Spawned,
     Modified,
-    _PendingDespawn,
 }
 
 #[derive(Clone)]
@@ -67,6 +65,10 @@ pub struct ChunkCoord {
 impl ChunkCoord {
     pub fn new(x: i32, y: i32) -> Self {
         Self { x, y }
+    }
+    #[inline]
+    pub fn is_outside_render_distance(&self, center: &ChunkCoord, render_dist: i32) -> bool {
+        (self.x - center.x).abs() > render_dist || (self.y - center.y).abs() > render_dist
     }
 }
 

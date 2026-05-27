@@ -47,38 +47,40 @@ impl TerrainGenerator {
         GlobalCoord::new(player_pos.x, player_pos.y).to_chunk(self.config.chunk_size)
     }
 
-    pub fn evalute_chunks(&mut self) {
-        if let Some(p_pos) = self.get_player_grid_pos() {
-            let p_chunk = self.get_player_coord(&p_pos);
-            let c_g = &mut self.chunk_generator;
+    pub fn evaluate_chunks(&mut self) {
+        if let Some(player_pos) = self.get_player_grid_pos() {
+            let player_chunk = self.get_player_coord(&player_pos);
+            let generator = &mut self.chunk_generator;
 
-            if c_g.has_center_changed(&p_chunk) {
-                c_g.set_center_chunk(p_chunk);
-                c_g.update_chunks();
+            if generator.has_center_changed(&player_chunk) {
+                generator.set_center_chunk(player_chunk);
+                generator.update_chunks();
             }
         }
     }
 
     pub fn process_spawning_queue(&mut self) {
-        let cs = self.config.chunk_size;
+        let chunk_size = self.config.chunk_size;
 
         if let Some(tile_map) = &mut self.tile_map_node {
-            let s_q = &mut self.chunk_generator.spawn_queue;
+            let spawn_queue = &mut self.chunk_generator.spawn_queue;
 
-            if s_q.is_empty() {
+            if spawn_queue.is_empty() {
                 return;
             }
 
-            for (chunk, coord) in s_q.drain(..) {
+            for (chunk, coord) in spawn_queue.drain(..) {
                 for (index, tile_type) in chunk.tiles.iter().enumerate() {
                     if *tile_type == TileType::Void {
                         continue;
                     }
 
-                    let local =
-                        LocalCoord::new((index % cs as usize) as i32, (index / cs as usize) as i32);
+                    let local = LocalCoord::new(
+                        (index % chunk_size as usize) as i32,
+                        (index / chunk_size as usize) as i32,
+                    );
 
-                    let global = local.to_global(coord, cs);
+                    let global = local.to_global(coord, chunk_size);
 
                     tile_map
                         .set_cell_ex(Vector2i::new(global.x, global.y))
@@ -91,21 +93,23 @@ impl TerrainGenerator {
     }
 
     pub fn process_despawning_queue(&mut self) {
-        let cs = self.config.chunk_size;
+        let chunk_size = self.config.chunk_size;
 
         if let Some(tile_map) = &mut self.tile_map_node {
-            let d_q = &mut self.chunk_generator.despawn_queue;
+            let despawn_queue = &mut self.chunk_generator.despawn_queue;
 
-            if d_q.is_empty() {
+            if despawn_queue.is_empty() {
                 return;
             }
 
-            for (chunk, coord) in d_q.drain(..) {
+            for (chunk, coord) in despawn_queue.drain(..) {
                 for index in 0..chunk.tiles.len() {
-                    let local =
-                        LocalCoord::new((index % cs as usize) as i32, (index / cs as usize) as i32);
+                    let local = LocalCoord::new(
+                        (index % chunk_size as usize) as i32,
+                        (index / chunk_size as usize) as i32,
+                    );
 
-                    let global = local.to_global(coord, cs);
+                    let global = local.to_global(coord, chunk_size);
 
                     tile_map.set_cell(Vector2i::new(global.x, global.y));
                 }
@@ -124,19 +128,19 @@ impl TerrainGenerator {
         let grid_pos = tile_map.local_to_map(local_pos);
 
         // Check if there is a tile there
-        let tar_cell = tile_map.get_cell_atlas_coords(grid_pos);
+        let target_cell = tile_map.get_cell_atlas_coords(grid_pos);
         let empty_cell = self.config.atlas_coords.empty_cell.to_vector2i();
-        let none_existing_cell = Vector2i::new(-1, -1);
+        let non_existing_cell = Vector2i::new(-1, -1);
 
-        if tar_cell != empty_cell && tar_cell != none_existing_cell {
-            let ac = &self.config.atlas_coords;
-            if tar_cell == ac.ore.to_vector2i() {
+        if target_cell != empty_cell && target_cell != non_existing_cell {
+            let atlas_coords = &self.config.atlas_coords;
+            if target_cell == atlas_coords.ore.to_vector2i() {
                 crate::gd_print!("Mined Ore!");
-            } else if tar_cell == ac.stone.to_vector2i() {
+            } else if target_cell == atlas_coords.stone.to_vector2i() {
                 crate::gd_print!("Mined Stone.");
-            } else if tar_cell == ac.dirt.to_vector2i() {
+            } else if target_cell == atlas_coords.dirt.to_vector2i() {
                 crate::gd_print!("Mined Dirt.");
-            } else if tar_cell == ac.gem.to_vector2i() {
+            } else if target_cell == atlas_coords.gem.to_vector2i() {
                 crate::gd_print!("Mined Gem!");
             }
 
@@ -169,7 +173,7 @@ impl TerrainGenerator {
 #[godot_api]
 impl INode for TerrainGenerator {
     fn process(&mut self, _delta: f64) {
-        self.evalute_chunks();
+        self.evaluate_chunks();
         self.process_spawning_queue();
         self.process_despawning_queue();
     }
@@ -210,10 +214,10 @@ impl INode for TerrainGenerator {
         );
 
         // Spawn chunks initial
-        if let Some(p_pos) = self.get_player_grid_pos() {
-            let p_chunk = self.get_player_coord(&p_pos);
+        if let Some(player_pos) = self.get_player_grid_pos() {
+            let player_chunk = self.get_player_coord(&player_pos);
 
-            self.chunk_generator.set_center_chunk(p_chunk);
+            self.chunk_generator.set_center_chunk(player_chunk);
             self.chunk_generator.update_chunks();
         }
     }

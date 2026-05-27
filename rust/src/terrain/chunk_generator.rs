@@ -1,4 +1,4 @@
-use super::tile_generator;
+use super::tile_generator::TileGenerator;
 use crate::terrain::*;
 
 use rand::{self, RngExt};
@@ -16,18 +16,17 @@ pub struct ChunkGenerator {
 
 impl ChunkGenerator {
     fn generate_chunk(&mut self, coord: &ChunkCoord) -> Chunk {
-        let cs = self.config.chunk_size;
-        let tg = tile_generator::TileGenerator;
-        let mut new_chunk = Chunk::new(cs);
+        let chunk_size = self.config.chunk_size;
+        let mut new_chunk = Chunk::new(chunk_size);
 
-        for x in 0..cs {
-            for y in 0..cs {
-                let index = (y * cs + x) as usize;
+        for x in 0..chunk_size {
+            for y in 0..chunk_size {
+                let index = (y * chunk_size + x) as usize;
 
                 let local = LocalCoord::new(x, y);
-                let global = local.to_global(*coord, cs);
+                let global = local.to_global(*coord, chunk_size);
 
-                new_chunk.tiles[index] = tg.generate_tile(global.x, global.y);
+                new_chunk.tiles[index] = TileGenerator.generate_tile(global.x, global.y);
             }
         }
 
@@ -35,10 +34,8 @@ impl ChunkGenerator {
     }
 
     fn spawn_logic(&mut self, center: ChunkCoord, render_dist: i32) {
-        let c = center;
-        let rd = render_dist;
-        for x in (c.x - rd)..=(c.x + rd) {
-            for y in (c.y - rd)..=(c.y + rd) {
+        for x in (center.x - render_dist)..=(center.x + render_dist) {
+            for y in (center.y - render_dist)..=(center.y + render_dist) {
                 let coord = ChunkCoord::new(x, y);
 
                 if self.chunks.contains_key(&coord) {
@@ -46,7 +43,6 @@ impl ChunkGenerator {
                 }
 
                 let mut new_chunk = self.generate_chunk(&coord);
-
                 if new_chunk.state == ChunkState::Unspawned {
                     self.spawn_queue
                         .push((new_chunk.clone(), ChunkCoord::new(x, y)));
@@ -58,13 +54,12 @@ impl ChunkGenerator {
     }
 
     fn despawn_logic(&mut self, center: ChunkCoord, render_dist: i32) {
-        let c = center;
-        let rd = render_dist;
         let to_remove: Vec<ChunkCoord> = self
             .chunks
             .iter()
             .filter(|(coord, chunk)| {
-                let is_outside = (coord.x - c.x).abs() > rd || (coord.y - c.y).abs() > rd;
+                let is_outside = (coord.x - center.x).abs() > render_dist
+                    || (coord.y - center.y).abs() > render_dist;
                 is_outside && chunk.state != ChunkState::Modified
             })
             .map(|(coord, _)| *coord)
