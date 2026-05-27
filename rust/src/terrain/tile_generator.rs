@@ -1,4 +1,6 @@
+use crate::terrain::config;
 use crate::terrain::TileType;
+use noise::NoiseFn;
 use rand::{self, RngExt};
 
 const PRINT_PREFIX: &str = "TileGenerator";
@@ -6,14 +8,26 @@ const PRINT_PREFIX: &str = "TileGenerator";
 #[derive(Default)]
 pub struct TileGenerator {
     perlin: noise::Perlin,
+    config: config::TileGen,
 }
 
 impl TileGenerator {
-    pub fn generate_tile(&self, _x: i32, y: i32) -> TileType {
-        if y < 0 {
-            return TileType::default();
+    pub fn generate_tile(&self, x: i32, y: i32) -> TileType {
+        if y > self.config.ground_level {
+            return TileType::Stone;
         }
-        TileType::Stone
+        // Multiply by spread (frequency) and stretch directly in the coordinates
+        let island_spread = 0.0013;
+        let nx = (x as f64) * island_spread * self.config.isle.stretch_x;
+        let ny = (y as f64) * island_spread * self.config.isle.stretch_y;
+
+        // The noise crate takes an array of f64s
+        let island_val = self.perlin.get([nx, ny]);
+        if 0.23 > island_val {
+            TileType::Stone
+        } else {
+            TileType::default()
+        }
     }
     pub fn new() -> Self {
         let mut rng = rand::rng();
@@ -22,6 +36,7 @@ impl TileGenerator {
 
         Self {
             perlin: noise::Perlin::new(rnd_num),
+            config: config::TileGen::default(),
         }
     }
     // fn _calc_height_penalty(&self, cur_pos: &f32) -> f32 {

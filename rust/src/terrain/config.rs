@@ -7,7 +7,7 @@ pub struct TerrainConfig {
     pub chunk_gen: ChunkGen,
     pub tile_gen: TileGen,
 }
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, Serialize, Deserialize, Clone, Debug)]
 pub struct AtlasCoordsConfig {
     pub source_id: i32,
     pub dirt: (i32, i32),
@@ -17,16 +17,24 @@ pub struct AtlasCoordsConfig {
     pub empty_cell: (i32, i32),
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, Serialize, Deserialize, Clone, Debug)]
 pub struct ChunkGen {
     pub chunk_size: i32,
     pub render_distance: i32,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, Serialize, Deserialize, Clone, Debug)]
 pub struct TileGen {
     pub ground_level: i32,
+    pub isle: Isle,
 }
+
+#[derive(Default, Serialize, Deserialize, Clone, Debug)]
+pub struct Isle {
+    pub stretch_x: f64,
+    pub stretch_y: f64,
+}
+
 impl TerrainConfig {
     pub fn load() -> Self {
         use godot::classes::file_access::ModeFlags;
@@ -111,6 +119,10 @@ impl Default for TerrainConfig {
             },
             tile_gen: TileGen {
                 ground_level: tile_gen::GROUND_LEVEL,
+                isle: Isle {
+                    stretch_x: tile_gen::isle::STRETCH_X,
+                    stretch_y: tile_gen::isle::STRETCH_Y,
+                },
             },
         }
     }
