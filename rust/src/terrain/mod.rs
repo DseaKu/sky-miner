@@ -8,7 +8,9 @@ use godot::classes::class_macros::private::virtuals::Os::Vector2i;
 
 use crate::core::utils::ToVector2i;
 
-#[derive(Default, Clone, Copy, Debug, PartialEq, Eq)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Default, Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TileType {
     #[default]
     Void,
@@ -33,7 +35,7 @@ impl TileType {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Chunk {
     pub tiles: Vec<TileType>,
     pub is_modified: bool,

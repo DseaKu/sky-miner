@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+const PRINT_PREFIX: &str = "PlayerConfig: ";
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct TerrainConfig {
     pub chunk_size: i32,
@@ -34,8 +35,9 @@ impl TerrainConfig {
                 let content = file.get_as_text();
                 match toml::from_str::<TerrainConfig>(&content.to_string()) {
                     Ok(config) => {
-                        crate::gd_print!(
-                            "TerrainConfig: Successfully loaded from {}\n => \"{}\"",
+                        crate::node_print!(
+                            PRINT_PREFIX,
+                            "Successfully loaded from {}\n => \"{}\"",
                             path,
                             absolute_dir
                         );

@@ -1,8 +1,11 @@
 use super::tile_generator::TileGenerator;
 use crate::terrain::*;
+use godot::prelude::PackedByteArray;
 
 use rand::{self, RngExt};
 use std::collections::HashMap;
+
+const PRINT_PREFIX: &str = "ChunkGenerator: ";
 
 #[derive(Default)]
 pub struct ChunkGenerator {
@@ -15,7 +18,54 @@ pub struct ChunkGenerator {
 }
 
 impl ChunkGenerator {
+    fn get_chunk_path(coord: &ChunkCoord) -> String {
+        format!("user://chunks/chunk_{}_{}.bin", coord.x, coord.y)
+    }
+
+    fn save_chunk(coord: &ChunkCoord, chunk: &Chunk) {
+        use godot::classes::file_access::ModeFlags;
+        use godot::classes::{DirAccess, FileAccess};
+
+        if let Some(mut dir) = DirAccess::open("user://") {
+            if !dir.dir_exists("chunks") {
+                dir.make_dir("chunks");
+            }
+        } else {
+            crate::gd_error!("{}Failed to open user:// directory", PRINT_PREFIX);
+            return;
+        }
+
+        let path = Self::get_chunk_path(coord);
+        if let Ok(encoded) = bincode::serialize(chunk) {
+            if let Some(mut file) = FileAccess::open(&path, ModeFlags::WRITE) {
+                let bytes = PackedByteArray::from_iter(encoded);
+                file.store_buffer(&bytes);
+            }
+        }
+    }
+
+    fn load_chunk(&self, coord: &ChunkCoord) -> Option<Chunk> {
+        use godot::classes::file_access::ModeFlags;
+        use godot::classes::FileAccess;
+
+        let path = Self::get_chunk_path(coord);
+        if FileAccess::file_exists(&path) {
+            if let Some(mut file) = FileAccess::open(&path, ModeFlags::READ) {
+                let len = file.get_length() as i64;
+                let bytes = file.get_buffer(len).to_vec();
+                if let Ok(chunk) = bincode::deserialize::<Chunk>(&bytes) {
+                    return Some(chunk);
+                }
+            }
+        }
+        None
+    }
+
     fn generate_chunk(&mut self, coord: &ChunkCoord) -> Chunk {
+        if let Some(saved_chunk) = self.load_chunk(coord) {
+            return saved_chunk;
+        }
+
         let chunk_size = self.config.chunk_size;
         let mut new_chunk = Chunk::new(chunk_size);
 
@@ -54,16 +104,15 @@ impl ChunkGenerator {
         let to_remove: Vec<ChunkCoord> = self
             .chunks
             .iter()
-            .filter(|(coord, chunk)| {
-                let is_outside = (coord.x - center.x).abs() > render_dist
-                    || (coord.y - center.y).abs() > render_dist;
-                is_outside && !chunk.is_modified
-            })
+            .filter(|(coord, _)| coord.is_outside_render_distance(&center, render_dist))
             .map(|(coord, _)| *coord)
             .collect();
 
         for coord in to_remove {
             if let Some(chunk) = self.chunks.remove(&coord) {
+                if chunk.is_modified {
+                    Self::save_chunk(&coord, &chunk);
+                }
                 self.despawn_queue.push((chunk, coord));
             }
         }
@@ -82,10 +131,25 @@ impl ChunkGenerator {
         }
     }
 
+    pub fn set_tile(&mut self, grid_pos: Vector2i, tile: TileType) {
+        let chunk_size = self.config.chunk_size;
+        let coord = GlobalCoord::new(grid_pos.x, grid_pos.y).to_chunk(chunk_size);
+
+        if let Some(chunk) = self.chunks.get_mut(&coord) {
+            let local_x = grid_pos.x.rem_euclid(chunk_size);
+            let local_y = grid_pos.y.rem_euclid(chunk_size);
+            let index = (local_y * chunk_size + local_x) as usize;
+            if index < chunk.tiles.len() {
+                chunk.tiles[index] = tile;
+                chunk.is_modified = true;
+            }
+        }
+    }
+
     pub fn new(config: config::TerrainConfig) -> Self {
         let mut rng = rand::rng();
         let rnd_num: u32 = rng.random();
-        crate::gd_print!("MapGenerator: Initialized with seed {}", rnd_num);
+        crate::node_print!(PRINT_PREFIX, "Initialized with seed {}", rnd_num);
 
         Self {
             _perlin: noise::Perlin::new(rnd_num),

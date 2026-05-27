@@ -135,13 +135,13 @@ impl TerrainGenerator {
         if target_cell != empty_cell && target_cell != non_existing_cell {
             let atlas_coords = &self.config.atlas_coords;
             if target_cell == atlas_coords.ore.to_vector2i() {
-                crate::gd_print!("Mined Ore!");
+                crate::node_print!(PRINT_PREFIX, "Mined Ore!");
             } else if target_cell == atlas_coords.stone.to_vector2i() {
-                crate::gd_print!("Mined Stone.");
+                crate::node_print!(PRINT_PREFIX, "Mined Stone!");
             } else if target_cell == atlas_coords.dirt.to_vector2i() {
-                crate::gd_print!("Mined Dirt.");
+                crate::node_print!(PRINT_PREFIX, "Mined Dirt!");
             } else if target_cell == atlas_coords.gem.to_vector2i() {
-                crate::gd_print!("Mined Gem!");
+                crate::node_print!(PRINT_PREFIX, "Mined Gem!");
             }
 
             tile_map
@@ -150,7 +150,8 @@ impl TerrainGenerator {
                 .atlas_coords(empty_cell)
                 .done();
 
-            self.mark_chunk_dirty(grid_pos);
+            // Update the chunk data
+            self.chunk_generator.set_tile(grid_pos, TileType::Void);
 
             return true;
         }
@@ -174,13 +175,24 @@ impl TerrainGenerator {
 impl INode for TerrainGenerator {
     fn process(&mut self, _delta: f64) {
         self.evaluate_chunks();
-        self.process_spawning_queue();
         self.process_despawning_queue();
+        self.process_spawning_queue();
     }
 
     fn init(base: Base<Node>) -> Self {
+        use godot::classes::ProjectSettings;
+        use godot::obj::Singleton;
+
         crate::node_print!(PRINT_PREFIX, "Initializing...");
         let config = crate::terrain::config::TerrainConfig::load();
+
+        let absolute_dir = ProjectSettings::singleton().globalize_path("user://chunks");
+        crate::node_print!(
+            PRINT_PREFIX,
+            "Chunks will be saved to:\n => \"{}\"",
+            absolute_dir
+        );
+
         Self {
             player_node: None,
             tile_map_node: None,
