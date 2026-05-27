@@ -1,12 +1,10 @@
 use super::tile_generator::TileGenerator;
 use crate::terrain::*;
-use godot::prelude::PackedByteArray;
-
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
+use std::path::PathBuf;
 
 const PRINT_PREFIX: &str = "ChunkGenerator: ";
 
-#[derive(Default)]
 pub struct ChunkGenerator {
     center: ChunkCoord,
     chunk_hash_map: HashMap<ChunkCoord, Chunk>,
@@ -14,51 +12,11 @@ pub struct ChunkGenerator {
     pub spawn_queue: Vec<ChunkData>,
     pub despawn_queue: Vec<ChunkData>,
     pub config: config::TerrainConfig,
+    io_handler: Option<io_handler::IOHandler>,
+    loading_set: HashSet<ChunkCoord>,
 }
 
 impl ChunkGenerator {
-    fn get_chunk_path(coord: &ChunkCoord) -> String {
-        format!("user://chunks/chunk_{}_{}.bin", coord.x, coord.y)
-    }
-
-    fn save_chunk(coord: &ChunkCoord, chunk: &Chunk) {
-        use godot::classes::file_access::ModeFlags;
-        use godot::classes::{DirAccess, FileAccess};
-
-        if let Some(mut dir) = DirAccess::open("user://") {
-            if !dir.dir_exists("chunks") {
-                dir.make_dir("chunks");
-            }
-        } else {
-            crate::gd_error!("{}Failed to open user:// directory", PRINT_PREFIX);
-            return;
-        }
-
-        let path = Self::get_chunk_path(coord);
-        if let Ok(encoded) = bincode::serialize(chunk) {
-            if let Some(mut file) = FileAccess::open(&path, ModeFlags::WRITE) {
-                let bytes = PackedByteArray::from_iter(encoded);
-                file.store_buffer(&bytes);
-            }
-        }
-    }
-    fn load_chunk(&self, coord: &ChunkCoord) -> Option<Chunk> {
-        use godot::classes::file_access::ModeFlags;
-        use godot::classes::FileAccess;
-
-        let path = Self::get_chunk_path(coord);
-        if FileAccess::file_exists(&path) {
-            if let Some(mut file) = FileAccess::open(&path, ModeFlags::READ) {
-                let len = file.get_length() as i64;
-                let bytes = file.get_buffer(len).to_vec();
-                if let Ok(chunk) = bincode::deserialize::<Chunk>(&bytes) {
-                    return Some(chunk);
-                }
-            }
-        }
-        None
-    }
-
     pub fn clear_saved_chunks() {
         use godot::classes::DirAccess;
 
@@ -78,26 +36,49 @@ impl ChunkGenerator {
             }
         }
     }
-    fn generate_chunk(&mut self, coord: &ChunkCoord) -> Chunk {
-        if let Some(saved_chunk) = self.load_chunk(coord) {
-            return saved_chunk;
-        }
+
+    fn generate_chunk_internal(&mut self, coord: &ChunkCoord) -> Chunk {
+        use rayon::prelude::*;
 
         let chunk_size = self.config.chunk_size;
         let mut new_chunk = Chunk::new(chunk_size);
 
-        for x in 0..chunk_size {
-            for y in 0..chunk_size {
-                let index = (y * chunk_size + x) as usize;
+        new_chunk.tiles.par_iter_mut().enumerate().for_each(|(index, tile_type)| {
+            let x = (index % chunk_size as usize) as i32;
+            let y = (index / chunk_size as usize) as i32;
 
-                let local = LocalTileCoord::new(x, y);
-                let tile = local.to_tile(*coord, chunk_size);
+            let local = LocalTileCoord::new(x, y);
+            let tile = local.to_tile(*coord, chunk_size);
 
-                new_chunk.tiles[index] = self.tile_gen.generate_tile(tile.x, tile.y);
+            *tile_type = self.tile_gen.generate_tile(tile.x, tile.y);
+        });
+
+        new_chunk
+    }
+
+    pub fn poll_io(&mut self) {
+        let mut responses = Vec::new();
+        if let Some(io) = &self.io_handler {
+            while let Some(response) = io.poll() {
+                responses.push(response);
             }
         }
 
-        new_chunk
+        for response in responses {
+            match response {
+                io_handler::IOResponse::Loaded(coord, chunk) => {
+                    self.loading_set.remove(&coord);
+                    self.spawn_queue.push(ChunkData::new(chunk.clone(), coord));
+                    self.chunk_hash_map.insert(coord, chunk);
+                }
+                io_handler::IOResponse::NotFound(coord) => {
+                    self.loading_set.remove(&coord);
+                    let new_chunk = self.generate_chunk_internal(&coord);
+                    self.spawn_queue.push(ChunkData::new(new_chunk.clone(), coord));
+                    self.chunk_hash_map.insert(coord, new_chunk);
+                }
+            }
+        }
     }
 
     fn spawn_logic(&mut self, center: ChunkCoord, render_dist: i32) {
@@ -105,14 +86,18 @@ impl ChunkGenerator {
             for y in (center.y - render_dist)..=(center.y + render_dist) {
                 let coord = ChunkCoord::new(x, y);
 
-                if self.chunk_hash_map.contains_key(&coord) {
+                if self.chunk_hash_map.contains_key(&coord) || self.loading_set.contains(&coord) {
                     continue;
                 }
 
-                let new_chunk = self.generate_chunk(&coord);
-                self.spawn_queue
-                    .push(ChunkData::new(new_chunk.clone(), ChunkCoord::new(x, y)));
-                self.chunk_hash_map.insert(coord, new_chunk);
+                if let Some(io) = &self.io_handler {
+                    io.load(coord);
+                    self.loading_set.insert(coord);
+                } else {
+                    let new_chunk = self.generate_chunk_internal(&coord);
+                    self.spawn_queue.push(ChunkData::new(new_chunk.clone(), coord));
+                    self.chunk_hash_map.insert(coord, new_chunk);
+                }
             }
         }
     }
@@ -128,7 +113,9 @@ impl ChunkGenerator {
         for coord in to_remove {
             if let Some(chunk) = self.chunk_hash_map.remove(&coord) {
                 if chunk.is_modified {
-                    Self::save_chunk(&coord, &chunk);
+                    if let Some(io) = &self.io_handler {
+                        io.save(coord, chunk.clone());
+                    }
                 }
                 self.despawn_queue.push(ChunkData::new(chunk, coord));
             }
@@ -164,7 +151,8 @@ impl ChunkGenerator {
         }
     }
 
-    pub fn new(config: config::TerrainConfig) -> Self {
+    pub fn new(config: config::TerrainConfig, base_path: Option<PathBuf>) -> Self {
+        let io_handler = base_path.map(io_handler::IOHandler::new);
         Self {
             center: ChunkCoord::default(),
             chunk_hash_map: HashMap::new(),
@@ -172,6 +160,8 @@ impl ChunkGenerator {
             spawn_queue: Vec::new(),
             despawn_queue: Vec::new(),
             config,
+            io_handler,
+            loading_set: HashSet::new(),
         }
     }
     pub fn has_center_changed(&self, new_chunk: &ChunkCoord) -> bool {

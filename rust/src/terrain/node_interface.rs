@@ -9,6 +9,7 @@ use super::chunk_generator;
 use super::consts;
 use godot::classes::TileMapLayer;
 use godot::prelude::*;
+use std::path::PathBuf;
 
 const PRINT_PREFIX: &str = "TerrainGenerator: ";
 
@@ -169,6 +170,7 @@ impl TerrainGenerator {
 #[godot_api]
 impl INode for TerrainGenerator {
     fn process(&mut self, _delta: f64) {
+        self.chunk_generator.poll_io();
         self.evaluate_chunks();
         self.process_despawning_queue();
         self.process_spawning_queue();
@@ -193,7 +195,10 @@ impl INode for TerrainGenerator {
         Self {
             player_node: None,
             tile_map_node: None,
-            chunk_generator: chunk_generator::ChunkGenerator::new(config.clone()),
+            chunk_generator: chunk_generator::ChunkGenerator::new(
+                config.clone(),
+                Some(PathBuf::from(absolute_dir.to_string())),
+            ),
             config,
             base,
         }

@@ -1,6 +1,7 @@
 pub mod chunk_generator;
 pub mod config;
 pub mod consts;
+pub mod io_handler;
 pub mod node_interface;
 pub mod tile_generator;
 
