@@ -1,5 +1,6 @@
 use super::tile_generator::TileGenerator;
 use crate::terrain::*;
+use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 
@@ -32,26 +33,28 @@ impl ChunkGenerator {
                     file_name = dir.get_next();
                 }
                 dir.list_dir_end();
-                crate::gd_print!("ChunkGenerator: Cleared all saved chunks in\n => {}", path);
+                crate::node_print!(PRINT_PREFIX, "Cleared all saved chunks in\n => {}", path);
             }
         }
     }
 
     fn generate_chunk_internal(&mut self, coord: &ChunkCoord) -> Chunk {
-        use rayon::prelude::*;
-
         let chunk_size = self.config.chunk_size;
         let mut new_chunk = Chunk::new(chunk_size);
 
-        new_chunk.tiles.par_iter_mut().enumerate().for_each(|(index, tile_type)| {
-            let x = (index % chunk_size as usize) as i32;
-            let y = (index / chunk_size as usize) as i32;
+        new_chunk
+            .tiles
+            .par_iter_mut()
+            .enumerate()
+            .for_each(|(index, tile_type)| {
+                let x = (index % chunk_size as usize) as i32;
+                let y = (index / chunk_size as usize) as i32;
 
-            let local = LocalTileCoord::new(x, y);
-            let tile = local.to_tile(*coord, chunk_size);
+                let local = LocalTileCoord::new(x, y);
+                let tile = local.to_tile(*coord, chunk_size);
 
-            *tile_type = self.tile_gen.generate_tile(tile.x, tile.y);
-        });
+                *tile_type = self.tile_gen.generate_tile(tile.x, tile.y);
+            });
 
         new_chunk
     }
@@ -74,7 +77,8 @@ impl ChunkGenerator {
                 io_handler::IOResponse::NotFound(coord) => {
                     self.loading_set.remove(&coord);
                     let new_chunk = self.generate_chunk_internal(&coord);
-                    self.spawn_queue.push(ChunkData::new(new_chunk.clone(), coord));
+                    self.spawn_queue
+                        .push(ChunkData::new(new_chunk.clone(), coord));
                     self.chunk_hash_map.insert(coord, new_chunk);
                 }
             }
@@ -95,7 +99,8 @@ impl ChunkGenerator {
                     self.loading_set.insert(coord);
                 } else {
                     let new_chunk = self.generate_chunk_internal(&coord);
-                    self.spawn_queue.push(ChunkData::new(new_chunk.clone(), coord));
+                    self.spawn_queue
+                        .push(ChunkData::new(new_chunk.clone(), coord));
                     self.chunk_hash_map.insert(coord, new_chunk);
                 }
             }
