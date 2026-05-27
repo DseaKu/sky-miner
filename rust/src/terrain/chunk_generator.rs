@@ -42,12 +42,9 @@ impl ChunkGenerator {
                     continue;
                 }
 
-                let mut new_chunk = self.generate_chunk(&coord);
-                if new_chunk.state == ChunkState::Unspawned {
-                    self.spawn_queue
-                        .push((new_chunk.clone(), ChunkCoord::new(x, y)));
-                    new_chunk.state = ChunkState::PendingSpawn;
-                }
+                let new_chunk = self.generate_chunk(&coord);
+                self.spawn_queue
+                    .push((new_chunk.clone(), ChunkCoord::new(x, y)));
                 self.chunks.insert(coord, new_chunk);
             }
         }
@@ -60,7 +57,7 @@ impl ChunkGenerator {
             .filter(|(coord, chunk)| {
                 let is_outside = (coord.x - center.x).abs() > render_dist
                     || (coord.y - center.y).abs() > render_dist;
-                is_outside && chunk.state != ChunkState::Modified
+                is_outside && !chunk.is_modified
             })
             .map(|(coord, _)| *coord)
             .collect();
@@ -81,7 +78,7 @@ impl ChunkGenerator {
 
     pub fn mark_dirty(&mut self, coord: &ChunkCoord) {
         if let Some(chunk) = self.chunks.get_mut(coord) {
-            chunk.state = ChunkState::Modified;
+            chunk.is_modified = true;
         }
     }
 

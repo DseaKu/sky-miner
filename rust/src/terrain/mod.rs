@@ -33,25 +33,17 @@ impl TileType {
     }
 }
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-pub enum ChunkState {
-    #[default]
-    Unspawned,
-    PendingSpawn,
-    Modified,
-}
-
 #[derive(Clone)]
 pub struct Chunk {
     pub tiles: Vec<TileType>,
-    pub state: ChunkState,
+    pub is_modified: bool,
 }
 
 impl Chunk {
     pub fn new(chunk_size: i32) -> Self {
         Self {
             tiles: vec![TileType::Void; (chunk_size * chunk_size) as usize],
-            state: ChunkState::default(),
+            is_modified: false,
         }
     }
 }
