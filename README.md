@@ -3,7 +3,7 @@
 > [!IMPORTANT] **🚧 Under Development:** This project is currently in
 > development.
 
-Sky Miner is a procedurally generated mining adventure game built with **Godot
+Sky Miner is a procedurally generated mining game built with **Godot
 4.6** and **Rust** via **GDExtension**.
 
 ### 🏔️ The Vertical Challenge
