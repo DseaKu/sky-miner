@@ -35,7 +35,7 @@ impl TerrainGenerator {
         crate::on_exit_stop_process!(self, tile_map_node, "Tile Map Layer", PRINT_PREFIX);
     }
 
-    fn get_player_chunk_coord(&self) -> Option<ChunkCoord> {
+    fn get_player_info(&self) -> Option<(ChunkCoord, f64)> {
         let player = self.player_node.as_ref()?;
         let tile_map = self.tile_map_node.as_ref()?;
 
@@ -43,12 +43,14 @@ impl TerrainGenerator {
         let l_pos = tile_map.to_local(g_pos);
         let grid_pos = tile_map.local_to_map(l_pos);
 
-        Some(TileCoord::from(grid_pos).to_chunk(self.config.chunk_gen.chunk_size))
+        let chunk_coord = TileCoord::from(grid_pos).to_chunk(self.config.chunk_gen.chunk_size);
+        Some((chunk_coord, g_pos.y as f64))
     }
 
     pub fn evaluate_chunks(&mut self) {
-        if let Some(player_chunk) = self.get_player_chunk_coord() {
+        if let Some((player_chunk, player_y)) = self.get_player_info() {
             let generator = &mut self.chunk_generator;
+            generator.update_dynamic_params(player_y);
 
             if generator.has_center_changed(&player_chunk) {
                 generator.set_center_chunk(player_chunk);
@@ -72,10 +74,6 @@ impl TerrainGenerator {
 
         for ChunkData { chunk, coord } in spawn_queue.drain(..) {
             for (index, tile_type) in chunk.tiles.iter().enumerate() {
-                if *tile_type == TileType::Void {
-                    continue;
-                }
-
                 let local = LocalTileCoord::new(
                     (index % chunk_size as usize) as i32,
                     (index / chunk_size as usize) as i32,
@@ -83,9 +81,15 @@ impl TerrainGenerator {
 
                 let tile = local.to_tile(coord, chunk_size);
 
+                let source_id = if *tile_type == TileType::Sky {
+                    -1
+                } else {
+                    self.config.atlas_coords.source_id
+                };
+
                 tile_map
                     .set_cell_ex(Vector2i::from(tile))
-                    .source_id(self.config.atlas_coords.source_id)
+                    .source_id(source_id)
                     .atlas_coords(tile_type.to_atlas_coords(&self.config))
                     .done();
             }
@@ -105,16 +109,13 @@ impl TerrainGenerator {
             return;
         }
 
-        for ChunkData { chunk, coord } in despawn_queue.drain(..) {
-            for index in 0..chunk.tiles.len() {
-                let local = LocalTileCoord::new(
-                    (index % chunk_size as usize) as i32,
-                    (index / chunk_size as usize) as i32,
-                );
-
-                let tile = local.to_tile(coord, chunk_size);
-
-                tile_map.set_cell(Vector2i::from(tile));
+        for ChunkData { chunk: _, coord } in despawn_queue.drain(..) {
+            for x in 0..chunk_size {
+                for y in 0..chunk_size {
+                    let local = LocalTileCoord::new(x, y);
+                    let tile = local.to_tile(coord, chunk_size);
+                    tile_map.set_cell(Vector2i::from(tile));
+                }
             }
         }
     }
@@ -129,7 +130,6 @@ impl TerrainGenerator {
         let local_pos = tile_map.to_local(world_position);
         let grid_pos = tile_map.local_to_map(local_pos);
 
-        // Check if there is a tile there
         let target_cell = tile_map.get_cell_atlas_coords(grid_pos);
         let empty_cell = self.config.atlas_coords.empty_cell.to_vector2i();
         let non_existing_cell = Vector2i::new(-1, -1);
@@ -141,7 +141,6 @@ impl TerrainGenerator {
                 .atlas_coords(empty_cell)
                 .done();
 
-            // Update the chunk data
             self.chunk_generator.set_tile(grid_pos, TileType::Void);
 
             return true;
@@ -207,6 +206,8 @@ impl INode for TerrainGenerator {
     fn ready(&mut self) {
         use consts::path as p;
 
+        self.base_mut().add_to_group("terrain");
+
         crate::link_node!(
             self,
             Node2D,
@@ -227,8 +228,8 @@ impl INode for TerrainGenerator {
             PRINT_PREFIX
         );
 
-        // Spawn chunks initial
-        if let Some(player_chunk) = self.get_player_chunk_coord() {
+        if let Some((player_chunk, player_y)) = self.get_player_info() {
+            self.chunk_generator.update_dynamic_params(player_y);
             self.chunk_generator.set_center_chunk(player_chunk);
             self.chunk_generator.update_chunks();
         }

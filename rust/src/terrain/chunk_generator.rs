@@ -40,7 +40,7 @@ impl ChunkGenerator {
 
     fn generate_chunk_internal(&mut self, coord: &ChunkCoord) -> Chunk {
         let chunk_size = self.config.chunk_gen.chunk_size;
-        let cs_usize = chunk_size as usize; // Cast once outside the loop
+        let cs_usize = chunk_size as usize;
         let mut new_chunk = Chunk::new(chunk_size);
 
         new_chunk
@@ -48,7 +48,6 @@ impl ChunkGenerator {
             .par_iter_mut()
             .enumerate()
             .for_each(|(index, tile_type)| {
-                // Inline the math directly into the constructor
                 let local =
                     LocalTileCoord::new((index % cs_usize) as i32, (index / cs_usize) as i32);
 
@@ -162,7 +161,7 @@ impl ChunkGenerator {
         Self {
             center: ChunkCoord::default(),
             chunk_hash_map: HashMap::new(),
-            tile_gen: TileGenerator::new(),
+            tile_gen: TileGenerator::new(config.tile_gen.clone()),
             spawn_queue: Vec::new(),
             despawn_queue: Vec::new(),
             config,
@@ -175,5 +174,8 @@ impl ChunkGenerator {
     }
     pub fn set_center_chunk(&mut self, new_chunk: ChunkCoord) {
         self.center = new_chunk;
+    }
+    pub fn update_dynamic_params(&mut self, player_y: f64) {
+        self.tile_gen.update_dynamic_params(player_y);
     }
 }

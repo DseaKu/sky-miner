@@ -1,13 +1,17 @@
 use serde::{Deserialize, Serialize};
 
-const PRINT_PREFIX: &str = "PlayerConfig: ";
+const PRINT_PREFIX: &str = "TerrainConfig: ";
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(default)]
 pub struct TerrainConfig {
     pub atlas_coords: AtlasCoordsConfig,
     pub chunk_gen: ChunkGen,
     pub tile_gen: TileGen,
 }
-#[derive(Default, Serialize, Deserialize, Clone, Debug)]
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(default)]
 pub struct AtlasCoordsConfig {
     pub source_id: i32,
     pub dirt: (i32, i32),
@@ -17,23 +21,139 @@ pub struct AtlasCoordsConfig {
     pub empty_cell: (i32, i32),
 }
 
-#[derive(Default, Serialize, Deserialize, Clone, Debug)]
+impl Default for AtlasCoordsConfig {
+    fn default() -> Self {
+        use super::consts::atlas_coords::*;
+        Self {
+            source_id: SOURCE_ID,
+            dirt: DIRT,
+            stone: STONE,
+            ore: (2, 0),
+            gem: (0, 1),
+            empty_cell: EMPTY_CELL,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(default)]
 pub struct ChunkGen {
     pub chunk_size: i32,
     pub render_distance: i32,
 }
 
-#[derive(Default, Serialize, Deserialize, Clone, Debug)]
-pub struct TileGen {
-    pub ground_level: i32,
-    pub isle: Isle,
+impl Default for ChunkGen {
+    fn default() -> Self {
+        use super::consts::chunk_gen::*;
+        Self {
+            chunk_size: CHUNK_SIZE,
+            render_distance: RENDER_DISTANCE,
+        }
+    }
 }
 
-#[derive(Default, Serialize, Deserialize, Clone, Debug)]
-pub struct Isle {
-    pub spawn_limit: f64,
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(default)]
+pub struct TileGen {
+    pub ground_level: i32,
+    pub space_isle_ground: i32,
+    pub height_penalty_step: f64,
+    pub isle: IsleConfig,
+    pub ore: OreConfig,
+    pub gem: GemConfig,
+    pub void: VoidConfig,
+}
+
+impl Default for TileGen {
+    fn default() -> Self {
+        Self {
+            ground_level: 0,
+            space_isle_ground: -2,
+            height_penalty_step: 0.00001,
+            isle: IsleConfig::default(),
+            ore: OreConfig::default(),
+            gem: GemConfig::default(),
+            void: VoidConfig::default(),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(default)]
+pub struct IsleConfig {
+    pub spread: f64,
+    pub threshold: f64,
     pub stretch_x: f64,
     pub stretch_y: f64,
+}
+
+impl Default for IsleConfig {
+    fn default() -> Self {
+        Self {
+            spread: 0.0001,  // Decreased from 0.0013 to increase space between islands
+            threshold: 0.15, // Increased from 0.15 to make islands more distinct
+            stretch_x: 4.0,
+            stretch_y: 40.0,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(default)]
+pub struct OreConfig {
+    pub spread: f64,
+    pub init_threshold: f64,
+    pub min_threshold: f64,
+    pub curve_steepness: f64,
+    pub dirt_threshold: f64,
+}
+
+impl Default for OreConfig {
+    fn default() -> Self {
+        Self {
+            spread: 0.05,
+            init_threshold: 1.00,
+            min_threshold: 0.60,
+            curve_steepness: 1.35,
+            dirt_threshold: -0.3,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(default)]
+pub struct GemConfig {
+    pub spread: f64,
+    pub init_threshold: f64,
+    pub min_threshold: f64,
+    pub curve_steepness: f64,
+}
+
+impl Default for GemConfig {
+    fn default() -> Self {
+        Self {
+            spread: 0.35,
+            init_threshold: 1.15,
+            min_threshold: 0.50,
+            curve_steepness: 1.35,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(default)]
+pub struct VoidConfig {
+    pub spread: f64,
+    pub threshold: f64,
+}
+
+impl Default for VoidConfig {
+    fn default() -> Self {
+        Self {
+            spread: 0.25,
+            threshold: 0.23,
+        }
+    }
 }
 
 impl TerrainConfig {
@@ -104,28 +224,10 @@ impl TerrainConfig {
 
 impl Default for TerrainConfig {
     fn default() -> Self {
-        use super::consts::*;
         Self {
-            atlas_coords: AtlasCoordsConfig {
-                source_id: atlas_coords::SOURCE_ID,
-                dirt: atlas_coords::DIRT,
-                stone: atlas_coords::STONE,
-                ore: (2, 0),
-                gem: (0, 1),
-                empty_cell: atlas_coords::EMPTY_CELL,
-            },
-            chunk_gen: ChunkGen {
-                chunk_size: chunk_gen::CHUNK_SIZE,
-                render_distance: chunk_gen::RENDER_DISTANCE,
-            },
-            tile_gen: TileGen {
-                ground_level: tile_gen::GROUND_LEVEL,
-                isle: Isle {
-                    spawn_limit: tile_gen::isle::SPAWN_LIMIT,
-                    stretch_x: tile_gen::isle::STRETCH_X,
-                    stretch_y: tile_gen::isle::STRETCH_Y,
-                },
-            },
+            atlas_coords: AtlasCoordsConfig::default(),
+            chunk_gen: ChunkGen::default(),
+            tile_gen: TileGen::default(),
         }
     }
 }

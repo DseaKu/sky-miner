@@ -14,6 +14,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Default, Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TileType {
     #[default]
+    Sky,
     Void,
     Stone,
     Dirt,
@@ -26,13 +27,13 @@ impl TileType {
         use TileType::*;
 
         match self {
-            Void => ac.empty_cell,
-            Stone => ac.stone,
-            Dirt => ac.dirt,
-            Ore => ac.ore,
-            Gem => ac.gem,
+            Sky => Vector2i::new(-1, -1),
+            Void => ac.empty_cell.to_vector2i(),
+            Stone => ac.stone.to_vector2i(),
+            Dirt => ac.dirt.to_vector2i(),
+            Ore => ac.ore.to_vector2i(),
+            Gem => ac.gem.to_vector2i(),
         }
-        .to_vector2i()
     }
 }
 
@@ -45,7 +46,7 @@ pub struct Chunk {
 impl Chunk {
     pub fn new(chunk_size: i32) -> Self {
         Self {
-            tiles: vec![TileType::Void; (chunk_size * chunk_size) as usize],
+            tiles: vec![TileType::Sky; (chunk_size * chunk_size) as usize],
             is_modified: false,
         }
     }
@@ -53,8 +54,8 @@ impl Chunk {
 
 #[derive(Default)]
 pub struct ChunkData {
-    chunk: Chunk,
-    coord: ChunkCoord,
+    pub chunk: Chunk,
+    pub coord: ChunkCoord,
 }
 impl ChunkData {
     pub fn new(chunk: Chunk, coord: ChunkCoord) -> Self {
@@ -111,8 +112,6 @@ impl TileCoord {
     }
 
     pub fn to_chunk(self, chunk_size: i32) -> ChunkCoord {
-        // Division truncates toward zero in Rust, but for procedural grids
-        // spanning negative numbers, you generally want Euclidean division (div_euclid).
         ChunkCoord {
             x: self.x.div_euclid(chunk_size),
             y: self.y.div_euclid(chunk_size),
