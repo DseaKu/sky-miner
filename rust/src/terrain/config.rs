@@ -68,7 +68,7 @@ impl Default for TileGen {
     fn default() -> Self {
         Self {
             ground_level: 0,
-            space_isle_ground: -2,
+            space_isle_ground: -4,
             height_penalty_step: 0.00001,
             isle: IsleConfig::default(),
             ore: OreConfig::default(),
@@ -90,8 +90,8 @@ pub struct IsleConfig {
 impl Default for IsleConfig {
     fn default() -> Self {
         Self {
-            spread: 0.0001,  // Decreased from 0.0013 to increase space between islands
-            threshold: 0.15, // Increased from 0.15 to make islands more distinct
+            spread: 0.0013,
+            threshold: 0.25,
             stretch_x: 4.0,
             stretch_y: 40.0,
         }
