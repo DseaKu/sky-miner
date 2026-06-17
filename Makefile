@@ -1,11 +1,15 @@
 PROJECT_NAME = $(shell grep "config/name" godot/project.godot | cut -d'=' -f2 | tr -d '"')
 EDITOR ?= nvim
 
-# Detect OS for Godot user data path (macOS or Linux only)
+# Detect OS
 UNAME_S := $(shell uname -s)
+
+# Detect Godot executable
 ifeq ($(UNAME_S),Darwin)
+    GODOT ?= $(shell which godot 2>/dev/null || echo "/Applications/Godot.app/Contents/MacOS/Godot")
     USER_DATA_DIR = $(HOME)/Library/Application Support/Godot/app_userdata/$(PROJECT_NAME)
 else
+    GODOT ?= $(shell which godot 2>/dev/null || which godot-engine 2>/dev/null || echo "godot")
     USER_DATA_DIR = $(HOME)/.local/share/godot/app_userdata/$(PROJECT_NAME)
 endif
 
@@ -19,7 +23,7 @@ build:
 	@ cargo build --manifest-path rust/Cargo.toml
 
 run: 
-	@/Applications/Godot.app/Contents/MacOS/Godot --path godot
+	@"$(GODOT)" --path godot
 
 conf:
 	@$(EDITOR) "$(USER_DATA_DIR)"
