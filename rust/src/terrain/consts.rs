@@ -1,6 +1,6 @@
 pub mod chunk_gen {
-    pub const CHUNK_SIZE: i32 = 4;
-    pub const RENDER_DISTANCE: i32 = 1;
+    pub const CHUNK_SIZE: i32 = 6;
+    pub const RENDER_DISTANCE: i32 = 3;
 }
 pub mod path {
     pub const PLAYER_NODE_PATH: &str = "../../Player";
@@ -26,6 +26,7 @@ pub mod tile_gen {
     pub const GROUND_LEVEL: i32 = 0;
 
     pub mod isle {
+        pub const SPAWN_LIMIT: f64 = 0.25;
         pub const STRETCH_X: f64 = 4.0;
         pub const STRETCH_Y: f64 = 40.0;
     }

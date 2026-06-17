@@ -23,9 +23,11 @@ impl TileGenerator {
 
         // The noise crate takes an array of f64s
         let island_val = self.perlin.get([nx, ny]);
-        if 0.23 > island_val {
+        // If the noise value is a high peak, make it land
+        if island_val > 0.25 {
             TileType::Stone
         } else {
+            // Otherwise, it is a valley and should be empty sky
             TileType::default()
         }
     }

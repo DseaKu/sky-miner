@@ -31,6 +31,7 @@ pub struct TileGen {
 
 #[derive(Default, Serialize, Deserialize, Clone, Debug)]
 pub struct Isle {
+    pub spawn_limit: f64,
     pub stretch_x: f64,
     pub stretch_y: f64,
 }
@@ -120,6 +121,7 @@ impl Default for TerrainConfig {
             tile_gen: TileGen {
                 ground_level: tile_gen::GROUND_LEVEL,
                 isle: Isle {
+                    spawn_limit: tile_gen::isle::SPAWN_LIMIT,
                     stretch_x: tile_gen::isle::STRETCH_X,
                     stretch_y: tile_gen::isle::STRETCH_Y,
                 },
